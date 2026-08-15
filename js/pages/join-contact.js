@@ -477,6 +477,11 @@ async function handleMembershipSubmit(
                 "membertype"
             );
 
+        const whyJoin =
+            formData.get(
+                "whyJoin"
+            )?.trim() || "Not specified";
+
         const photo =
 
             formData.get(
