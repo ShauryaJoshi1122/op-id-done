@@ -93,50 +93,6 @@ if (adminPasscodeForm) {
 }
 
 // ========================================
-// GOOGLE SIGN-IN HANDLER
-// ========================================
-
-if (adminLoginBtn) {
-    adminLoginBtn.addEventListener("click", handleAdminGoogleLogin);
-}
-
-async function handleAdminGoogleLogin() {
-    if (loginLoading) loginLoading.style.display = "block";
-    if (adminLoginBtn) adminLoginBtn.disabled = true;
-
-    try {
-        hideError();
-
-        const user = await signInWithGoogle();
-        const admin = await isAdmin(user.uid, user);
-
-        if (!admin) {
-            await logout();
-            throw new Error(`The account ${user.email} is not registered as an authorized admin.`);
-        }
-
-        await recordLogin(user);
-        showSuccess("Admin signed in successfully!");
-
-        setTimeout(() => {
-            location.href = "admin-dashboard.html";
-        }, 600);
-    } catch (error) {
-        console.error(error);
-        if (error.code === "auth/popup-closed-by-user" || error.code === "auth/cancelled-popup-request") {
-            if (loginLoading) loginLoading.style.display = "none";
-            if (adminLoginBtn) adminLoginBtn.disabled = false;
-            return;
-        }
-
-        showErrorMessage(error.message || "Google Sign-in failed.");
-    } finally {
-        if (adminLoginBtn) adminLoginBtn.disabled = false;
-        if (loginLoading) loginLoading.style.display = "none";
-    }
-}
-
-// ========================================
 // MESSAGES
 // ========================================
 

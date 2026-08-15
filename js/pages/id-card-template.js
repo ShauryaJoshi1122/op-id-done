@@ -44,38 +44,25 @@ let orgSettings = null;
 let layoutSettings = null;
 
 watchAuth(async (user) => {
-    if (!user) {
+    const sessionMemberId = sessionStorage.getItem("tct_member_id") || memberIdParam;
+
+    if (!user && !sessionMemberId) {
         location.href = "member-login.html";
         return;
     }
 
-    if (memberIdParam) {
-        try {
-            const adminCheck = await isAdmin(user.uid, user);
-            const isSelf = user.uid === memberIdParam;
-            if (adminCheck || isSelf) {
-                await loadMemberCard(memberIdParam);
-                
-                if (autoDownloadParam === "true") {
-                    showSuccess("Generating ID Card...");
-                    setTimeout(async () => {
-                        await downloadIdCardPDF();
-                    }, 1200);
-                }
-                return;
-            } else {
-                showError("Unauthorized access");
-                showInvalid();
-                return;
-            }
-        } catch (err) {
-            console.error("Auth check failed:", err);
-            showInvalid();
-            return;
-        }
-    }
+    const targetMemberId = sessionMemberId || user?.uid;
+    if (targetMemberId) {
+        await loadMemberCard(targetMemberId);
 
-    await loadMemberCard(user.uid);
+        if (autoDownloadParam === "true") {
+            setTimeout(async () => {
+                await downloadIdCardPDF();
+            }, 1200);
+        }
+    } else {
+        showInvalid();
+    }
 });
 
 // ========================================

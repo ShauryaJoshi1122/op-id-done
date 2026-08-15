@@ -173,127 +173,29 @@ if (
     }
 
     // ====================================
-    // GOOGLE VERIFICATION FOR EMAIL
+    // EMAIL VALIDATION
     // ====================================
 
-    const googleVerifyBtn = document.getElementById("googleVerifyBtn");
-    const googleVerifyStatus = document.getElementById("googleVerifyStatus");
     const memberEmailInput = document.getElementById("memberEmailInput");
     const membershipSubmitBtn = document.getElementById("membershipSubmitBtn");
 
-    // Track Google-verified user (stays signed in for registration)
-    window._googleVerifiedEmail = null;
-    window._googleUser = null;
-
-    if (googleVerifyBtn) {
-        googleVerifyBtn.addEventListener("click", async () => {
-            googleVerifyBtn.disabled = true;
-            googleVerifyBtn.style.opacity = "0.7";
-
-            try {
-                let user;
-                try {
-                    // Try Firebase Google Popup first
-                    user = await signInWithGoogleForVerification();
-                } catch (popupErr) {
-                    console.warn("Google popup unavailable or closed, falling back to email verification:", popupErr);
-                    
-                    let targetEmail = memberEmailInput?.value?.trim();
-                    if (!targetEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(targetEmail)) {
-                        targetEmail = prompt("Please enter your Google Email address to verify:");
-                        if (targetEmail) targetEmail = targetEmail.trim();
-                    }
-
-                    if (targetEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(targetEmail)) {
-                        user = {
-                            email: targetEmail,
-                            displayName: targetEmail.split("@")[0],
-                            uid: "verified_" + Date.now()
-                        };
-                    } else {
-                        throw new Error("Please enter a valid email address to complete verification.");
-                    }
-                }
-
-                // Store user and email for use during form submission
-                window._googleUser = user;
-                window._googleVerifiedEmail = user.email;
-
-                // Auto-fill email input
-                if (memberEmailInput) {
-                    memberEmailInput.value = user.email;
-                    memberEmailInput.readOnly = true;
-                }
-
-                // Enable submit button
-                if (membershipSubmitBtn) {
-                    membershipSubmitBtn.disabled = false;
-                    membershipSubmitBtn.classList.add("btn-enabled");
-                }
-
-                // Show success status
-                if (googleVerifyStatus) {
-                    googleVerifyStatus.style.display = "flex";
-                    googleVerifyStatus.className = "google-verify-status google-verify-success";
-                    googleVerifyStatus.innerHTML = `✅ Email Verified: <strong style="margin-left:4px;">${user.email}</strong>`;
-                }
-
-                // Update button to show verified state
-                googleVerifyBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:8px;">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                        <path fill="none" d="M0 0h48v48H0z"/>
-                    </svg>
-                    ✅ Verified with Google
-                `;
-                googleVerifyBtn.style.opacity = "1";
-                googleVerifyBtn.disabled = false;
-                googleVerifyBtn.classList.add("google-verify-btn--verified");
-
-            } catch (error) {
-                googleVerifyBtn.disabled = false;
-                googleVerifyBtn.style.opacity = "1";
-
-                const errMsg = error.message || "Google verification failed.";
-
-                if (googleVerifyStatus) {
-                    googleVerifyStatus.style.display = "flex";
-                    googleVerifyStatus.className = "google-verify-status google-verify-error";
-                    googleVerifyStatus.textContent = `ℹ️ ${errMsg} You can type your email address directly in the input field above.`;
-                }
-            }
-        });
-    }
-
-    // Allow typing email directly if Google verify is skipped or unavailable
     if (memberEmailInput) {
         const validateEmailInput = () => {
             const val = memberEmailInput.value.trim();
             const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-            if (isValid) {
-                window._googleVerifiedEmail = val;
-                if (membershipSubmitBtn) {
-                    membershipSubmitBtn.disabled = false;
+            if (membershipSubmitBtn) {
+                membershipSubmitBtn.disabled = !isValid;
+                if (isValid) {
                     membershipSubmitBtn.classList.add("btn-enabled");
-                }
-                if (googleVerifyStatus && !memberEmailInput.readOnly) {
-                    googleVerifyStatus.style.display = "flex";
-                    googleVerifyStatus.className = "google-verify-status google-verify-success";
-                    googleVerifyStatus.innerHTML = `✅ Email: <strong>${val}</strong>`;
-                }
-            } else if (!memberEmailInput.readOnly) {
-                window._googleVerifiedEmail = null;
-                if (googleVerifyStatus) {
-                    googleVerifyStatus.style.display = "none";
+                } else {
+                    membershipSubmitBtn.classList.remove("btn-enabled");
                 }
             }
         };
 
         memberEmailInput.addEventListener("input", validateEmailInput);
         memberEmailInput.addEventListener("change", validateEmailInput);
+        validateEmailInput();
     }
 }
 
@@ -504,25 +406,10 @@ async function handleMembershipSubmit(
     try {
 
         // ====================================
-        // EMAIL VERIFICATION & VALIDATION CHECK
+        // EMAIL VALIDATION CHECK
         // ====================================
-        let emailToUse = window._googleVerifiedEmail;
-        if (!emailToUse) {
-            const rawEmail = memberEmailInput?.value?.trim();
-            if (rawEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
-                emailToUse = rawEmail;
-                window._googleVerifiedEmail = rawEmail;
-            }
-        }
-
-        if (!emailToUse) {
-            const googleVerifyStatus = document.getElementById("googleVerifyStatus");
-            if (googleVerifyStatus) {
-                googleVerifyStatus.style.display = "flex";
-                googleVerifyStatus.className = "google-verify-status google-verify-error";
-                googleVerifyStatus.textContent = "❌ Please enter a valid email address before submitting.";
-                googleVerifyStatus.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
+        const rawEmail = memberEmailInput?.value?.trim();
+        if (!rawEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
             showError("Please enter a valid email address before submitting your application.");
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -530,6 +417,7 @@ async function handleMembershipSubmit(
             }
             return;
         }
+        const emailToUse = rawEmail;
 
         const formData =
 
@@ -701,15 +589,10 @@ async function handleMembershipSubmit(
         }
 
         // ====================================
-        // USE GOOGLE-VERIFIED USER
+        // UNIQUE MEMBER IDENTIFIER
         // ====================================
 
-        // The user was signed in with Google during email verification
-        const user = window._googleUser;
-
-        if (!user) {
-            throw new Error("Google authentication account not found. Please verify with Google again.");
-        }
+        const memberUid = "mem_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
 
         // ====================================
         // FILE UPLOADS
@@ -717,124 +600,73 @@ async function handleMembershipSubmit(
 
         try {
 
-            const photoUrl =
+            // ====================================
+            // PARALLEL FAST FILE UPLOADS
+            // ====================================
 
-                await uploadMemberPhoto(
-
-                    user.uid,
-
-                    photo
-
-                );
-
-            const governmentProofPath =
-
-                await uploadGovernmentProof(
-
-                    user.uid,
-
-                    governmentProof
-
-                );
+            const [photoUrl, governmentProofPath] = await Promise.all([
+                uploadMemberPhoto(memberUid, photo),
+                uploadGovernmentProof(memberUid, governmentProof)
+            ]);
 
             // ====================================
             // MEMBER RECORD
             // ====================================
 
-
             await setDocument(
-
                 COLLECTIONS.MEMBERS,
-
-                user.uid,
-
+                memberUid,
                 {
-
-                    uid:
-                        user.uid,
-
+                    uid: memberUid,
                     fullName,
-
                     fatherName,
-
                     mobile,
-
                     email,
-
                     address,
-
                     dob,
-
                     occupation,
-
                     gender,
-
                     bloodGroup,
-
                     memberType,
-
                     photoUrl,
-
                     governmentProofPath,
-
-                    governmentProofDeleted:
-                        false,
-
-                    memberNumber:
-                        null,
-
-                    status:
-                        MEMBER_STATUS.PENDING,
-
-                    createdAt:
-                        serverTimestamp(),
-
-                    approvedAt:
-                        null,
-
-                    rejectedAt:
-                        null
-
+                    governmentProofDeleted: false,
+                    memberNumber: null,
+                    status: MEMBER_STATUS.PENDING,
+                    createdAt: serverTimestamp(),
+                    approvedAt: null,
+                    rejectedAt: null
                 }
-
             );
 
-            // Send email to admin
-            try {
-                await sendAdminNotification({
-                    subject: `New Member Application: ${fullName}`,
-                    html: `
-                        <h3>New Membership Application Submitted</h3>
-                        <p>Applicant details:</p>
-                        <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; max-width: 600px;">
-                            <tr><td><strong>Full Name:</strong></td><td>${fullName}</td></tr>
-                            <tr><td><strong>Father's Name:</strong></td><td>${fatherName}</td></tr>
-                            <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
-                            <tr><td><strong>Mobile:</strong></td><td>${mobile}</td></tr>
-                            <tr><td><strong>DOB:</strong></td><td>${dob}</td></tr>
-                            <tr><td><strong>Gender:</strong></td><td>${gender}</td></tr>
-                            <tr><td><strong>Blood Group:</strong></td><td>${bloodGroup}</td></tr>
-                            <tr><td><strong>Occupation:</strong></td><td>${occupation}</td></tr>
-                            <tr><td><strong>Address:</strong></td><td>${address}</td></tr>
-                            <tr><td><strong>Member Category:</strong></td><td>${memberType === "member" ? "Regular Member" : "Active Member"}</td></tr>
-                            <tr><td><strong>Reason to Join:</strong></td><td>${whyJoin}</td></tr>
-                        </table>
-                        <p>Visit the Admin Portal to review and approve this application.</p>
-                    `
-                });
-            } catch (emailError) {
-                console.error("Could not send admin membership notification email:", emailError);
-            }
+            // Background admin email notification (non-blocking)
+            sendAdminNotification({
+                subject: `New Member Application: ${fullName}`,
+                html: `
+                    <h3>New Membership Application Submitted</h3>
+                    <p>Applicant details:</p>
+                    <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; max-width: 600px;">
+                        <tr><td><strong>Full Name:</strong></td><td>${fullName}</td></tr>
+                        <tr><td><strong>Father's Name:</strong></td><td>${fatherName}</td></tr>
+                        <tr><td><strong>Email:</strong></td><td>${email}</td></tr>
+                        <tr><td><strong>Mobile:</strong></td><td>${mobile}</td></tr>
+                        <tr><td><strong>DOB:</strong></td><td>${dob}</td></tr>
+                        <tr><td><strong>Gender:</strong></td><td>${gender}</td></tr>
+                        <tr><td><strong>Blood Group:</strong></td><td>${bloodGroup}</td></tr>
+                        <tr><td><strong>Occupation:</strong></td><td>${occupation}</td></tr>
+                        <tr><td><strong>Address:</strong></td><td>${address}</td></tr>
+                        <tr><td><strong>Member Category:</strong></td><td>${memberType === "member" ? "Regular Member" : "Active Member"}</td></tr>
+                        <tr><td><strong>Reason to Join:</strong></td><td>${whyJoin}</td></tr>
+                    </table>
+                    <p>Visit the Admin Portal to review and approve this application.</p>
+                `
+            }).catch(emailErr => console.warn("Admin notification email sent in background encountered error:", emailErr));
 
             showSuccess(
 
                 "Application submitted successfully! Please wait for administrator verification."
 
             );
-
-            // Reset Google verification state
-            window._googleUser = null;
-            window._googleVerifiedEmail = null;
 
             membershipForm.reset();
 

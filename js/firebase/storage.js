@@ -10,9 +10,55 @@ import {
     deleteObject
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
 
-// Helper: Convert file to Base64 DataURL fallback
+// Helper: Convert file to Base64 DataURL fallback with canvas image compression
 function fileToDataUrl(file) {
     return new Promise((resolve, reject) => {
+        if (!file) {
+            resolve(null);
+            return;
+        }
+
+        // If it's an image, compress & downscale it for fast base64 storage
+        if (file.type && file.type.startsWith("image/")) {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+                const maxDim = 1000;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+                resolve(compressedDataUrl);
+            };
+            img.onerror = () => {
+                // Fallback to standard FileReader if canvas fails
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (err) => reject(err);
+                reader.readAsDataURL(file);
+            };
+            img.src = url;
+            return;
+        }
+
+        // Non-image files (e.g. PDFs)
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = (err) => reject(err);
@@ -20,30 +66,43 @@ function fileToDataUrl(file) {
     });
 }
 
+// Helper: Promise timeout wrapper
+function withTimeout(promise, ms = 1000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("Storage timeout")), ms);
+        promise.then(
+            res => { clearTimeout(timer); resolve(res); },
+            err => { clearTimeout(timer); reject(err); }
+        );
+    });
+}
+
 // Generic Upload with Firebase & Supabase Fallback
 async function uploadToFirebaseStorage(path, file) {
     if (!file) return null;
+
+    // Try Firebase Storage with 1s timeout
     try {
         if (storage) {
             const storageRef = ref(storage, path);
-            const snapshot = await uploadBytes(storageRef, file);
-            const downloadUrl = await getDownloadURL(snapshot.ref);
+            const uploadPromise = uploadBytes(storageRef, file).then(snapshot => getDownloadURL(snapshot.ref));
+            const downloadUrl = await withTimeout(uploadPromise, 1000);
             if (downloadUrl) return downloadUrl;
         }
     } catch (err) {
-        console.warn(`[Firebase Storage] Upload to ${path} failed, attempting Supabase Storage fallback:`, err);
+        console.warn(`[Firebase Storage] Upload to ${path} skipped or timed out:`, err);
     }
 
-    // Try Supabase Storage
+    // Try Supabase Storage with 1s timeout
     try {
         const { uploadToSupabase } = await import("../supabase-config.js");
-        const supabaseUrl = await uploadToSupabase(path, file);
+        const supabaseUrl = await withTimeout(uploadToSupabase(path, file), 1000);
         if (supabaseUrl) return supabaseUrl;
     } catch (sbErr) {
-        console.warn("[Supabase Storage] Fallback upload skipped or error:", sbErr);
+        console.warn("[Supabase Storage] Fallback upload skipped or timed out:", sbErr);
     }
 
-    // Local DataURL fallback
+    // Fast local compressed DataURL fallback
     return await fileToDataUrl(file);
 }
 
