@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Administrator Control Panel</title>
+    <meta
+      name="description"
+      content="Secure Administrator Control Panel for Member Management and Digital ID Card Generation."
+    />
+
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/id-card-layouts.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <style>
+      .btn-download-id {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: #2563eb;
+        color: #ffffff !important;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .btn-download-id:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      }
+      .btn-inspect {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+      }
+      .btn-inspect:hover {
+        background-color: #1d4ed8;
+      }
+      .btn-approve {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+      }
+      .btn-approve:hover {
+        background-color: #1d4ed8;
+      }
+      .btn-reject {
+        background-color: #dc2626;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+      }
+      .btn-reject:hover {
+        background-color: #b91c1c;
+      }
+      .badge-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.8rem;
+      }
+      .badge-approved {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        border: 1px solid #bfdbfe;
+      }
+      .modal-detail-img {
+        max-width: 100%;
+        max-height: 280px;
+        object-fit: contain;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+      }
+      .settings-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .settings-form-group label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #334155;
+      }
+      .settings-form-group input,
+      .settings-form-group textarea {
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: inherit;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar Overlay for Mobile/Tablet Toggle -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- ======================================== -->
+    <!-- SIDEBAR -->
+    <!-- ======================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div style="width: 36px; height: 36px; background: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h2>Admin Center</h2>
+      </div>
+
+      <ul>
+        <li>
+          <a href="index.html">🏠 Home Portal</a>
+        </li>
+        <li>
+          <a href="#dashboardStatistics" class="active">📊 Statistics</a>
+        </li>
+        <li>
+          <a href="#memberApprovals">📋 Application Screening</a>
+        </li>
+        <li>
+          <a href="#memberManagement">👥 Member Directory & ID Cards</a>
+        </li>
+        <li>
+          <a href="#adminSettings">⚙️ Organization & Assets</a>
+        </li>
+        <li>
+          <a href="#adminManagementSection" id="navAdminManagement">🛡️ Admin Management <span style="background: #fef3c7; color: #92400e; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 6px;">SUPER</span></a>
+        </li>
+        <li>
+          <a href="#idCardStudioSection" id="navIdCardStudio">🎴 ID Card Layout Studio <span style="background: #fef3c7; color: #92400e; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 6px;">SUPER</span></a>
+        </li>
+        <li>
+          <button id="adminLogoutBtn">🚪 Logout</button>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- ======================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ======================================== -->
+    <main class="dashboard-content">
+      <!-- ======================================== -->
+      <!-- TOP BAR -->
+      <!-- ======================================== -->
+      <div id="dashboardLoader" class="dashboard-loader" style="display: none">
+        Loading data...
+      </div>
+
+      <section class="topbar">
+        <div class="topbar-left">
+          <button
+            id="sidebarToggle"
+            class="sidebar-toggle"
+            aria-label="Toggle Sidebar"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <h1>Administrator Control Center</h1>
+        </div>
+
+        <div id="adminInfo" class="admin-info">Welcome, Administrator</div>
+      </section>
+
+      <!-- ======================================== -->
+      <!-- DASHBOARD STATISTICS -->
+      <!-- ======================================== -->
+      <section id="dashboardStatistics" class="statistics-section">
+        <div class="stat-card">
+          <h2 id="totalMembers">0</h2>
+          <p>Total Approved Members</p>
+        </div>
+
+        <div class="stat-card">
+          <h2 id="pendingApprovals" style="color: #d97706;">0</h2>
+          <p>Pending Applications</p>
+        </div>
+
+        <div class="stat-card">
+          <h2 id="activeMembersCount" style="color: #2563eb;">0</h2>
+          <p>Active Volunteer Members</p>
+        </div>
+      </section>
+
+      <!-- ======================================== -->
+      <!-- APPLICANT SCREENING (MEMBER APPROVALS) -->
+      <!-- ======================================== -->
+      <section id="memberApprovals">
+        <div class="section-header">
+          <h2>📋 Applicant Screening & Approval Queue</h2>
+        </div>
+
+        <div class="security-note" style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; font-size: 0.9rem; color: #1e40af;">
+          🔒 <strong>Security & Compliance:</strong> Government ID proofs uploaded by applicants are accessible to administrators for verification. Once approved or rejected, documents can be reviewed or permanently purged.
+        </div>
+
+        <div class="admin-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Applicant Name</th>
+                <th>Photo</th>
+                <th>Mobile Number</th>
+                <th>Email Address</th>
+                <th>Member Category</th>
+                <th>Status</th>
+                <th>Screening & Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="memberApprovalsTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">No pending applications in queue</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================== -->
+      <!-- MEMBER MANAGEMENT & ID CARD DOWNLOAD -->
+      <!-- ======================================== -->
+      <section id="memberManagement">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+          <h2>👥 Member Management & Digital ID Cards</h2>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button id="exportMembersBtn" style="display: inline-flex; align-items: center; gap: 8px; background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+              📥 Export to CSV
+            </button>
+            <button id="clearAllOldMembersBtn" style="display: inline-flex; align-items: center; gap: 8px; background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;" title="Clear all old test members to start fresh">
+              🗑️ Clear All Old Members
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <input
+            id="memberSearchInput"
+            type="text"
+            placeholder="Search by Member ID, Name, Mobile, or Blood Group..."
+            style="width: 100%; max-width: 450px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;"
+          />
+        </div>
+
+        <div class="admin-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Member ID</th>
+                <th>Full Name</th>
+                <th>Photo</th>
+                <th>Blood Group</th>
+                <th>Mobile</th>
+                <th>Category</th>
+                <th style="text-align: center;">Download ID Card</th>
+                <th>Details / Remove</th>
+              </tr>
+            </thead>
+
+            <tbody id="membersTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: #64748b; padding: 20px;">Loading members...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ======================================== -->
+      <!-- ADMIN ORGANIZATION & ASSET SETTINGS -->
+      <!-- ======================================== -->
+      <section id="adminSettings">
+        <div class="section-header">
+          <h2>⚙️ Organization Details & ID Card Settings</h2>
+        </div>
+
+        <div class="settings-container" style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0;">
+          <h3 style="margin-top: 0; margin-bottom: 16px; color: #0f172a; font-size: 1.15rem;">🏢 Custom Organization Profile</h3>
+          <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">
+            Set your new organization name, address, contact numbers, and ID card details below. These are automatically applied across all pages and newly generated ID Cards.
+          </p>
+
+          <form id="orgSettingsForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="settings-form-group">
+              <label for="orgNameInput">Organization / Trust Name *</label>
+              <input type="text" id="orgNameInput" placeholder="e.g. Global Social Welfare Foundation" required />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgTaglineInput">Portal Tagline / Subtitle</label>
+              <input type="text" id="orgTaglineInput" placeholder="e.g. Official Digital Member Management & ID Portal" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgPhoneInput">Helpline / Contact Phone</label>
+              <input type="text" id="orgPhoneInput" placeholder="e.g. +91 9876543210" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgEmailInput">Official Email Address</label>
+              <input type="email" id="orgEmailInput" placeholder="e.g. contact@yourorganization.org" />
+            </div>
+
+            <div class="settings-form-group" style="grid-column: 1 / -1;">
+              <label for="orgAddressInput">Registered Office Address</label>
+              <textarea id="orgAddressInput" rows="2" placeholder="e.g. 100 Main Road, Metro City, State, Pincode"></textarea>
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgLeaderNameInput">President / Authorized Signatory Name</label>
+              <input type="text" id="orgLeaderNameInput" placeholder="e.g. Authorized Signatory / President" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgLeaderTitleInput">Signatory Title / Designation</label>
+              <input type="text" id="orgLeaderTitleInput" placeholder="e.g. President / Founder / Director" />
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+              <button type="submit" id="saveOrgDetailsBtn" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
+                💾 Save Organization Profile
+              </button>
+            </div>
+          </form>
+
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+
+          <h3 style="margin-top: 0; margin-bottom: 16px; color: #0f172a; font-size: 1.15rem;">🦶 Footer Customizer & Brand Settings</h3>
+          <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">
+            Customize the red logo text, contact information, social handles, policy links, and copyright text displayed in the website footer.
+          </p>
+
+          <form id="footerSettingsForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <!-- Brand Logo Customization -->
+            <div class="settings-form-group">
+              <label for="footerLogoTopInput">Logo Top Text (e.g. Hindi Line 1)</label>
+              <input type="text" id="footerLogoTopInput" placeholder="e.g. खबर की" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerLogoStarInput">Logo Icon / Star Emoji</label>
+              <input type="text" id="footerLogoStarInput" placeholder="e.g. ✨" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerLogoBottomInput">Logo Bottom Text (e.g. Hindi Line 2)</label>
+              <input type="text" id="footerLogoBottomInput" placeholder="e.g. तहतक" />
+            </div>
+
+            <!-- Footer Contact Info -->
+            <div class="settings-form-group">
+              <label for="footerEmailInput">Footer Email Address</label>
+              <input type="email" id="footerEmailInput" placeholder="e.g. khabarkitahtak@gmail.com" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerPhoneInput">Footer Helpline / Phone Number</label>
+              <input type="text" id="footerPhoneInput" placeholder="e.g. 94517 33981" />
+            </div>
+
+            <div class="settings-form-group" style="grid-column: 1 / -1;">
+              <label for="footerAddressInput">Footer Head Office Address</label>
+              <textarea id="footerAddressInput" rows="2" placeholder="e.g. Head Office - Office No. 1743, First Floor Lekhraj Dollar..."></textarea>
+            </div>
+
+            <div class="settings-form-group" style="grid-column: 1 / -1;">
+              <label for="footerCopyrightInput">Bottom Bar Copyright Text</label>
+              <input type="text" id="footerCopyrightInput" placeholder="e.g. © 2021 All rights reserved by Fragron Infotech" />
+            </div>
+
+            <!-- Policy Link URLs -->
+            <div class="settings-form-group">
+              <label for="footerTermsUrlInput">Terms & Condition Link URL</label>
+              <input type="text" id="footerTermsUrlInput" placeholder="e.g. # or https://..." />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerPrivacyUrlInput">Privacy Policy Link URL</label>
+              <input type="text" id="footerPrivacyUrlInput" placeholder="e.g. # or https://..." />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerDisclaimerUrlInput">Disclaimer Link URL</label>
+              <input type="text" id="footerDisclaimerUrlInput" placeholder="e.g. # or https://..." />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerRefundUrlInput">Refund Policy Link URL</label>
+              <input type="text" id="footerRefundUrlInput" placeholder="e.g. # or https://..." />
+            </div>
+
+            <!-- Social Media Profile Links -->
+            <div class="settings-form-group">
+              <label for="footerFbUrlInput">Facebook Page URL</label>
+              <input type="text" id="footerFbUrlInput" placeholder="e.g. https://facebook.com/yourpage" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerTwitterUrlInput">Twitter / X Profile URL</label>
+              <input type="text" id="footerTwitterUrlInput" placeholder="e.g. https://twitter.com/yourprofile" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerInstaUrlInput">Instagram Profile URL</label>
+              <input type="text" id="footerInstaUrlInput" placeholder="e.g. https://instagram.com/yourprofile" />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="footerYoutubeUrlInput">YouTube Channel URL</label>
+              <input type="text" id="footerYoutubeUrlInput" placeholder="e.g. https://youtube.com/yourchannel" />
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+              <button type="submit" id="saveFooterSettingsBtn" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
+                💾 Save Footer Settings
+              </button>
+            </div>
+          </form>
+
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+
+          <h3 style="margin-top: 0; margin-bottom: 16px; color: #0f172a; font-size: 1.15rem;">🎨 ID Card Assets & Signatures</h3>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;">
+            <!-- Founder Signature Upload -->
+            <div class="settings-card" style="padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;">
+              <h4 style="margin-top: 0; font-size: 1rem; color: #1e293b;">✍️ Official Digital Signature</h4>
+              <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 12px;">Appears on bottom right of generated Digital ID Cards.</p>
+              
+              <div id="currentSignaturePreview" style="margin-bottom: 12px; min-height: 50px; display: flex; align-items: center; background: white; padding: 8px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                <span style="color: #94a3b8; font-size: 0.85rem;">Loading...</span>
+              </div>
+              
+              <input type="file" id="signatureUpload" accept="image/*" style="font-size: 0.85rem; margin-bottom: 8px; width: 100%;" />
+            </div>
+
+            <!-- Default Photo Upload -->
+            <div class="settings-card" style="padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;">
+              <h4 style="margin-top: 0; font-size: 1rem; color: #1e293b;">👤 Default Member Placeholder Avatar</h4>
+              <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 12px;">Fallback image when a member photo is not uploaded.</p>
+              
+              <div id="currentDefaultPhotoPreview" style="margin-bottom: 12px; min-height: 50px; display: flex; align-items: center; background: white; padding: 8px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                <span style="color: #94a3b8; font-size: 0.85rem;">Loading...</span>
+              </div>
+              
+              <input type="file" id="defaultPhotoUpload" accept="image/*" style="font-size: 0.85rem; margin-bottom: 8px; width: 100%;" />
+            </div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <button id="saveAssetSettingsBtn" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
+              💾 Save Asset Images
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================== -->
+      <!-- SUPER ADMIN: ADMINISTRATOR MANAGEMENT -->
+      <!-- ======================================== -->
+      <section id="adminManagementSection">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+          <div>
+            <h2>🛡️ Administrator Management & Roles</h2>
+            <p style="margin: 4px 0 0; font-size: 0.88rem; color: #64748b;">
+              Super Admin Control: Create new administrators, assign permissions, and manage login passcodes.
+            </p>
+          </div>
+          <span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            👑 Super Administrator Feature
+          </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 20px;">
+          <!-- ADD ADMIN FORM CARD -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+            <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 1.15rem; color: #0f172a;">➕ Add New Administrator Account</h3>
+            
+            <form id="addNewAdminForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px;">
+              <div class="settings-form-group">
+                <label for="newAdminName">Full Name *</label>
+                <input type="text" id="newAdminName" placeholder="e.g. Rajesh Kumar" required />
+              </div>
+
+              <div class="settings-form-group">
+                <label for="newAdminEmail">Admin Email Address *</label>
+                <input type="email" id="newAdminEmail" placeholder="e.g. admin.rajesh@portal.com" required />
+              </div>
+
+              <div class="settings-form-group">
+                <label for="newAdminRole">Access Role *</label>
+                <select id="newAdminRole" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: white;">
+                  <option value="admin">Standard Admin (Screening, Approvals, Member ID Cards)</option>
+                  <option value="superadmin">Super Admin (Full Access + Add Admins + Layout Studio)</option>
+                </select>
+              </div>
+
+              <div class="settings-form-group">
+                <label for="newAdminPasscode">Custom Login Passcode / PIN *</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="newAdminPasscode" placeholder="e.g. admin789" required style="flex: 1;" />
+                  <button type="button" id="generatePasscodeBtn" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 0 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">Generate</button>
+                </div>
+              </div>
+
+              <div class="settings-form-group">
+                <label for="newAdminPhone">Mobile / Contact Phone</label>
+                <input type="tel" id="newAdminPhone" placeholder="e.g. +91 9876543210" />
+              </div>
+
+              <div style="grid-column: 1 / -1; margin-top: 10px;">
+                <button type="submit" id="createAdminSubmitBtn" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px;">
+                  <span>💾 Save & Create Administrator</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ADMIN LIST TABLE -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a;">👥 Active Administrators & Privileges</h3>
+              <button id="refreshAdminsBtn" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">🔄 Refresh List</button>
+            </div>
+
+            <div class="admin-table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Admin Name & Contact</th>
+                    <th>Email Address</th>
+                    <th>Role Privilege</th>
+                    <th>Login Passcode</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminsTableBody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Loading administrators...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================== -->
+      <!-- SUPER ADMIN: ID CARD LAYOUT STUDIO -->
+      <!-- ======================================== -->
+      <section id="idCardStudioSection">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+          <div>
+            <h2>🎴 ID Card Layout Studio & Visual Customizer</h2>
+            <p style="margin: 4px 0 0; font-size: 0.88rem; color: #64748b;">
+              Super Admin: Customize layout styles, accent color themes, and field visibility. Changes apply instantly across all member ID cards.
+            </p>
+          </div>
+          <span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            👑 Super Administrator Feature
+          </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: minmax(320px, 1.2fr) minmax(340px, 1fr); gap: 24px; margin-top: 20px; align-items: start;">
+          <!-- STUDIO CONTROLS -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+            
+            <!-- 1. Layout Preset Selection -->
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 10px;">
+                1. Select ID Card Layout Template
+              </label>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;" id="layoutPresetGrid">
+                
+                <div class="layout-preset-card active" data-preset="modern" style="border: 2px solid #2563eb; background: #eff6ff; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">✨</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #1e40af;">Modern Badge</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Vertical &bull; Chips &bull; QR</div>
+                </div>
+
+                <div class="layout-preset-card" data-preset="classic" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">🏛️</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Classic Portrait</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Traditional &bull; Badge</div>
+                </div>
+
+                <div class="layout-preset-card" data-preset="horizontal" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Executive Card</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Landscape 86x54mm</div>
+                </div>
+
+                <div class="layout-preset-card" data-preset="minimal" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">📄</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Minimalist</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Compact &bull; Modern</div>
+                </div>
+
+              </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+
+            <!-- 2. Primary Accent Color -->
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 10px;">
+                2. Brand Accent Color Theme
+              </label>
+              
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;" id="colorSwatches">
+                <button type="button" class="color-swatch active" data-color="#2563eb" style="width: 32px; height: 32px; border-radius: 50%; background: #2563eb; border: 3px solid #0f172a; cursor: pointer;" title="Royal Blue"></button>
+                <button type="button" class="color-swatch" data-color="#059669" style="width: 32px; height: 32px; border-radius: 50%; background: #059669; border: 2px solid white; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer;" title="Emerald Green"></button>
+                <button type="button" class="color-swatch" data-color="#991b1b" style="width: 32px; height: 32px; border-radius: 50%; background: #991b1b; border: 2px solid white; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer;" title="Crimson Maroon"></button>
+                <button type="button" class="color-swatch" data-color="#0f172a" style="width: 32px; height: 32px; border-radius: 50%; background: #0f172a; border: 2px solid white; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer;" title="Midnight Navy"></button>
+                <button type="button" class="color-swatch" data-color="#7c3aed" style="width: 32px; height: 32px; border-radius: 50%; background: #7c3aed; border: 2px solid white; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer;" title="Royal Purple"></button>
+                <button type="button" class="color-swatch" data-color="#d97706" style="width: 32px; height: 32px; border-radius: 50%; background: #d97706; border: 2px solid white; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer;" title="Sunset Amber"></button>
+                <button type="button" class="color-swatch" data-color="#334155" style="width: 32px; height: 32px; border-radius: 50%; background: #334155; border: 2px solid white; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer;" title="Slate"></button>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="studioCustomColor" style="font-size: 0.85rem; color: #475569; font-weight: 600;">Custom Hex:</label>
+                <input type="color" id="studioCustomColor" value="#2563eb" style="width: 36px; height: 32px; padding: 0; border: none; border-radius: 4px; cursor: pointer;" />
+                <input type="text" id="studioCustomHexText" value="#2563eb" style="width: 100px; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.85rem;" />
+              </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+
+            <!-- 3. Field & Badge Visibility Toggles -->
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 10px;">
+                3. Information & Badge Visibility
+              </label>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.88rem; color: #334155;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleBloodGroup" checked />
+                  <span>🩸 Blood Group Badge</span>
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleFatherName" checked />
+                  <span>Father's Name</span>
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleDob" checked />
+                  <span>Date of Birth</span>
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleAddress" checked />
+                  <span>Residential Address</span>
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleQrCode" checked />
+                  <span>Official QR Code</span>
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleIssueDate" checked />
+                  <span>Approval Issue Date</span>
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="toggleSignatory" checked />
+                  <span>Signatory Signature</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
+              <button id="saveLayoutSettingsBtn" type="button" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px;">
+                <span>💾 Save & Apply ID Card Layout</span>
+              </button>
+
+              <button id="resetLayoutSettingsBtn" type="button" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 12px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
+                <span>🔄 Reset Defaults</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- LIVE PREVIEW CONTAINER -->
+          <div style="position: sticky; top: 20px;">
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; text-align: center;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">👁️ Real-Time Live Preview</span>
+                <span style="font-size: 0.75rem; background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 4px; font-weight: 600;">PVC High-Res Standard</span>
+              </div>
+
+              <!-- Preview wrapper -->
+              <div id="studioLiveCardPreviewContainer" style="display: flex; justify-content: center; align-items: center; min-height: 420px; overflow-x: auto; padding: 10px 0;">
+                <!-- Dynamically populated card -->
+              </div>
+
+              <p style="font-size: 0.78rem; color: #64748b; margin-top: 12px; margin-bottom: 0;">
+                All approved members will receive this exact ID card layout when viewing or downloading their official ID card.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================================== -->
+    <!-- DETAIL MODAL FOR INSPECTING APPLICANTS / MEMBERS -->
+    <!-- ======================================== -->
+    <div id="detailModal" class="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
+      <div class="admin-modal-content" style="background: white; width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; border-radius: 16px; padding: 24px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
+        <button id="closeDetailModalBtn" style="position: absolute; top: 16px; right: 16px; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b;">✕</button>
+        <h3 id="detailModalTitle" style="margin-top: 0; margin-bottom: 16px; color: #0f172a; font-size: 1.25rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Applicant Details</h3>
+        <div id="detailModalBody" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/pages/admin-dashboard.js"></script>
+  </body>
+</html>

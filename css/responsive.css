@@ -1,0 +1,1696 @@
+/* ==========================================================================
+   THAMARAI CHARITABLE TRUST FOUNDATION (தாமரை அறக்கட்டளை)
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================== */
+
+/* ==========================================
+   1400px BREAKPOINT (Large Laptop / Desktop)
+   ========================================== */
+@media (max-width: 1400px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+/* ==========================================
+   1200px BREAKPOINT (Laptop)
+   ========================================== */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 960px;
+  }
+
+  /* Font size reductions for readability */
+  .hero h1 {
+    font-size: 2.8rem;
+  }
+
+  .section-title h2 {
+    font-size: 2rem;
+  }
+
+  /* Flex adjustments */
+  .hero-content {
+    padding-right: 20px;
+  }
+
+  .hero-image img {
+    width: 280px;
+    height: 280px;
+    max-height: none;
+  }
+
+  .founder,
+  .founder-container {
+    gap: 40px;
+  }
+}
+
+/* ==========================================
+   992px BREAKPOINT (Tablet Landscape)
+   ========================================== */
+@media (max-width: 992px) {
+  .container {
+    max-width: 720px;
+  }
+
+  section {
+    padding: 60px 24px;
+  }
+
+  /* Sticky main header to column/wrapping mode */
+  .main-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+  }
+
+  .logo-area {
+    padding: 10px 16px;
+    justify-content: center;
+  }
+
+  .logo-area img {
+    height: 48px;
+    width: 48px;
+  }
+
+  .logo-area h2 {
+    font-size: 1.15rem;
+  }
+
+  /* Mobile Sidebar Navigation trigger */
+
+  /* Floating Language switcher scale-down */
+  .language-switch {
+    top: 10px;
+    padding: 2px;
+  }
+
+  .language-switch button {
+    padding: 5px 12px;
+    font-size: 0.72rem;
+  }
+
+  /* Hero section grid stack */
+  .hero {
+    padding: 100px 24px 60px 24px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2.3rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+  }
+
+  /* Inner Page Hero Sub-banner scale-down */
+  .page-hero {
+    padding: 60px 20px;
+  }
+
+  .page-hero h1 {
+    font-size: 2.1rem;
+  }
+
+  .page-hero p {
+    font-size: 1rem;
+  }
+
+  .hero-content {
+    padding-right: 0;
+    order: 2;
+  }
+
+  .hero-image {
+    max-width: 460px;
+    margin: 0 auto;
+    order: 1;
+  }
+
+  .hero-image img {
+    width: 220px;
+    height: 220px;
+    border-width: 6px;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  /* Founder section stack */
+  .founder,
+  .founder-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .founder-image {
+    max-width: 340px;
+    margin-bottom: 20px;
+    height: auto;
+    padding: 20px;
+  }
+
+  .founder-image img {
+    width: 100% !important;
+    max-width: 260px !important;
+    height: auto !important;
+  }
+
+  .founder-image::before {
+    width: 290px;
+    height: 290px;
+  }
+
+  .founder-image::after {
+    width: 280px;
+    height: 280px;
+  }
+
+  .founder-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .founder-message,
+  .founder-journey,
+  .founder-vision {
+    text-align: left;
+    margin-left: 0 !important;
+  }
+
+  /* Featured Event layout collapse */
+  .featured-event {
+    flex-direction: column;
+  }
+
+  .featured-image {
+    min-height: 240px;
+  }
+
+  .featured-content {
+    padding: 30px;
+  }
+
+  /* Volunteer block collapse */
+  .volunteer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  /* Footer structure wrap */
+  .footer-container,
+  .footer > .container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  /* ==========================
+       ADMIN PANEL RESPONSIVE SET
+       ========================== */
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+    z-index: 1000;
+  }
+
+  /* JS adds .open class to sidebar on mobile toggle */
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .dashboard-content {
+    margin-left: 0;
+    padding: 30px 20px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .topbar .admin-info {
+    align-self: flex-start;
+  }
+}
+
+/* ==========================================
+   768px BREAKPOINT (Tablet Portrait)
+   ========================================== */
+@media (max-width: 768px) {
+  .container {
+    max-width: 540px;
+  }
+
+  /* Collapse layout grids to single column on tablet portrait and mobile */
+  .about-grid,
+  .services-grid,
+  .benefits-grid,
+  .impact-grid,
+  .events-grid,
+  .testimonial-grid,
+  .updates-grid,
+  .partners-grid,
+  .goals-grid,
+  .contact-container,
+  .export-grid,
+  .settings-box,
+  .steps-grid,
+  .instructions-grid,
+  .purpose-grid,
+  .donation-summary,
+  .statistics-section,
+  .activity-grid,
+  .volunteer-grid,
+  .story-grid,
+  .gallery-categories,
+  .areas-grid,
+  .recognition-grid,
+  .guidelines-grid,
+  .activities-grid,
+  .info-grid,
+  .founder-details {
+    grid-template-columns: 1fr !important;
+    gap: 24px;
+  }
+
+  /* services-grid, benefits-grid, impact-grid, recognition-grid and impact-counter
+     are flex-wrap layouts (see style.css) with a min-width set on their cards,
+     so they reflow into as many columns as fit naturally — no forced
+     single-column override needed here. */
+
+  /* Reduce card paddings and text sizes on tablet to prevent overflows and word breaking */
+  .about-card,
+  .service-card,
+  .benefit-card,
+  .impact-card,
+  .event-card,
+  .testimonial-card,
+  .update-card,
+  .step-card,
+  .instruction-card,
+  .info-card,
+  .donor-card,
+  .summary-card,
+  .stat-card,
+  .founder-vision,
+  .founder-journey,
+  .founder-message,
+  .volunteer-card,
+  .gallery-card,
+  .area-card,
+  .timeline-content,
+  .recognition-card,
+  .guideline-card,
+  .activity-preview,
+  .purpose-card,
+  .goal-card,
+  .emergency-card,
+  .emergency-box,
+  .faq-item {
+    padding: 24px 20px !important;
+  }
+  .about-card p,
+  .service-card p,
+  .benefit-card p,
+  .impact-card p,
+  .event-card p,
+  .testimonial-card p,
+  .update-card p,
+  .step-card p,
+  .instruction-card p,
+  .info-card p,
+  .donor-card p,
+  .founder-vision p,
+  .founder-journey p,
+  .founder-message p,
+  .volunteer-card p,
+  .timeline-content p,
+  .recognition-card p,
+  .guideline-card p,
+  .purpose-card p,
+  .goal-card p,
+  .emergency-card p,
+  .emergency-box p,
+  .faq-item p {
+    font-size: 0.88rem !important;
+  }
+  .about-card h3,
+  .service-card h3,
+  .benefit-card h3,
+  .impact-card h3,
+  .event-card h3,
+  .testimonial-card h3,
+  .update-card h3,
+  .founder-vision h5,
+  .founder-journey h5,
+  .founder-message h5,
+  .volunteer-card h3,
+  .timeline-content h3,
+  .recognition-card h3,
+  .guideline-card h3,
+  .purpose-card h3,
+  .goal-card h3,
+  .emergency-card h3,
+  .emergency-box h3,
+  .faq-item h3 {
+    font-size: 1.15rem !important;
+  }
+
+  .section-title h2 {
+    font-size: 1.8rem;
+  }
+
+  /* Main hero heading scale-down */
+  .hero h1 {
+    font-size: 1.95rem;
+  }
+
+  .hero h2 {
+    font-size: 1.1rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .hero-image img {
+    width: 180px;
+    height: 180px;
+    border-width: 5px;
+  }
+
+  /* Inner Page Hero Sub-banner scale-down */
+  .page-hero {
+    padding: 50px 20px;
+  }
+
+  .page-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .page-hero p {
+    font-size: 0.95rem;
+  }
+
+  /* Counters grid */
+  .impact-counter {
+    grid-template-columns: 1fr;
+    margin: -20px 20px 0 20px;
+    padding: 30px 15px;
+  }
+
+  .counter-card {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px;
+  }
+
+  .counter-card:last-child {
+    border-bottom: none;
+  }
+
+  /* Table horizontal scroll wrapper for responsiveness */
+  .admin-table-wrapper {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Timeline stack to left side */
+  .timeline::before {
+    left: 20px;
+  }
+
+  .timeline-item {
+    width: 100%;
+    padding-left: 50px;
+    padding-right: 0;
+  }
+
+  .timeline-item:nth-child(even) {
+    left: 0;
+    padding-left: 50px;
+  }
+
+  .timeline-year {
+    left: -5px;
+    right: auto;
+  }
+
+  .timeline-item:nth-child(even) .timeline-year {
+    left: -5px;
+  }
+
+  /* ID Card actions list stack */
+  .id-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .id-actions a {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+/* ==========================================
+   576px BREAKPOINT (Mobile)
+   ========================================== */
+@media (max-width: 576px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .section-title {
+    margin-bottom: 30px;
+  }
+
+  .section-title h2 {
+    font-size: 1.55rem;
+  }
+
+  /* Main hero heading scale-down */
+  .hero h1 {
+    font-size: 1.7rem;
+  }
+
+  .hero h2 {
+    font-size: 1.02rem;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+  }
+
+  .hero-image img {
+    width: 150px;
+    height: 150px;
+    border-width: 5px;
+  }
+
+  /* Inner Page Hero Sub-banner scale-down */
+  .page-hero {
+    padding: 45px 16px;
+  }
+
+  .page-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-hero p {
+    font-size: 0.9rem;
+  }
+
+  /* Removed horizontal nav items wrapping */
+
+  /* Forms padding reduction */
+  form {
+    padding: 24px 16px;
+  }
+
+  /* Admin login card padding reduction */
+  .admin-login-container {
+    padding: 28px 20px;
+  }
+
+  /* Grid layout collapses to single column */
+  .about-grid,
+  .services-grid,
+  .benefits-grid,
+  .impact-grid,
+  .events-grid,
+  .testimonial-grid,
+  .updates-grid,
+  .partners-grid,
+  .goals-grid,
+  .contact-container,
+  .export-grid,
+  .settings-box,
+  .steps-grid,
+  .instructions-grid,
+  .purpose-grid,
+  .donation-summary,
+  .statistics-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Footer columns collapse */
+  .footer-container,
+  .footer > .container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* Counters grid stack */
+  .impact-counter {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .counter-card:nth-child(odd) {
+    border-right: none;
+  }
+
+  .counter-card {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .counter-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Map container padding */
+  .map-container {
+    padding: 20px 10px;
+  }
+
+  /* Access and ID Templates scale */
+  .member-id-card {
+    width: 320px !important;
+    height: 507px !important;
+    padding: 12px 16px !important;
+  }
+
+  .member-photo {
+    width: 90px !important;
+    height: 105px !important;
+  }
+
+  .founder-image img {
+    width: 100% !important;
+    max-width: 220px !important;
+    height: auto !important;
+  }
+
+  .founder-image::before {
+    width: 250px;
+    height: 250px;
+  }
+
+  .founder-image::after {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+/* ==========================================
+   400px BREAKPOINT (Small Mobile Devices)
+   ========================================== */
+@media (max-width: 400px) {
+  /* Main Hero padding adjustments */
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero h2 {
+    font-size: 0.95rem;
+  }
+
+  .hero p {
+    font-size: 0.88rem;
+  }
+
+  .hero-image img {
+    width: 120px;
+    height: 120px;
+    border-width: 4px;
+  }
+
+  /* Inner Page Hero Sub-banner scale-down */
+  .page-hero {
+    padding: 38px 14px;
+  }
+
+  .page-hero h1 {
+    font-size: 1.3rem;
+  }
+
+  .page-hero p {
+    font-size: 0.85rem;
+  }
+
+  /* General header text resizing */
+  .logo-area h2 {
+    font-size: 1.1rem;
+  }
+
+  /* Access status and review text padding scaling */
+  .status-box,
+  .pending-box,
+  .rejected-box,
+  .approved-box {
+    padding: 24px 12px;
+  }
+
+  .admin-login-container {
+    padding: 22px 16px;
+  }
+}
+
+/* ==========================================
+   NEW COMPONENTS RESPONSIVE — 992px
+   ========================================== */
+@media (max-width: 992px) {
+  /* Our Work — volunteer two-col collapse */
+  .volunteer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  /* Events page featured layout */
+  .featured-event-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .timeline::before {
+    left: 16px;
+  }
+
+  .timeline-item {
+    flex-direction: column;
+    gap: 16px;
+    padding-left: 44px;
+  }
+
+  .timeline-item:nth-child(even) {
+    flex-direction: column;
+  }
+
+  .timeline-content {
+    max-width: 100%;
+  }
+}
+
+/* ==========================================
+   NEW COMPONENTS RESPONSIVE — 768px
+   ========================================== */
+@media (max-width: 768px) {
+  /* QR container padding */
+  .qr-container {
+    padding: 36px 20px;
+  }
+
+  .qr-container img {
+    width: 180px;
+    height: 180px;
+  }
+
+  /* Emergency box */
+  .emergency-box {
+    padding: 36px 20px;
+  }
+
+  .emergency-box h3 {
+    font-size: 1.3rem;
+  }
+  .emergency-box h4 {
+    font-size: 1.6rem;
+  }
+
+  /* Success container */
+  .success-container {
+    padding: 36px 20px;
+  }
+
+  /* Thank you section */
+  .thank-you-container h2 {
+    font-size: 1.7rem;
+  }
+
+  /* Action cell stack */
+  .action-cell {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ==========================================
+   NEW COMPONENTS RESPONSIVE — 576px
+   ========================================== */
+@media (max-width: 576px) {
+  /* All new grids collapse to 1 col */
+  .activity-grid,
+  .volunteer-grid,
+  .story-grid,
+  .gallery-categories,
+  .areas-grid,
+  .recognition-grid,
+  .purpose-grid,
+  .goals-grid,
+  .guidelines-grid,
+  .activities-grid,
+  .info-grid,
+  .steps-grid,
+  .instructions-grid,
+  .donation-summary {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  /* Timeline */
+  .timeline-item {
+    padding-left: 36px;
+  }
+
+  .timeline-year {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+
+  /* Featured event detail */
+  .event-details h3 {
+    font-size: 1.4rem;
+  }
+
+  /* FAQ */
+  .faq-item h3 {
+    font-size: 0.95rem;
+    padding: 16px 20px;
+  }
+
+  .faq-item h3::after {
+    right: 16px;
+  }
+
+  /* Donor card */
+  .donor-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .call-link {
+    margin-left: 0;
+  }
+
+  /* QR */
+  .qr-container img {
+    width: 150px;
+    height: 150px;
+  }
+
+  /* Volunteer features */
+  .volunteer-feature {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==========================================
+   480px BREAKPOINT (Small Mobile Devices)
+   ========================================== */
+@media (max-width: 480px) {
+  /* Tighten card paddings and text sizes further on small screens */
+  .about-card,
+  .service-card,
+  .benefit-card,
+  .impact-card,
+  .event-card,
+  .testimonial-card,
+  .update-card,
+  .step-card,
+  .instruction-card,
+  .info-card,
+  .donor-card,
+  .summary-card,
+  .stat-card,
+  .founder-vision,
+  .founder-journey,
+  .founder-message,
+  .volunteer-card,
+  .gallery-card,
+  .area-card,
+  .timeline-content,
+  .recognition-card,
+  .guideline-card,
+  .activity-preview,
+  .purpose-card,
+  .goal-card,
+  .emergency-card,
+  .emergency-box,
+  .faq-item {
+    padding: 18px 14px !important;
+  }
+  .about-card p,
+  .service-card p,
+  .benefit-card p,
+  .impact-card p,
+  .event-card p,
+  .testimonial-card p,
+  .update-card p,
+  .step-card p,
+  .instruction-card p,
+  .info-card p,
+  .donor-card p,
+  .founder-vision p,
+  .founder-journey p,
+  .founder-message p,
+  .volunteer-card p,
+  .timeline-content p,
+  .recognition-card p,
+  .guideline-card p,
+  .purpose-card p,
+  .goal-card p,
+  .emergency-card p,
+  .emergency-box p,
+  .faq-item p {
+    font-size: 0.82rem !important;
+  }
+  .about-card h3,
+  .service-card h3,
+  .benefit-card h3,
+  .impact-card h3,
+  .event-card h3,
+  .testimonial-card h3,
+  .update-card h3,
+  .founder-vision h5,
+  .founder-journey h5,
+  .founder-message h5,
+  .volunteer-card h3,
+  .timeline-content h3,
+  .recognition-card h3,
+  .guideline-card h3,
+  .purpose-card h3,
+  .goal-card h3,
+  .emergency-card h3,
+  .emergency-box h3,
+  .faq-item h3 {
+    font-size: 1.02rem !important;
+  }
+}
+
+/* ==========================================
+   360px BREAKPOINT (Extra Small Mobile Devices)
+   ========================================== */
+@media (max-width: 360px) {
+  /* Safe padding and tiny fonts to guarantee zero overflow for Tamil strings */
+  .about-card,
+  .service-card,
+  .benefit-card,
+  .impact-card,
+  .event-card,
+  .testimonial-card,
+  .update-card,
+  .step-card,
+  .instruction-card,
+  .info-card,
+  .donor-card,
+  .summary-card,
+  .stat-card,
+  .founder-vision,
+  .founder-journey,
+  .founder-message,
+  .volunteer-card,
+  .gallery-card,
+  .area-card,
+  .timeline-content,
+  .recognition-card,
+  .guideline-card,
+  .activity-preview,
+  .purpose-card,
+  .goal-card,
+  .emergency-card,
+  .emergency-box,
+  .faq-item {
+    padding: 14px 10px !important;
+  }
+  .about-card p,
+  .service-card p,
+  .benefit-card p,
+  .impact-card p,
+  .event-card p,
+  .testimonial-card p,
+  .update-card p,
+  .step-card p,
+  .instruction-card p,
+  .info-card p,
+  .donor-card p,
+  .founder-vision p,
+  .founder-journey p,
+  .founder-message p,
+  .volunteer-card p,
+  .timeline-content p,
+  .recognition-card p,
+  .guideline-card p,
+  .purpose-card p,
+  .goal-card p,
+  .emergency-card p,
+  .emergency-box p,
+  .faq-item p {
+    font-size: 0.78rem !important;
+  }
+  .about-card h3,
+  .service-card h3,
+  .benefit-card h3,
+  .impact-card h3,
+  .event-card h3,
+  .testimonial-card h3,
+  .update-card h3,
+  .founder-vision h5,
+  .founder-journey h5,
+  .founder-message h5,
+  .volunteer-card h3,
+  .timeline-content h3,
+  .recognition-card h3,
+  .guideline-card h3,
+  .purpose-card h3,
+  .goal-card h3,
+  .emergency-card h3,
+  .emergency-box h3,
+  .faq-item h3 {
+    font-size: 0.92rem !important;
+  }
+}
+
+/* Gallery & video slider stack sizing now lives in style.css
+   (.slider-container is a position:absolute card stack, not flex). */
+@media (max-width: 768px) {
+  .lightbox-close {
+    top: 20px;
+    right: 20px;
+    font-size: 2.5rem;
+  }
+}
+
+/* ==========================================
+   MOBILE SIDEBAR NAVIGATION (UNDER 1024PX BREAKPOINT)
+   ========================================== */
+@media (max-width: 1023px) {
+  .menu-toggle-btn {
+    display: flex !important;
+  }
+
+  .main-nav {
+    position: fixed !important;
+    top: 0 !important;
+    right: -320px !important;
+    width: 320px !important;
+    height: 100vh !important;
+    background: linear-gradient(
+      180deg,
+      var(--accent) 0%,
+      var(--accent-light) 100%
+    ) !important;
+    box-shadow: var(--shadow-lg) !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 85px 20px 30px 20px !important;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow-y: auto !important;
+    border-top: none !important;
+  }
+
+  .main-nav.open {
+    right: 0 !important;
+  }
+
+  .main-nav ul {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+  }
+
+  .main-nav li {
+    width: 100% !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 8px !important;
+    flex: none !important;
+  }
+
+  .nav-item-wrapper {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .main-nav a {
+    font-size: 1.05rem !important;
+    color: var(--text-white) !important;
+    background-color: transparent !important;
+    text-align: left !important;
+    padding: 10px 16px !important;
+    display: block !important;
+    min-height: auto !important;
+    width: auto !important;
+    flex-grow: 1 !important;
+    transform: none !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+  }
+
+  .main-nav a:hover {
+    background-color: rgba(255, 107, 0, 0.08) !important;
+    color: var(--primary) !important;
+    padding-left: 22px !important;
+  }
+
+  .dropdown-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    width: 40px !important;
+    height: 40px !important;
+    cursor: pointer !important;
+    transition: transform 0.3s ease !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .dropdown-toggle .arrow-icon {
+    width: 16px !important;
+    height: 16px !important;
+    stroke: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .has-dropdown.open .dropdown-toggle .arrow-icon {
+    transform: rotate(180deg) !important;
+    stroke: var(--primary) !important;
+  }
+
+  .has-dropdown.open > .nav-item-wrapper > a {
+    color: var(--primary) !important;
+  }
+
+  /* Accordion dropdown contents */
+  .dropdown-menu {
+    position: static !important;
+    width: 100% !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    transition: all 0.3s ease !important;
+    background-color: transparent !important;
+    border-left: 2px solid rgba(255, 255, 255, 0.08) !important;
+    margin-left: 16px !important;
+  }
+
+  .has-dropdown.open .dropdown-menu {
+    max-height: 400px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    padding: 6px 0 4px 10px !important;
+  }
+
+  .dropdown-menu li {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+
+  .dropdown-menu a {
+    font-size: 0.95rem !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 8px 12px !important;
+    display: block !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+  }
+
+  .dropdown-menu a:hover {
+    color: var(--primary) !important;
+    background-color: rgba(255, 107, 0, 0.05) !important;
+    padding-left: 18px !important;
+  }
+
+  /* Body scroll lock when nav open */
+  body.nav-open {
+    overflow: hidden !important;
+  }
+
+  /* Overlay backdrop */
+  .nav-backdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(11, 19, 43, 0.6) !important;
+    z-index: 998 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s !important;
+    backdrop-filter: blur(3px) !important;
+  }
+
+  .nav-backdrop.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
+/* ==========================================================================
+   TERMS OF USE PAGE — RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* 992px — Tablet Landscape */
+@media (max-width: 992px) {
+  .terms-toc {
+    padding: 28px 30px;
+  }
+
+  .terms-article-header {
+    padding: 22px 28px;
+    gap: 16px;
+  }
+
+  .terms-article-number {
+    font-size: 1.8rem;
+    min-width: 50px;
+  }
+
+  .terms-article-body {
+    padding: 26px 28px;
+  }
+
+  .terms-contact-card {
+    gap: 28px;
+    padding: 32px;
+  }
+}
+
+/* 768px — Tablet Portrait */
+@media (max-width: 768px) {
+  .terms-notice-box {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .terms-toc {
+    padding: 22px 20px;
+  }
+
+  .terms-toc-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-left: 20px;
+  }
+
+  .terms-article-header {
+    padding: 18px 20px;
+    gap: 14px;
+  }
+
+  .terms-article-number {
+    font-size: 1.5rem;
+    min-width: 44px;
+  }
+
+  .terms-article-body {
+    padding: 22px 20px;
+  }
+
+  .terms-ip-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .terms-violations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .terms-contact-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 28px 22px;
+    gap: 22px;
+  }
+
+  .terms-contact-links {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .terms-contact-link {
+    justify-content: center;
+  }
+
+  .terms-law-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .terms-rule-card {
+    gap: 14px;
+    padding: 18px;
+  }
+}
+
+/* 576px — Mobile */
+@media (max-width: 576px) {
+  .terms-hero {
+    padding: 60px 16px 50px 16px;
+  }
+
+  .terms-notice-section {
+    padding: 22px 16px;
+  }
+
+  .terms-toc-section {
+    padding: 36px 16px;
+  }
+
+  .terms-body-section {
+    padding: 14px 16px 60px 16px;
+  }
+
+  .terms-article {
+    margin-bottom: 22px;
+    border-radius: var(--radius-md);
+  }
+
+  .terms-article-header {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .terms-article-number {
+    font-size: 1.3rem;
+    min-width: 38px;
+  }
+
+  .terms-article-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .terms-article-body {
+    padding: 18px 16px;
+  }
+
+  .terms-step {
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  .terms-step-num {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .terms-donation-notice {
+    padding: 20px 18px;
+  }
+
+  .terms-termination-box {
+    padding: 20px 18px;
+  }
+
+  .terms-contact-card {
+    padding: 22px 18px;
+  }
+
+  .terms-contact-icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .terms-toc {
+    padding: 18px 16px;
+    border-radius: var(--radius-md);
+  }
+}
+
+/* 400px — Very Small Mobile */
+@media (max-width: 400px) {
+  .terms-article-header {
+    padding: 14px;
+  }
+
+  .terms-article-number {
+    font-size: 1.1rem;
+    min-width: 32px;
+  }
+
+  .terms-article-header h2 {
+    font-size: 0.98rem;
+  }
+
+  .terms-article-body {
+    padding: 16px 14px;
+  }
+
+  .terms-violation-item {
+    padding: 16px 14px;
+  }
+
+  .terms-rule-card {
+    padding: 14px 12px;
+  }
+
+  .terms-ip-card {
+    padding: 22px 16px;
+  }
+}
+
+/* ==========================================================================
+   PRIVACY POLICY PAGE — RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* 992px — Tablet Landscape */
+@media (max-width: 992px) {
+  .privacy-toc {
+    padding: 28px 30px;
+  }
+
+  .privacy-article-header {
+    padding: 22px 28px;
+    gap: 16px;
+  }
+
+  .privacy-article-number {
+    font-size: 1.8rem;
+    min-width: 50px;
+  }
+
+  .privacy-article-body {
+    padding: 26px 28px;
+  }
+
+  .privacy-contact-card {
+    gap: 28px;
+    padding: 32px;
+  }
+}
+
+/* 768px — Tablet Portrait */
+@media (max-width: 768px) {
+  .privacy-notice-box {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .privacy-toc {
+    padding: 22px 20px;
+  }
+
+  .privacy-toc-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-left: 20px;
+  }
+
+  .privacy-article-header {
+    padding: 18px 20px;
+    gap: 14px;
+  }
+
+  .privacy-article-number {
+    font-size: 1.5rem;
+    min-width: 44px;
+  }
+
+  .privacy-article-body {
+    padding: 22px 20px;
+  }
+
+  .privacy-security-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .privacy-sharing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .privacy-contact-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 28px 22px;
+    gap: 22px;
+  }
+
+  .privacy-contact-links {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .privacy-contact-link {
+    justify-content: center;
+  }
+
+  .privacy-law-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .privacy-info-card {
+    gap: 14px;
+    padding: 18px;
+  }
+}
+
+/* 576px — Mobile */
+@media (max-width: 576px) {
+  .privacy-hero {
+    padding: 60px 16px 50px 16px;
+  }
+
+  .privacy-notice-section {
+    padding: 22px 16px;
+  }
+
+  .privacy-toc-section {
+    padding: 36px 16px;
+  }
+
+  .privacy-body-section {
+    padding: 14px 16px 60px 16px;
+  }
+
+  .privacy-article {
+    margin-bottom: 22px;
+    border-radius: var(--radius-md);
+  }
+
+  .privacy-article-header {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .privacy-article-number {
+    font-size: 1.3rem;
+    min-width: 38px;
+  }
+
+  .privacy-article-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .privacy-article-body {
+    padding: 18px 16px;
+  }
+
+  .privacy-step {
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  .privacy-step-num {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .privacy-donation-box {
+    padding: 20px 18px;
+  }
+
+  .privacy-contact-card {
+    padding: 22px 18px;
+  }
+
+  .privacy-contact-icon {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+/* 400px — Very Small Mobile */
+@media (max-width: 400px) {
+  .privacy-article-header {
+    padding: 14px;
+  }
+
+  .privacy-article-number {
+    font-size: 1.1rem;
+    min-width: 32px;
+  }
+
+  .privacy-article-header h2 {
+    font-size: 0.98rem;
+  }
+
+  .privacy-article-body {
+    padding: 16px 14px;
+  }
+
+  .privacy-info-card {
+    padding: 14px 12px;
+  }
+
+  .privacy-security-card {
+    padding: 22px 16px;
+  }
+}
+
+/* ==========================================================================
+   LEADER SECTION — RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* 1200px — Large Desktop */
+@media (max-width: 1200px) {
+  .leader {
+    gap: 40px;
+  }
+
+  .leader-image {
+    max-width: 280px;
+  }
+}
+
+/* 992px — Tablet Landscape */
+@media (max-width: 992px) {
+  .leader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .leader-image {
+    max-width: 260px;
+    padding: 20px;
+    margin-bottom: 10px;
+  }
+
+  .leader-details {
+    width: 100%;
+    align-items: center;
+  }
+
+  .leader-details h4 {
+    text-align: center;
+  }
+
+  .leader-about p {
+    text-align: left;
+  }
+}
+
+/* 768px — Tablet Portrait */
+@media (max-width: 768px) {
+  .leader-section {
+    padding: 60px 16px;
+  }
+
+  .leader {
+    gap: 24px;
+  }
+
+  .leader-image {
+    max-width: 220px;
+    padding: 16px;
+  }
+
+  .leader-details h3 {
+    font-size: 1.6rem;
+  }
+
+  .leader-details h4 {
+    font-size: 1rem;
+  }
+
+  .leader-details h5 {
+    font-size: 1rem;
+  }
+
+  .leader-details p {
+    font-size: 0.93rem;
+  }
+}
+
+/* 576px — Mobile Landscape */
+@media (max-width: 576px) {
+  .leader-section {
+    padding: 50px 12px;
+  }
+
+  .leader-image {
+    max-width: 180px;
+    padding: 12px;
+  }
+
+  .leader-details h3 {
+    font-size: 1.4rem;
+  }
+}
+
+/* 400px — Very Small Mobile */
+@media (max-width: 400px) {
+  .leader-image {
+    max-width: 150px;
+    padding: 10px;
+  }
+
+  .leader-details h3 {
+    font-size: 1.2rem;
+  }
+
+  .leader-details p {
+    font-size: 0.88rem;
+  }
+}

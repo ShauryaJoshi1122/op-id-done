@@ -1,0 +1,466 @@
+/* ==========================================================================
+   DYNAMIC ID CARD LAYOUT THEMES & STYLES STUDIO
+   ========================================================================== */
+
+:root {
+  --idcard-accent: #2563eb;
+  --idcard-accent-dark: #1e40af;
+  --idcard-accent-light: #eff6ff;
+  --idcard-accent-border: #bfdbfe;
+  --idcard-text-primary: #0f172a;
+  --idcard-text-muted: #64748b;
+  --idcard-bg: #ffffff;
+}
+
+/* ==========================================
+   BASE WRAPPER & CONTAINER
+   ========================================== */
+.id-card-outer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 8px;
+  width: 100%;
+}
+
+.member-id-card {
+  position: relative;
+  background-color: var(--idcard-bg);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--idcard-text-primary);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* ==========================================
+   LAYOUT 1: CLASSIC PORTRAIT
+   ========================================== */
+.member-id-card.card-layout-classic {
+  width: 320px;
+  min-height: 480px;
+  border: 1px solid #cbd5e1;
+  padding-bottom: 12px;
+}
+
+.card-layout-classic .card-header {
+  text-align: center;
+  padding: 16px 14px 10px;
+  background: var(--idcard-bg);
+  border-bottom: 2.5px solid var(--idcard-accent);
+}
+
+.card-layout-classic .header-logo-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--idcard-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.card-layout-classic .card-org-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--idcard-text-primary);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.card-layout-classic .card-org-subtitle {
+  font-size: 0.72rem;
+  color: var(--idcard-text-muted);
+  margin: 3px 0 6px;
+  font-weight: 500;
+}
+
+.card-layout-classic .card-badge-pill {
+  background: var(--idcard-accent);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.6px;
+}
+
+.card-layout-classic .member-photo-wrapper {
+  text-align: center;
+  margin: 12px 0 8px;
+}
+
+.card-layout-classic .member-photo-wrapper img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--idcard-accent);
+  padding: 2px;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card-layout-classic .member-details-table {
+  padding: 0 14px;
+  margin-bottom: 10px;
+}
+
+.card-layout-classic .member-details-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.card-layout-classic .member-details-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.card-layout-classic .member-details-table td:first-child {
+  font-weight: 600;
+  color: var(--idcard-text-muted);
+  width: 42%;
+}
+
+.card-layout-classic .signature-block {
+  text-align: center;
+  padding: 6px 14px 4px;
+  border-top: 1px dashed #e2e8f0;
+  margin-top: 6px;
+}
+
+/* ==========================================
+   LAYOUT 2: MODERN BADGE (PORTRAIT)
+   ========================================== */
+.member-id-card.card-layout-modern {
+  width: 330px;
+  min-height: 510px;
+  border: 2px solid var(--idcard-accent);
+  border-radius: 16px;
+  background: #ffffff;
+  padding-bottom: 14px;
+}
+
+.card-layout-modern .card-header {
+  background: linear-gradient(135deg, var(--idcard-accent) 0%, var(--idcard-accent-dark) 100%);
+  color: white;
+  text-align: center;
+  padding: 16px 12px 14px;
+  position: relative;
+}
+
+.card-layout-modern .header-chip-badge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-layout-modern .card-org-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.card-layout-modern .card-org-subtitle {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 3px 0 0;
+}
+
+.card-layout-modern .member-photo-wrapper {
+  text-align: center;
+  margin: -24px 0 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.card-layout-modern .member-photo-wrapper img {
+  width: 90px;
+  height: 90px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  background: white;
+}
+
+.card-layout-modern .badge-ribbon-bar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px 8px;
+}
+
+.card-layout-modern .id-chip {
+  background: var(--idcard-accent-light);
+  color: var(--idcard-accent-dark);
+  border: 1px solid var(--idcard-accent-border);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  font-family: monospace;
+}
+
+.card-layout-modern .blood-chip {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.card-layout-modern .member-details-table {
+  padding: 0 16px;
+}
+
+.card-layout-modern .member-details-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.card-layout-modern .member-details-table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.card-layout-modern .member-details-table td {
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.card-layout-modern .member-details-table td:first-child {
+  font-weight: 600;
+  color: #475569;
+  width: 40%;
+}
+
+.card-layout-modern .qr-signature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 0;
+  margin-top: 6px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ==========================================
+   LAYOUT 3: EXECUTIVE HORIZONTAL (LANDSCAPE)
+   ========================================== */
+.member-id-card.card-layout-horizontal {
+  width: 480px;
+  min-height: 290px;
+  display: flex;
+  flex-direction: row;
+  border: 1.5px solid var(--idcard-accent);
+  border-radius: 14px;
+}
+
+.card-layout-horizontal .landscape-left-col {
+  width: 155px;
+  background: var(--idcard-accent-light);
+  border-right: 1.5px solid var(--idcard-accent-border);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.card-layout-horizontal .landscape-left-col img.photo {
+  width: 85px;
+  height: 85px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+  margin-bottom: 6px;
+}
+
+.card-layout-horizontal .landscape-right-col {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.card-layout-horizontal .card-header {
+  border-bottom: 1.5px solid var(--idcard-accent);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.card-layout-horizontal .card-org-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--idcard-accent-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.card-layout-horizontal .card-org-subtitle {
+  font-size: 0.68rem;
+  color: var(--idcard-text-muted);
+  margin: 2px 0 0;
+}
+
+.card-layout-horizontal .member-details-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.card-layout-horizontal .member-details-table td {
+  padding: 2.5px 4px;
+}
+
+.card-layout-horizontal .member-details-table td:first-child {
+  font-weight: 600;
+  color: var(--idcard-text-muted);
+  width: 38%;
+}
+
+.card-layout-horizontal .landscape-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 4px;
+  margin-top: 4px;
+}
+
+/* ==========================================
+   LAYOUT 4: MINIMALIST CORPORATE (PORTRAIT)
+   ========================================== */
+.member-id-card.card-layout-minimal {
+  width: 320px;
+  min-height: 480px;
+  border: 1px solid #e2e8f0;
+  border-top: 6px solid var(--idcard-accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.card-layout-minimal .card-header {
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-layout-minimal .card-org-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.card-layout-minimal .card-org-subtitle {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin: 2px 0 0;
+}
+
+.card-layout-minimal .minimal-photo-id-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.card-layout-minimal .minimal-photo-id-row img {
+  width: 76px;
+  height: 76px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #cbd5e1;
+}
+
+.card-layout-minimal .member-details-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.card-layout-minimal .member-details-table td {
+  padding: 3.5px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.card-layout-minimal .member-details-table td:first-child {
+  font-weight: 600;
+  color: #64748b;
+  width: 40%;
+}
+
+.card-layout-minimal .minimal-footer {
+  margin-top: 10px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ==========================================
+   COMMON QR CODE & WATERMARKS
+   ========================================== */
+.card-qr-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.card-qr-box svg,
+.card-qr-box canvas,
+.card-qr-box img {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
+.card-qr-box span {
+  font-size: 0.6rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Print Specific Rules */
+@media print {
+  .member-id-card {
+    box-shadow: none !important;
+    border-color: #000 !important;
+    page-break-inside: avoid;
+  }
+}

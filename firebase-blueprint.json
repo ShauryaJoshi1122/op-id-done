@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "members": {
+      "title": "Members",
+      "description": "Registered trust members and digital ID card holders",
+      "type": "object",
+      "properties": {
+        "memberId": { "type": "string" },
+        "fullName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "idCardNumber": { "type": "string" },
+        "status": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["fullName", "phone", "idCardNumber"]
+    },
+    "applications": {
+      "title": "Applications",
+      "description": "Membership application submissions",
+      "type": "object",
+      "properties": {
+        "applicantName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "status": { "type": "string" },
+        "submittedAt": { "type": "string" }
+      },
+      "required": ["applicantName", "phone"]
+    },
+    "admins": {
+      "title": "Admins",
+      "description": "Admin users permitted to manage trust operations",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    }
+  }
+}

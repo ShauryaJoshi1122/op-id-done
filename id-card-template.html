@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Official Digital Member ID Card</title>
+    <meta
+      name="description"
+      content="Official Digital Member ID Card and Verification Portal."
+    />
+
+    <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/id-card-layouts.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <style>
+      .id-card-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 25px auto;
+        flex-wrap: wrap;
+        max-width: 600px;
+      }
+      .id-card-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+      .id-card-action-btn:hover {
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+      }
+      .id-card-action-btn.btn-secondary {
+        background-color: #3b82f6;
+      }
+      .id-card-action-btn.btn-secondary:hover {
+        background-color: #2563eb;
+      }
+      .id-card-action-btn.btn-print {
+        background-color: #475569;
+      }
+      .id-card-action-btn.btn-print:hover {
+        background-color: #334155;
+      }
+      .valid-badge {
+        background-color: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        margin: 20px auto;
+        max-width: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .id-card-outer {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+      }
+      @media print {
+        header, footer, .id-card-actions, .valid-badge, .security-box, .notice-box, .dashboard-welcome-section {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .id-card-page {
+          display: block !important;
+          margin: 0 auto !important;
+          padding: 0 !important;
+        }
+        .member-id-card {
+          box-shadow: none !important;
+          border: 1px solid #333 !important;
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ======================================== -->
+    <!-- HEADER -->
+    <!-- ======================================== -->
+    <header class="main-header">
+      <div class="logo-area">
+        <a href="index.html" class="logo-branding" style="text-decoration: none;">
+          <div style="width: 44px; height: 44px; background: #2563eb; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <div>
+            <h2 id="topHeaderOrgName" style="font-size: 1.15rem; margin: 0; color: #0f172a;">Member Portal</h2>
+            <span style="font-size: 0.8rem; color: #64748b;">Verified Digital ID Card</span>
+          </div>
+        </a>
+
+        <div class="header-actions">
+          <div id="logoutNavLi">
+            <a href="#" id="logoutBtn" class="logout-btn" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">Logout</a>
+          </div>
+          <button class="menu-toggle-btn" aria-label="Toggle Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </button>
+        </div>
+      </div>
+
+      <nav class="main-nav">
+        <ul>
+          <li>
+            <div class="nav-item-wrapper">
+              <a href="index.html">Home</a>
+            </div>
+          </li>
+          <li>
+            <div class="nav-item-wrapper">
+              <a href="join-contact.html">Member Registration</a>
+            </div>
+          </li>
+          <li>
+            <div class="nav-item-wrapper">
+              <a href="member-login.html">Member Portal</a>
+            </div>
+          </li>
+          <li>
+            <div class="nav-item-wrapper">
+              <a href="admin-login.html">Admin Central</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- ======================================== -->
+    <!-- VALID MEMBER NOTICE -->
+    <!-- ======================================== -->
+    <section id="validStatusSection" style="display: none">
+      <div class="valid-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>Verified Official Member ID Card</span>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- WELCOME BANNER -->
+    <!-- ======================================== -->
+    <section class="dashboard-welcome-section" style="display: none">
+      <div class="dashboard-welcome-card" style="max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 20px; border: 1px solid #e2e8f0;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="dashboard-welcome-text">
+          <h3 style="margin: 0 0 4px; font-size: 1.1rem; color: #0f172a;">Welcome to the Member Community!</h3>
+          <p style="margin: 0 0 4px; font-size: 0.9rem; color: #475569; line-height: 1.4;">Your membership has been officially approved and verified in the central registry.</p>
+          <span style="font-size: 0.85rem; color: #2563eb; font-weight: 600;" id="welcomeSignatory">- <strong id="welcomeLeaderName">Authorized Administration</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- MEMBER ID CARD CANVAS / CONTAINER -->
+    <!-- ======================================== -->
+    <section id="idCardPage" class="id-card-page" style="display: none">
+      <div class="id-card-outer" id="idCardOuterContainer">
+        <div class="member-id-card" id="memberIdCardElement">
+          <!-- TOP SECTION -->
+          <div class="card-header" style="border-bottom: 2px solid #2563eb;">
+            <div class="header-photos" style="display: flex; justify-content: center; align-items: center; margin-bottom: 4px;">
+              <div style="width: 44px; height: 44px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; color: white;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+            </div>
+
+            <h1 id="idCardOrgName" style="font-size: 1rem; color: #1e3a8a; margin: 0; line-height: 1.2;">Member ID Portal</h1>
+            <h2 id="idCardOrgSubtitle" style="font-size: 0.72rem; color: #64748b; margin: 2px 0 0;">Official Identification Card</h2>
+            <div style="background: #2563eb; color: white; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; font-weight: bold; font-size: 0.75rem; letter-spacing: 0.5px;">
+              OFFICIAL MEMBERSHIP CARD
+            </div>
+          </div>
+
+          <!-- MEMBER PHOTO -->
+          <div class="member-photo">
+            <img id="memberPhoto" src="images/default-user.jpg" alt="Member Photo" crossorigin="anonymous" />
+          </div>
+
+          <!-- MEMBER DETAILS TABLE -->
+          <div class="member-details">
+            <table>
+              <tr>
+                <td style="font-weight: 600; width: 45%;">Full Name</td>
+                <td id="memberName" style="font-weight: 700;">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Father's Name</td>
+                <td id="memberFatherName">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Date of Birth</td>
+                <td id="memberDob">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Member ID</td>
+                <td id="memberNumber" style="font-weight: 700; color: #2563eb;">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Membership Type</td>
+                <td id="memberType">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Blood Group</td>
+                <td id="memberBloodGroup" style="font-weight: 700; color: #dc2626;">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Mobile Number</td>
+                <td id="memberMobile">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Email Address</td>
+                <td id="memberEmail" style="font-size: 0.8rem; word-break: break-all;">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Address</td>
+                <td id="memberAddress" style="font-size: 0.8rem;">-</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">Issue Date</td>
+                <td id="memberIssueDate">-</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- SIGNATURE SECTION -->
+          <div class="signature-section" style="text-align: center; margin-top: 6px;">
+            <img
+              id="founderSignature"
+              src="images/signature.png"
+              alt="Authorized Signature"
+              crossorigin="anonymous"
+              style="max-height: 38px; object-fit: contain; margin: 0 auto 2px;"
+            />
+            <p id="idCardAuthorityName" style="margin: 0; font-weight: 700; font-size: 0.85rem; color: #0f172a;">Authorized Signatory</p>
+            <span id="idCardAuthorityTitle" style="font-size: 0.75rem; color: #64748b;">President / General Secretary</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- DOWNLOAD & PRINT ACTIONS -->
+      <!-- ======================================== -->
+      <div class="id-card-actions">
+        <button id="downloadPdfBtn" class="id-card-action-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Download PDF</span>
+        </button>
+
+        <button id="downloadPngBtn" class="id-card-action-btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+            <circle cx="9" cy="9" r="2"></circle>
+            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+          </svg>
+          <span>Download PNG</span>
+        </button>
+
+        <button id="printCardBtn" class="id-card-action-btn btn-print">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect width="12" height="8" x="6" y="14"></rect>
+          </svg>
+          <span>Print Card</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- INVALID MEMBER STATUS -->
+    <!-- ======================================== -->
+    <section id="invalidStatusSection" style="display: none; max-width: 600px; margin: 40px auto; padding: 20px;">
+      <div class="invalid-status" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 25px; border-radius: 12px; text-align: center;">
+        <h3 style="margin: 0 0 10px; font-size: 1.2rem;">❌ ID Card Not Available</h3>
+        <p style="margin: 0 0 15px; line-height: 1.5;">This membership account is pending admin approval or has not yet been registered.</p>
+        <a href="member-login.html" class="id-card-action-btn" style="display: inline-block;">Go to Member Login</a>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- SECURITY & NOTICE -->
+    <!-- ======================================== -->
+    <section style="max-width: 600px; margin: 20px auto; padding: 0 15px;">
+      <div class="security-box" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; font-size: 0.9rem; color: #475569;">
+        <h4 style="margin: 0 0 10px; color: #0f172a; font-size: 1rem;">Security & Verification Information</h4>
+        <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+          <li>This member number is uniquely assigned and verified in the central registry database.</li>
+          <li>The ID card is officially valid upon administrative verification and approval.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- FOOTER -->
+    <!-- ======================================== -->
+    <footer class="footer-simple" style="background: #ffffff; padding: 24px 20px; text-align: center; border-top: 1px solid #e2e8f0; margin-top: 40px;">
+      <p style="margin: 0 0 6px; font-weight: 600; color: #0f172a;">Official Digital Member Portal</p>
+      <p style="margin: 0; font-size: 0.82rem; color: #64748b;">
+        Powered by Digital ID Card Verification System
+      </p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/pages/id-card-template.js"></script>
+  </body>
+</html>

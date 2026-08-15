@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Portal Login</title>
+    <meta
+      name="description"
+      content="Secure Admin Portal for Member Management and ID Card Verification."
+    />
+
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <style>
+      body {
+        background-color: #f8fafc;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .admin-card-container {
+        max-width: 440px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 36px 28px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+        border: 1px solid #e2e8f0;
+      }
+      .brand-badge-center {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .passcode-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 24px 0 20px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .passcode-divider::before,
+      .passcode-divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .passcode-divider:not(:empty)::before {
+        margin-right: .75em;
+      }
+      .passcode-divider:not(:empty)::after {
+        margin-left: .75em;
+      }
+      .credentials-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        font-size: 0.88rem;
+        color: #1e40af;
+      }
+      .credentials-box strong {
+        color: #1e3a8a;
+      }
+      .credentials-box code {
+        background: #dbeafe;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-weight: bold;
+        color: #1d4ed8;
+      }
+      .admin-input-group {
+        margin-bottom: 16px;
+        text-align: left;
+      }
+      .admin-input-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #334155;
+      }
+      .admin-input-group input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+      .admin-submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      }
+      .admin-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top Bar -->
+    <header class="app-header" style="background:#fff; padding: 12px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+      <a href="index.html" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
+        <div style="width:40px; height:40px; background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; overflow:hidden;">
+          <img src="images/logo.jpg" alt="Thamarai Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
+        </div>
+        <span style="font-size:1.2rem; font-weight:700; color:#0f172a;">Admin Control Panel</span>
+      </a>
+      <a href="index.html" style="text-decoration:none; color:#2563eb; font-weight:600; font-size:0.9rem;">&larr; Back to Home</a>
+    </header>
+
+    <main style="flex:1; padding: 20px;">
+      <div class="admin-card-container">
+        <div class="brand-badge-center">
+          <div style="width:64px; height:64px; background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius:16px; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 8px 20px rgba(37,99,235,0.25); overflow:hidden;">
+            <img src="images/logo.jpg" alt="Thamarai Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
+          </div>
+        </div>
+
+        <h1 style="text-align: center; font-size: 1.5rem; color: #0f172a; margin: 0 0 6px;">
+          Administrator Login
+        </h1>
+        <p style="text-align: center; color: #64748b; font-size: 0.92rem; margin: 0 0 20px;">
+          Control panel for ID card approvals, member management, and portal configuration
+        </p>
+
+       
+
+        <div id="loginInfo" class="info-message" style="display: none; background: #eff6ff; color: #1e40af; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;"></div>
+        <div id="loginError" class="error-message" style="display: none; background: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;"></div>
+        <div id="loginLoading" style="display: none; text-align: center; padding: 10px; color: #2563eb; font-weight: 600;">Authenticating...</div>
+
+        <!-- FORM: Direct Passcode Login -->
+        <form id="adminPasscodeForm">
+          <div class="admin-input-group">
+            <label for="adminEmailInput">Admin Email</label>
+            <input type="email" id="adminEmailInput" value="admin@portal.com" placeholder="admin@domain.com" required />
+          </div>
+
+          <div class="admin-input-group">
+            <label for="adminPasscodeInput">Admin Password / PIN</label>
+            <input type="password" id="adminPasscodeInput" placeholder="Enter Admin Password" required />
+          </div>
+
+          <button type="submit" id="adminPasscodeBtn" class="admin-submit-btn">
+            Sign In to Dashboard &rarr;
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <!-- ======================================== -->
+    <!-- FOOTER -->
+    <!-- ======================================== -->
+    <footer class="custom-site-footer">
+      <div class="footer-top-container">
+        <!-- LEFT: Red Brand Logo -->
+        <div class="footer-brand-column">
+          <div class="khabar-logo-box">
+            <div class="khabar-logo-text-top" id="footerLogoTopEl">खबर की</div>
+            <div class="khabar-logo-star" id="footerLogoStarEl">✨</div>
+            <div class="khabar-logo-text-bottom" id="footerLogoBottomEl">तहतक</div>
+          </div>
+        </div>
+
+        <!-- CENTER: Social Icons & Policy Links -->
+        <div class="footer-center-column">
+          <div class="footer-social-row">
+            <a href="#" id="footerFbLink" class="social-icon-circle" aria-label="Facebook" title="Facebook">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+            </a>
+            <a href="#" id="footerTwitterLink" class="social-icon-circle" aria-label="Twitter" title="Twitter">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+            </a>
+            <a href="#" id="footerInstaLink" class="social-icon-circle" aria-label="Instagram" title="Instagram">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" id="footerYoutubeLink" class="social-icon-circle" aria-label="YouTube" title="YouTube">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+
+          <div class="footer-links-grid">
+            <div class="footer-links-col">
+              <a href="#" id="footerTermsLink" class="footer-policy-link">Terms & Condition</a>
+              <a href="#" id="footerDisclaimerLink" class="footer-policy-link">Disclaimer</a>
+            </div>
+            <div class="footer-links-col">
+              <a href="#" id="footerPrivacyLink" class="footer-policy-link">Privacy Policy</a>
+              <a href="#" id="footerRefundLink" class="footer-policy-link">Refund Policy</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Contact Info -->
+        <div class="footer-contact-column">
+          <div class="contact-info-item">
+            <span class="contact-item-icon">✉️</span>
+            <a href="mailto:khabarkitahtak@gmail.com" id="footerEmailLink" class="contact-item-text">khabarkitahtak@gmail.com</a>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-item-icon">📍</span>
+            <span id="footerAddressText" class="contact-item-text">Head Office - Office No. 1743, First Floor Lekhraj Dollar, Near Ghazipur Police Station Faizabad Road, Indira Nagar Lucknow – 226016 Uttar Pradesh, India</span>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-item-icon">📞</span>
+            <a href="tel:9451733981" id="footerPhoneLink" class="contact-item-text">94517 33981</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM COPYRIGHT BAR -->
+      <div class="footer-copyright-bar">
+        <p id="footerCopyrightText">© 2021 All rights reserved by Fragron Infotech</p>
+      </div>
+    </footer>
+
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/pages/admin-login.js"></script>
+  </body>
+</html>
