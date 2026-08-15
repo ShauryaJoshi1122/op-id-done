@@ -65,27 +65,19 @@ let appCheck = null;
 
 try {
     if (typeof window !== "undefined") {
-        // Set debug token for dev, preview iframe, and container environments
+        // Set debug token for preview/dev environments to avoid 403 errors
         self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 
-        const isLocalOrPreview =
-            window.location.hostname === "localhost" ||
-            window.location.hostname === "127.0.0.1" ||
-            window.location.hostname.includes("run.app") ||
-            window.location.hostname.includes("google.com") ||
-            window.location.hostname.includes("ais-") ||
-            window.location.hostname.includes("webcontainer") ||
-            window.location.hostname.includes("preview");
-
-        if (!isLocalOrPreview) {
+        const recaptchaKey = firebaseConfig.recaptchaSiteKey;
+        if (recaptchaKey && recaptchaKey !== "6Ld18ywtAAAAAEuQNLyxjbaVKPV6AP3K7rtxfL3j") {
             appCheck = initializeAppCheck(app, {
-                provider: new ReCaptchaV3Provider("6Ld18ywtAAAAAEuQNLyxjbaVKPV6AP3K7rtxfL3j"),
-                isTokenAutoRefreshEnabled: true
+                provider: new ReCaptchaV3Provider(recaptchaKey),
+                isTokenAutoRefreshEnabled: false
             });
         }
     }
 } catch (e) {
-    console.warn("App Check initialization skipped/safe:", e);
+    console.warn("App Check initialization safely bypassed:", e);
 }
 
 // ========================================
