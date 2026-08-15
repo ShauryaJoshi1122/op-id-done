@@ -30,6 +30,7 @@ import {
     getGovernmentProofUrl,
     uploadSignature,
     uploadMemberPhoto,
+    uploadIdCardTemplateImage,
     deleteFile
 } from "../firebase/storage.js";
 
@@ -54,7 +55,8 @@ import {
 
 import {
     buildIdCardHTML,
-    DEFAULT_LAYOUT_CONFIG
+    DEFAULT_LAYOUT_CONFIG,
+    AVAILABLE_SHORTCODES
 } from "../utils/id-card-renderer.js";
 
 import {
@@ -1016,8 +1018,56 @@ document.addEventListener("click", async (e) => {
 // SUPER ADMIN: ID CARD LAYOUT STUDIO
 // ========================================
 
+const useCustomTemplateCheckbox = document.getElementById("useCustomTemplateCheckbox");
+const frontBgFileInput = document.getElementById("frontBgFileInput");
+const backBgFileInput = document.getElementById("backBgFileInput");
+const frontBgStatus = document.getElementById("frontBgStatus");
+const backBgStatus = document.getElementById("backBgStatus");
+const btnSideFront = document.getElementById("btnSideFront");
+const btnSideBack = document.getElementById("btnSideBack");
+const shortcodePalette = document.getElementById("shortcodePalette");
+const interactiveCardCanvas = document.getElementById("interactiveCardCanvas");
+const canvasSideBadge = document.getElementById("canvasSideBadge");
+const elementInspectorBox = document.getElementById("elementInspectorBox");
+const inspectorTagLabel = document.getElementById("inspectorTagLabel");
+const btnDeleteSelectedElement = document.getElementById("btnDeleteSelectedElement");
+const inspectorFontSize = document.getElementById("inspectorFontSize");
+const inspectorFontWeight = document.getElementById("inspectorFontWeight");
+const inspectorColor = document.getElementById("inspectorColor");
+
+let studioState = {
+    activeCanvasSide: "front", // "front" | "back"
+    selectedElementId: null,
+    useCustomTemplate: false,
+    frontBgUrl: "",
+    backBgUrl: "",
+    frontElements: [],
+    backElements: []
+};
+
 function loadIdCardStudio() {
     const config = dashboardState.layoutSettings || DEFAULT_LAYOUT_CONFIG;
+
+    studioState.useCustomTemplate = config.useCustomTemplate || config.preset === "custom";
+    studioState.frontBgUrl = config.frontBgUrl || "";
+    studioState.backBgUrl = config.backBgUrl || "";
+    studioState.frontElements = Array.isArray(config.frontElements) && config.frontElements.length
+        ? JSON.parse(JSON.stringify(config.frontElements))
+        : JSON.parse(JSON.stringify(DEFAULT_LAYOUT_CONFIG.frontElements));
+    studioState.backElements = Array.isArray(config.backElements) && config.backElements.length
+        ? JSON.parse(JSON.stringify(config.backElements))
+        : JSON.parse(JSON.stringify(DEFAULT_LAYOUT_CONFIG.backElements));
+
+    if (useCustomTemplateCheckbox) {
+        useCustomTemplateCheckbox.checked = studioState.useCustomTemplate;
+    }
+
+    if (frontBgStatus) {
+        frontBgStatus.style.display = studioState.frontBgUrl ? "block" : "none";
+    }
+    if (backBgStatus) {
+        backBgStatus.style.display = studioState.backBgUrl ? "block" : "none";
+    }
 
     // Set Preset active card
     if (layoutPresetGrid) {
@@ -1043,7 +1093,7 @@ function loadIdCardStudio() {
     if (colorSwatches) {
         const swatches = colorSwatches.querySelectorAll(".color-swatch");
         swatches.forEach((swatch) => {
-            if (swatch.dataset.color.toLowerCase() === config.primaryColor.toLowerCase()) {
+            if (swatch.dataset.color.toLowerCase() === (config.primaryColor || "#2563eb").toLowerCase()) {
                 swatch.style.borderColor = "#0f172a";
                 swatch.style.borderWidth = "3px";
             } else {
@@ -1062,13 +1112,374 @@ function loadIdCardStudio() {
     if (toggleIssueDate) toggleIssueDate.checked = config.showIssueDate !== false;
     if (toggleSignatory) toggleSignatory.checked = config.showSignatory !== false;
 
+    renderShortcodePalette();
+    renderInteractiveCanvas();
+    updateInspector();
     updateStudioLivePreview();
+}
+
+function renderShortcodePalette() {
+    if (!shortcodePalette) return;
+
+    shortcodePalette.innerHTML = AVAILABLE_SHORTCODES.map((sc) => `
+        <button type="button" class="btn-add-shortcode" data-tag="${sc.tag}" style="background: white; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; color: #1e293b; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s;" title="Add ${sc.label} tag to canvas">
+            <span>${sc.icon || "🏷️"}</span>
+            <span>${sc.label}</span>
+            <span style="color: #2563eb; font-weight: 800; font-size: 0.7rem;">+</span>
+        </button>
+    `).join("");
+
+    shortcodePalette.querySelectorAll(".btn-add-shortcode").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const tag = btn.dataset.tag;
+            addShortcodeToCanvas(tag);
+        });
+    });
+}
+
+function addShortcodeToCanvas(tag) {
+    const sc = AVAILABLE_SHORTCODES.find((s) => s.tag === tag);
+    if (!sc) return;
+
+    const newEl = {
+        id: "el-" + Date.now(),
+        tag: sc.tag,
+        label: sc.label,
+        x: 30,
+        y: 35,
+        fontSize: sc.isMedia ? undefined : 12,
+        fontWeight: sc.isMedia ? undefined : "600",
+        color: sc.isMedia ? undefined : "#0f172a",
+        width: sc.tag === "{photo}" ? 75 : (sc.tag === "{qrCode}" ? 55 : (sc.tag === "{signature}" ? 80 : undefined)),
+        height: sc.tag === "{photo}" ? 95 : (sc.tag === "{qrCode}" ? 55 : (sc.tag === "{signature}" ? 35 : undefined))
+    };
+
+    if (studioState.activeCanvasSide === "front") {
+        studioState.frontElements.push(newEl);
+    } else {
+        studioState.backElements.push(newEl);
+    }
+
+    studioState.selectedElementId = newEl.id;
+    renderInteractiveCanvas();
+    updateInspector();
+    updateStudioLivePreview();
+}
+
+function renderInteractiveCanvas() {
+    if (!interactiveCardCanvas) return;
+
+    const bgUrl = studioState.activeCanvasSide === "back" ? studioState.backBgUrl : studioState.frontBgUrl;
+    const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+
+    if (bgUrl) {
+        interactiveCardCanvas.style.backgroundImage = `url('${bgUrl}')`;
+        interactiveCardCanvas.style.backgroundSize = "cover";
+        interactiveCardCanvas.style.backgroundPosition = "center";
+        interactiveCardCanvas.style.border = "2px solid #2563eb";
+    } else {
+        interactiveCardCanvas.style.backgroundImage = "none";
+        interactiveCardCanvas.style.background = "#ffffff";
+        interactiveCardCanvas.style.border = "2px dashed #94a3b8";
+    }
+
+    interactiveCardCanvas.innerHTML = elements.map((el) => {
+        const isSelected = el.id === studioState.selectedElementId;
+        const scDef = AVAILABLE_SHORTCODES.find((s) => s.tag === el.tag) || {};
+
+        let content = `${scDef.icon || "🏷️"} ${el.label || el.tag}`;
+        if (el.tag === "{photo}") content = `🖼️ Member Photo`;
+        if (el.tag === "{qrCode}") content = `🔳 QR Code`;
+        if (el.tag === "{signature}") content = `✍️ Signature`;
+
+        const styleStr = `
+            position: absolute;
+            left: ${el.x}%;
+            top: ${el.y}%;
+            font-size: ${el.fontSize || 12}px;
+            font-weight: ${el.fontWeight || '600'};
+            color: ${el.color || '#0f172a'};
+            cursor: move;
+            padding: 3px 6px;
+            border: ${isSelected ? '2px solid #38bdf8' : '1px dashed rgba(37,99,235,0.5)'};
+            background: ${isSelected ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.85)'};
+            border-radius: 4px;
+            box-shadow: ${isSelected ? '0 0 10px rgba(56,189,248,0.8)' : '0 1px 3px rgba(0,0,0,0.1)'};
+            white-space: nowrap;
+            z-index: ${isSelected ? 10 : 2};
+            touch-action: none;
+        `;
+
+        return `<div class="draggable-canvas-item" data-id="${el.id}" style="${styleStr}">${content}</div>`;
+    }).join("");
+
+    if (!bgUrl) {
+        const emptyMsg = document.createElement("div");
+        emptyMsg.style.cssText = "position: absolute; top: 6px; right: 8px; font-size: 0.62rem; color: #64748b; font-weight: 700; pointer-events: none;";
+        emptyMsg.textContent = `${studioState.activeCanvasSide.toUpperCase()} CANVAS (No Image)`;
+        interactiveCardCanvas.appendChild(emptyMsg);
+    }
+
+    // Attach Drag Listeners
+    interactiveCardCanvas.querySelectorAll(".draggable-canvas-item").forEach((itemEl) => {
+        itemEl.addEventListener("mousedown", (e) => startDragging(e, itemEl));
+        itemEl.addEventListener("touchstart", (e) => startDragging(e, itemEl), { passive: false });
+    });
+}
+
+function startDragging(e, itemEl) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id = itemEl.dataset.id;
+    studioState.selectedElementId = id;
+    renderInteractiveCanvas();
+    updateInspector();
+
+    if (!interactiveCardCanvas) return;
+
+    const rect = interactiveCardCanvas.getBoundingClientRect();
+    const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+    const targetEl = elements.find((el) => el.id === id);
+    if (!targetEl) return;
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const startX = targetEl.x;
+    const startY = targetEl.y;
+
+    function onMove(moveEvent) {
+        const curX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+        const curY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
+
+        const deltaX = ((curX - clientX) / rect.width) * 100;
+        const deltaY = ((curY - clientY) / rect.height) * 100;
+
+        let newX = Math.round(Math.max(0, Math.min(85, startX + deltaX)));
+        let newY = Math.round(Math.max(0, Math.min(85, startY + deltaY)));
+
+        targetEl.x = newX;
+        targetEl.y = newY;
+
+        itemEl.style.left = newX + "%";
+        itemEl.style.top = newY + "%";
+
+        updateStudioLivePreview();
+    }
+
+    function onEnd() {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onEnd);
+        window.removeEventListener("touchmove", onMove);
+        window.removeEventListener("touchend", onEnd);
+    }
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onEnd);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onEnd);
+}
+
+function updateInspector() {
+    if (!elementInspectorBox) return;
+
+    const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+    const selected = elements.find((el) => el.id === studioState.selectedElementId);
+
+    if (!selected) {
+        elementInspectorBox.style.display = "none";
+        return;
+    }
+
+    elementInspectorBox.style.display = "block";
+    if (inspectorTagLabel) {
+        inspectorTagLabel.textContent = `Tag: ${selected.label || selected.tag} (${selected.tag})`;
+    }
+
+    if (inspectorFontSize) inspectorFontSize.value = selected.fontSize || 12;
+    if (inspectorFontWeight) inspectorFontWeight.value = selected.fontWeight || "600";
+    if (inspectorColor) inspectorColor.value = selected.color || "#0f172a";
+}
+
+// Inspector Event Listeners
+if (inspectorFontSize) {
+    inspectorFontSize.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (!val) return;
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.fontSize = val;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorFontWeight) {
+    inspectorFontWeight.addEventListener("change", (e) => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.fontWeight = e.target.value;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorColor) {
+    inspectorColor.addEventListener("input", (e) => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.color = e.target.value;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (btnDeleteSelectedElement) {
+    btnDeleteSelectedElement.addEventListener("click", () => {
+        if (!studioState.selectedElementId) return;
+
+        if (studioState.activeCanvasSide === "front") {
+            studioState.frontElements = studioState.frontElements.filter((el) => el.id !== studioState.selectedElementId);
+        } else {
+            studioState.backElements = studioState.backElements.filter((el) => el.id !== studioState.selectedElementId);
+        }
+
+        studioState.selectedElementId = null;
+        renderInteractiveCanvas();
+        updateInspector();
+        updateStudioLivePreview();
+    });
+}
+
+// Canvas Side Toggle Buttons
+if (btnSideFront) {
+    btnSideFront.addEventListener("click", () => {
+        studioState.activeCanvasSide = "front";
+        btnSideFront.classList.add("active");
+        btnSideFront.style.background = "#2563eb";
+        btnSideFront.style.color = "white";
+
+        if (btnSideBack) {
+            btnSideBack.classList.remove("active");
+            btnSideBack.style.background = "white";
+            btnSideBack.style.color = "#334155";
+        }
+
+        if (canvasSideBadge) canvasSideBadge.textContent = "FRONT CANVAS";
+        studioState.selectedElementId = null;
+        renderInteractiveCanvas();
+        updateInspector();
+    });
+}
+
+if (btnSideBack) {
+    btnSideBack.addEventListener("click", () => {
+        studioState.activeCanvasSide = "back";
+        btnSideBack.classList.add("active");
+        btnSideBack.style.background = "#2563eb";
+        btnSideBack.style.color = "white";
+
+        if (btnSideFront) {
+            btnSideFront.classList.remove("active");
+            btnSideFront.style.background = "white";
+            btnSideFront.style.color = "#334155";
+        }
+
+        if (canvasSideBadge) canvasSideBadge.textContent = "BACK CANVAS";
+        studioState.selectedElementId = null;
+        renderInteractiveCanvas();
+        updateInspector();
+    });
+}
+
+// Custom Template Checkbox toggle
+if (useCustomTemplateCheckbox) {
+    useCustomTemplateCheckbox.addEventListener("change", (e) => {
+        studioState.useCustomTemplate = e.target.checked;
+        if (e.target.checked) {
+            // Select custom preset card
+            const customCard = layoutPresetGrid?.querySelector('.layout-preset-card[data-preset="custom"]');
+            if (customCard) customCard.click();
+        }
+        updateStudioLivePreview();
+    });
+}
+
+// File Upload Handlers for Background Images
+if (frontBgFileInput) {
+    frontBgFileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+            const url = await uploadIdCardTemplateImage("front", file);
+            studioState.frontBgUrl = url;
+            studioState.useCustomTemplate = true;
+            if (useCustomTemplateCheckbox) useCustomTemplateCheckbox.checked = true;
+            if (frontBgStatus) frontBgStatus.style.display = "block";
+
+            // Select Custom Preset Card
+            const customCard = layoutPresetGrid?.querySelector('.layout-preset-card[data-preset="custom"]');
+            if (customCard) customCard.click();
+
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+            showSuccess("Front background template image uploaded and set!");
+        } catch (err) {
+            console.error("Front bg upload error:", err);
+            showError("Failed to upload front background image.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
+}
+
+if (backBgFileInput) {
+    backBgFileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+            const url = await uploadIdCardTemplateImage("back", file);
+            studioState.backBgUrl = url;
+            studioState.useCustomTemplate = true;
+            if (useCustomTemplateCheckbox) useCustomTemplateCheckbox.checked = true;
+            if (backBgStatus) backBgStatus.style.display = "block";
+
+            // Select Custom Preset Card
+            const customCard = layoutPresetGrid?.querySelector('.layout-preset-card[data-preset="custom"]');
+            if (customCard) customCard.click();
+
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+            showSuccess("Back background template image uploaded and set!");
+        } catch (err) {
+            console.error("Back bg upload error:", err);
+            showError("Failed to upload back background image.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
 }
 
 function getStudioCurrentConfig() {
     const activePresetCard = layoutPresetGrid?.querySelector(".layout-preset-card.active");
-    const preset = activePresetCard ? activePresetCard.dataset.preset : "modern";
+    let preset = activePresetCard ? activePresetCard.dataset.preset : "modern";
     const primaryColor = studioCustomHexText?.value?.trim() || studioCustomColor?.value || "#2563eb";
+    const useCustom = useCustomTemplateCheckbox ? useCustomTemplateCheckbox.checked : (preset === "custom");
+
+    if (preset === "custom") {
+        studioState.useCustomTemplate = true;
+    }
 
     return {
         preset: preset,
@@ -1080,7 +1491,12 @@ function getStudioCurrentConfig() {
         showAddress: toggleAddress ? toggleAddress.checked : true,
         showQrCode: toggleQrCode ? toggleQrCode.checked : true,
         showIssueDate: toggleIssueDate ? toggleIssueDate.checked : true,
-        showSignatory: toggleSignatory ? toggleSignatory.checked : true
+        showSignatory: toggleSignatory ? toggleSignatory.checked : true,
+        useCustomTemplate: useCustom || studioState.useCustomTemplate,
+        frontBgUrl: studioState.frontBgUrl || "",
+        backBgUrl: studioState.backBgUrl || "",
+        frontElements: studioState.frontElements || [],
+        backElements: studioState.backElements || []
     };
 }
 

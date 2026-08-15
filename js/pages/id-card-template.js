@@ -4,7 +4,7 @@
 
 import { watchAuth, isAdmin, logout } from "../firebase/auth.js";
 import { getDocument, COLLECTIONS } from "../firebase/firestore.js";
-import { formatDate, getMemberTypeTamil } from "../utils/validators.js";
+import { formatDate, getMemberTypeTamil } from "../utils/helpers.js";
 import { buildIdCardHTML, DEFAULT_LAYOUT_CONFIG } from "../utils/id-card-renderer.js";
 
 // ========================================
@@ -16,6 +16,7 @@ const invalidStatusSection = document.getElementById("invalidStatusSection");
 const idCardOuterContainer = document.getElementById("idCardOuterContainer");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const downloadPngBtn = document.getElementById("downloadPngBtn");
+const downloadLetterBtn = document.getElementById("downloadLetterBtn");
 const printCardBtn = document.getElementById("printCardBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 
@@ -245,6 +246,125 @@ async function downloadIdCardPNG() {
 }
 
 // ========================================
+// MEMBERSHIP LETTER PDF DOWNLOAD
+// ========================================
+
+async function downloadMembershipLetterPDF() {
+    try {
+        if (!currentMember) {
+            showError("Member details not loaded");
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4"
+        });
+
+        const orgName = orgSettings?.name || "THAMARAI CHARITABLE TRUST & FOUNDATION";
+        const orgSub = orgSettings?.subtitle || "Registered Charitable Trust & Non-Profit Foundation";
+        const authorityName = orgSettings?.authorityName || "Authorized Signatory";
+        const authorityTitle = orgSettings?.authorityTitle || "President / General Secretary";
+
+        // Header blue banner
+        pdf.setFillColor(37, 99, 235);
+        pdf.rect(0, 0, 210, 26, "F");
+
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(15);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(orgName, 105, 12, { align: "center" });
+
+        pdf.setFontSize(9);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(orgSub, 105, 19, { align: "center" });
+
+        // Letter Header & Reference
+        pdf.setTextColor(15, 23, 42);
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("OFFICIAL MEMBERSHIP APPOINTMENT LETTER", 105, 36, { align: "center" });
+
+        pdf.setFontSize(9);
+        pdf.setFont("helvetica", "normal");
+        const todayStr = new Date().toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' });
+        pdf.text(`Ref No: TCT/MEM/${currentMember.memberNumber || "NEW"}`, 15, 46);
+        pdf.text(`Date: ${todayStr}`, 195, 46, { align: "right" });
+
+        pdf.setLineWidth(0.4);
+        pdf.setDrawColor(203, 213, 225);
+        pdf.line(15, 49, 195, 49);
+
+        // Recipient Address
+        let y = 58;
+        pdf.setFont("helvetica", "bold");
+        pdf.text("To,", 15, y); y += 6;
+        pdf.setFontSize(11);
+        pdf.text(currentMember.fullName || "Valued Member", 15, y); y += 5;
+        pdf.setFontSize(9.5);
+        pdf.setFont("helvetica", "normal");
+        if (currentMember.fatherName) { pdf.text(`S/o, D/o, W/o: ${currentMember.fatherName}`, 15, y); y += 5; }
+        if (currentMember.address) { pdf.text(`Address: ${currentMember.address}`, 15, y); y += 5; }
+        if (currentMember.mobile) { pdf.text(`Contact: ${currentMember.mobile} | Email: ${currentMember.email || "N/A"}`, 15, y); y += 8; }
+
+        // Subject Line
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`Subject: Official Membership Confirmation - Member ID: ${currentMember.memberNumber || currentMember.uid}`, 15, y); y += 10;
+
+        // Content Body
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(`Dear ${currentMember.fullName},`, 15, y); y += 7;
+
+        const bodyMsg1 = `We are pleased to inform you that your application for membership with ${orgName} has been officially approved and verified by the administrative board.`;
+        pdf.text(pdf.splitTextToSize(bodyMsg1, 180), 15, y); y += 12;
+
+        const bodyMsg2 = `As a recognized ${currentMember.memberType === "active_member" ? "Active Member" : "Regular Member"}, you are hereby granted full participation in our community welfare initiatives, charitable programs, and official foundation events.`;
+        pdf.text(pdf.splitTextToSize(bodyMsg2, 180), 15, y); y += 12;
+
+        // Verification Table Box
+        pdf.setFillColor(248, 250, 252);
+        pdf.rect(15, y, 180, 42, "F");
+        pdf.setDrawColor(226, 232, 240);
+        pdf.rect(15, y, 180, 42, "S");
+
+        let ty = y + 7;
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Official Membership Verification Details:", 20, ty); ty += 7;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9);
+        pdf.text(`• Full Name: ${currentMember.fullName}`, 20, ty);
+        pdf.text(`• Member ID: ${currentMember.memberNumber || "Pending"}`, 110, ty); ty += 6;
+        pdf.text(`• Member Category: ${currentMember.memberType === "active_member" ? "Active Member" : "Regular Member"}`, 20, ty);
+        pdf.text(`• Blood Group: ${currentMember.bloodGroup || "N/A"}`, 110, ty); ty += 6;
+        pdf.text(`• Issue Date: ${formatDate(currentMember.approvedAt || currentMember.createdAt)}`, 20, ty);
+        pdf.text(`• Status: Official & Approved`, 110, ty); y += 50;
+
+        // Closing Statement
+        pdf.setFontSize(10);
+        const bodyMsg3 = `Thank you for standing with us in our noble mission to serve society and empower communities.`;
+        pdf.text(pdf.splitTextToSize(bodyMsg3, 180), 15, y); y += 20;
+
+        // Signatory
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Warm Regards,", 15, y); y += 12;
+        pdf.text(authorityName, 15, y); y += 5;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9);
+        pdf.text(authorityTitle, 15, y); y += 4;
+        pdf.text(orgName, 15, y);
+
+        pdf.save(`Membership_Appointment_Letter_${currentMember.memberNumber || "Official"}.pdf`);
+        showSuccess("Membership letter downloaded successfully!");
+    } catch (err) {
+        console.error("Letter generation error:", err);
+        showError("Failed to generate membership letter.");
+    }
+}
+
+// ========================================
 // EVENT LISTENERS
 // ========================================
 
@@ -257,6 +377,12 @@ if (downloadPdfBtn) {
 if (downloadPngBtn) {
     downloadPngBtn.addEventListener("click", async () => {
         await downloadIdCardPNG();
+    });
+}
+
+if (downloadLetterBtn) {
+    downloadLetterBtn.addEventListener("click", async () => {
+        await downloadMembershipLetterPDF();
     });
 }
 

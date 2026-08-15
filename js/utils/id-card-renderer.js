@@ -4,7 +4,7 @@
    ========================================================================== */
 
 export const DEFAULT_LAYOUT_CONFIG = {
-    preset: "modern", // "classic" | "modern" | "horizontal" | "minimal"
+    preset: "modern", // "classic" | "modern" | "horizontal" | "minimal" | "custom"
     primaryColor: "#2563eb",
     headerStyle: "gradient", // "solid" | "gradient" | "clean"
     showBloodGroup: true,
@@ -13,8 +13,132 @@ export const DEFAULT_LAYOUT_CONFIG = {
     showAddress: true,
     showQrCode: true,
     showIssueDate: true,
-    showSignatory: true
+    showSignatory: true,
+    frontBgUrl: "",
+    backBgUrl: "",
+    useCustomTemplate: false,
+    frontElements: [
+        { id: "el-photo", tag: "{photo}", label: "Member Photo", x: 6, y: 18, width: 75, height: 95 },
+        { id: "el-name", tag: "{fullName}", label: "Full Name", x: 32, y: 20, fontSize: 13, fontWeight: "700", color: "#0f172a" },
+        { id: "el-id", tag: "{memberNumber}", label: "Member ID", x: 32, y: 35, fontSize: 11, fontWeight: "800", color: "#2563eb" },
+        { id: "el-type", tag: "{memberType}", label: "Category", x: 32, y: 48, fontSize: 10, fontWeight: "600", color: "#475569" },
+        { id: "el-blood", tag: "{bloodGroup}", label: "Blood Group", x: 32, y: 60, fontSize: 10, fontWeight: "700", color: "#dc2626" },
+        { id: "el-qr", tag: "{qrCode}", label: "QR Code", x: 74, y: 18, width: 55, height: 55 }
+    ],
+    backElements: [
+        { id: "el-b-father", tag: "{fatherName}", label: "Father's Name", x: 8, y: 18, fontSize: 11, fontWeight: "500", color: "#0f172a" },
+        { id: "el-b-dob", tag: "{dob}", label: "Date of Birth", x: 8, y: 30, fontSize: 11, fontWeight: "500", color: "#0f172a" },
+        { id: "el-b-mobile", tag: "{mobile}", label: "Mobile Number", x: 8, y: 42, fontSize: 11, fontWeight: "500", color: "#0f172a" },
+        { id: "el-b-email", tag: "{email}", label: "Email Address", x: 8, y: 54, fontSize: 10, fontWeight: "400", color: "#334155" },
+        { id: "el-b-address", tag: "{address}", label: "Address", x: 8, y: 66, fontSize: 10, fontWeight: "400", color: "#334155" },
+        { id: "el-b-sig", tag: "{signature}", label: "Signature", x: 65, y: 68, width: 80, height: 35 }
+    ]
 };
+
+export const AVAILABLE_SHORTCODES = [
+    { tag: "{fullName}", label: "Full Name", icon: "👤", defaultVal: "Ananya N" },
+    { tag: "{memberNumber}", label: "Member ID", icon: "🆔", defaultVal: "TCT-M-1024" },
+    { tag: "{memberType}", label: "Category", icon: "⭐", defaultVal: "Active Member" },
+    { tag: "{fatherName}", label: "Father Name", icon: "👨", defaultVal: "Narayanan S" },
+    { tag: "{dob}", label: "Date of Birth", icon: "📅", defaultVal: "15/08/1995" },
+    { tag: "{bloodGroup}", label: "Blood Group", icon: "🩸", defaultVal: "O+" },
+    { tag: "{mobile}", label: "Mobile Number", icon: "📱", defaultVal: "+91 98765 43210" },
+    { tag: "{email}", label: "Email Address", icon: "✉️", defaultVal: "ananya@example.com" },
+    { tag: "{address}", label: "Address", icon: "🏠", defaultVal: "42 Heritage Rd, Chennai" },
+    { tag: "{issueDate}", label: "Issue Date", icon: "📆", defaultVal: "15 Aug 2025" },
+    { tag: "{orgName}", label: "Org Name", icon: "🏛️", defaultVal: "Thamarai Charitable Trust" },
+    { tag: "{photo}", label: "Member Photo", icon: "🖼️", isMedia: true },
+    { tag: "{qrCode}", label: "QR Code", icon: "🔳", isMedia: true },
+    { tag: "{signature}", label: "Signature", icon: "✍️", isMedia: true }
+];
+
+/**
+ * Renders HTML for a custom ID card side using uploaded background and drag-and-drop shortcodes
+ */
+export function renderCustomCardSideHTML(side = "front", member = {}, orgSettings = {}, assetSettings = {}, config = {}) {
+    const primaryColor = config.primaryColor || "#2563eb";
+    const bgUrl = side === "back" ? config.backBgUrl : config.frontBgUrl;
+    const elements = side === "back" ? (config.backElements || []) : (config.frontElements || []);
+
+    const fullName = member?.fullName || "Ananya N";
+    const fatherName = member?.fatherName ? `Father: ${member.fatherName}` : "Father: Narayanan S";
+    const dob = member?.dob ? `DOB: ${formatMemberDate(member.dob)}` : "DOB: 15/08/1995";
+    const memberNumber = member?.memberNumber || "TCT-M-1024";
+    const bloodGroup = member?.bloodGroup ? `Blood: ${member.bloodGroup}` : "Blood: O+";
+    const mobile = member?.mobile ? `Mobile: ${member.mobile}` : "Mobile: +91 98765 43210";
+    const email = member?.email || "ananya@example.com";
+    const address = member?.address ? `Addr: ${member.address}` : "Addr: 42 Heritage Rd, Chennai";
+    const memberType = getCategoryLabel(member?.memberType);
+    const issueDate = `Issued: ${formatMemberDate(member?.approvedAt || member?.createdAt || new Date())}`;
+    const orgName = orgSettings?.orgName || "Thamarai Charitable Trust";
+
+    const photoUrl = member?.photoUrl || assetSettings?.defaultPhotoUrl || "images/default-user.jpg";
+    const signatureUrl = assetSettings?.founderSignatureUrl || "images/signature.png";
+    const qrSvg = generateSvgQrCode(memberNumber, 50);
+
+    const valueMap = {
+        "{fullName}": fullName,
+        "{memberNumber}": memberNumber,
+        "{memberType}": memberType,
+        "{fatherName}": fatherName,
+        "{dob}": dob,
+        "{bloodGroup}": bloodGroup,
+        "{mobile}": mobile,
+        "{email}": email,
+        "{address}": address,
+        "{issueDate}": issueDate,
+        "{orgName}": orgName
+    };
+
+    let elementsHTML = "";
+    elements.forEach(el => {
+        const x = el.x ?? 10;
+        const y = el.y ?? 10;
+        const fontSize = el.fontSize || 12;
+        const fontWeight = el.fontWeight || "600";
+        const color = el.color || "#0f172a";
+        const align = el.align || "left";
+
+        if (el.tag === "{photo}") {
+            const w = el.width || 75;
+            const h = el.height || 95;
+            elementsHTML += `
+            <div style="position: absolute; left: ${x}%; top: ${y}%; width: ${w}px; height: ${h}px; z-index: 2;">
+                <img src="${photoUrl}" alt="Photo" crossorigin="anonymous" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 2px solid ${primaryColor}; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" onerror="this.src='images/default-user.jpg'" />
+            </div>`;
+        } else if (el.tag === "{qrCode}") {
+            const w = el.width || 55;
+            const h = el.height || 55;
+            elementsHTML += `
+            <div style="position: absolute; left: ${x}%; top: ${y}%; width: ${w}px; height: ${h}px; background: white; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2;">
+                ${qrSvg}
+            </div>`;
+        } else if (el.tag === "{signature}") {
+            const w = el.width || 80;
+            const h = el.height || 35;
+            elementsHTML += `
+            <div style="position: absolute; left: ${x}%; top: ${y}%; width: ${w}px; height: ${h}px; z-index: 2;">
+                <img src="${signatureUrl}" alt="Signature" crossorigin="anonymous" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'" />
+            </div>`;
+        } else {
+            const textVal = valueMap[el.tag] || el.label || el.tag;
+            elementsHTML += `
+            <div style="position: absolute; left: ${x}%; top: ${y}%; font-size: ${fontSize}px; font-weight: ${fontWeight}; color: ${color}; text-align: ${align}; white-space: nowrap; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; z-index: 2;">
+                ${textVal}
+            </div>`;
+        }
+    });
+
+    const backgroundStyle = bgUrl 
+        ? `background-image: url('${bgUrl}'); background-size: cover; background-position: center; background-repeat: no-repeat;`
+        : `background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 2px dashed ${primaryColor};`;
+
+    return `
+    <div class="custom-id-card-side side-${side}" style="position: relative; width: 340px; height: 214px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.12); ${backgroundStyle}">
+        ${!bgUrl ? `<div style="position: absolute; top: 6px; right: 8px; font-size: 0.6rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; background: rgba(255,255,255,0.8); padding: 2px 6px; border-radius: 4px;">${side.toUpperCase()} SIDE</div>` : ""}
+        ${elementsHTML}
+    </div>`;
+}
 
 /**
  * Generates an SVG QR Code visual pattern
@@ -159,6 +283,25 @@ export function buildIdCardHTML(member, orgSettings = {}, assetSettings = {}, la
       --idcard-accent-light: ${lightAccent};
       --idcard-accent-border: ${borderAccent};
     `;
+
+    // -------------------------------------------------------------
+    // TEMPLATE CUSTOM: UPLOADED BACKGROUNDS & DRAGGED SHORTCODES
+    // -------------------------------------------------------------
+    if (config.preset === "custom" || config.useCustomTemplate) {
+        const frontHTML = renderCustomCardSideHTML("front", member, orgSettings, assetSettings, config);
+        const backHTML = renderCustomCardSideHTML("back", member, orgSettings, assetSettings, config);
+        return `
+        <div class="custom-id-card-double-wrapper" style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+            <div class="card-side-block">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; margin-bottom: 4px; text-transform: uppercase;">Front Side</div>
+                ${frontHTML}
+            </div>
+            <div class="card-side-block">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; margin-bottom: 4px; text-transform: uppercase;">Back Side</div>
+                ${backHTML}
+            </div>
+        </div>`;
+    }
 
     // -------------------------------------------------------------
     // TEMPLATE 1: CLASSIC PORTRAIT

@@ -648,6 +648,12 @@
                   <div style="font-size: 0.72rem; color: #64748b;">Compact &bull; Modern</div>
                 </div>
 
+                <div class="layout-preset-card" data-preset="custom" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">🎨</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Custom Template</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Upload Front/Back & Shortcodes</div>
+                </div>
+
               </div>
             </div>
 
@@ -720,6 +726,95 @@
                   <span>Signatory Signature</span>
                 </label>
               </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+
+            <!-- 4. Custom ID Card Image Backgrounds & Drag Shortcodes -->
+            <div id="customTemplateStudioBlock" style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                <label style="font-weight: 700; font-size: 0.95rem; color: #0f172a; margin: 0;">
+                  4. Custom Background Template & Drag Shortcodes
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: #2563eb; cursor: pointer;">
+                  <input type="checkbox" id="useCustomTemplateCheckbox" />
+                  <span>Use Custom Card Template</span>
+                </label>
+              </div>
+
+              <!-- Upload Front & Back Background Images -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; text-align: center;">
+                  <div style="font-size: 0.78rem; font-weight: 700; color: #334155; margin-bottom: 6px;">🖼️ Front Background</div>
+                  <input type="file" id="frontBgFileInput" accept="image/*" style="font-size: 0.75rem; width: 100%;" />
+                  <div id="frontBgStatus" style="font-size: 0.7rem; color: #059669; margin-top: 4px; display: none;">✓ Front Background Set</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; text-align: center;">
+                  <div style="font-size: 0.78rem; font-weight: 700; color: #334155; margin-bottom: 6px;">🔄 Back Background</div>
+                  <input type="file" id="backBgFileInput" accept="image/*" style="font-size: 0.75rem; width: 100%;" />
+                  <div id="backBgStatus" style="font-size: 0.7rem; color: #059669; margin-top: 4px; display: none;">✓ Back Background Set</div>
+                </div>
+              </div>
+
+              <!-- Side Toggle & Shortcode Palette -->
+              <div style="background: #f1f5f9; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                  <span style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">Active Canvas Side:</span>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" id="btnSideFront" class="side-toggle-btn active" style="background: #2563eb; color: white; border: none; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 0.78rem; cursor: pointer;">🖼️ Front Side</button>
+                    <button type="button" id="btnSideBack" class="side-toggle-btn" style="background: white; color: #334155; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 0.78rem; cursor: pointer;">🔄 Back Side</button>
+                  </div>
+                </div>
+
+                <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">Click shortcode to place onto active canvas:</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;" id="shortcodePalette">
+                  <!-- Shortcode chips generated dynamically -->
+                </div>
+              </div>
+
+              <!-- Interactive Drag Canvas -->
+              <div style="background: #0f172a; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; color: white; font-size: 0.78rem; margin-bottom: 8px; font-weight: 600;">
+                  <span>🎯 Drag & Position Shortcodes on Canvas</span>
+                  <span id="canvasSideBadge" style="background: #2563eb; padding: 2px 8px; border-radius: 4px;">FRONT CANVAS</span>
+                </div>
+
+                <div style="display: flex; justify-content: center; overflow-x: auto; padding: 4px 0;">
+                  <div id="interactiveCardCanvas" style="position: relative; width: 340px; height: 214px; border-radius: 12px; overflow: hidden; background: #ffffff; border: 2px solid #38bdf8; box-shadow: 0 10px 25px rgba(0,0,0,0.3); user-select: none;">
+                    <!-- Shortcode elements rendered here with drag handles -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Element Inspector & Styling Controls -->
+              <div id="elementInspectorBox" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-weight: 700; font-size: 0.82rem; color: #0f172a;" id="inspectorTagLabel">Selected Shortcode</span>
+                  <button type="button" id="btnDeleteSelectedElement" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">🗑️ Delete Tag</button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; font-size: 0.78rem;">
+                  <div>
+                    <label style="display: block; color: #64748b; margin-bottom: 2px;">Font Size (px):</label>
+                    <input type="number" id="inspectorFontSize" min="8" max="28" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                  </div>
+                  <div>
+                    <label style="display: block; color: #64748b; margin-bottom: 2px;">Font Weight:</label>
+                    <select id="inspectorFontWeight" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                      <option value="400">Normal</option>
+                      <option value="600">SemiBold</option>
+                      <option value="700">Bold</option>
+                      <option value="800">ExtraBold</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="display: block; color: #64748b; margin-bottom: 2px;">Text Color:</label>
+                    <input type="color" id="inspectorColor" style="width: 100%; height: 26px; padding: 0; border: none; cursor: pointer;" />
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             <!-- ACTION BUTTONS -->

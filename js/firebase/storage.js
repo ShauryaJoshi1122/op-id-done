@@ -198,6 +198,14 @@ export async function uploadQrCode(file) {
 }
 
 // ========================================
+// UPLOAD ID CARD TEMPLATE IMAGE
+// ========================================
+export async function uploadIdCardTemplateImage(side, file) {
+    const filePath = `id-card-templates/${side}_${Date.now()}_${file.name || "template"}`;
+    return await uploadToFirebaseStorage(filePath, file);
+}
+
+// ========================================
 // DELETE FILE
 // ========================================
 export async function deleteFile(filePath) {
