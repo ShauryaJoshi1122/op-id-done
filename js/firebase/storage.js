@@ -20,7 +20,7 @@ function fileToDataUrl(file) {
     });
 }
 
-// Generic Firebase Upload with Fallback
+// Generic Upload with Firebase & Supabase Fallback
 async function uploadToFirebaseStorage(path, file) {
     if (!file) return null;
     try {
@@ -28,11 +28,22 @@ async function uploadToFirebaseStorage(path, file) {
             const storageRef = ref(storage, path);
             const snapshot = await uploadBytes(storageRef, file);
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            return downloadUrl;
+            if (downloadUrl) return downloadUrl;
         }
     } catch (err) {
-        console.warn(`[Firebase Storage] Upload to ${path} failed, using local DataURL fallback:`, err);
+        console.warn(`[Firebase Storage] Upload to ${path} failed, attempting Supabase Storage fallback:`, err);
     }
+
+    // Try Supabase Storage
+    try {
+        const { uploadToSupabase } = await import("../supabase-config.js");
+        const supabaseUrl = await uploadToSupabase(path, file);
+        if (supabaseUrl) return supabaseUrl;
+    } catch (sbErr) {
+        console.warn("[Supabase Storage] Fallback upload skipped or error:", sbErr);
+    }
+
+    // Local DataURL fallback
     return await fileToDataUrl(file);
 }
 

@@ -60,17 +60,49 @@ export const COLLECTIONS = {
     LOGIN_HISTORY: "loginHistory"
 };
 
+import {
+    saveToSupabaseTable,
+    getFromSupabaseTable,
+    getFromSupabaseById,
+    deleteFromSupabaseTable,
+    subscribeSupabaseTable
+} from "../supabase-config.js";
+
+// Helper: Async sync to Supabase Database
+async function syncToSupabase(collectionName, record) {
+    try {
+        await saveToSupabaseTable(collectionName, record);
+    } catch (e) {
+        console.warn(`[Supabase Sync] Warning syncing ${collectionName}:`, e);
+    }
+}
+
+// Helper: Async delete from Supabase Database
+async function syncDeleteToSupabase(collectionName, id) {
+    try {
+        await deleteFromSupabaseTable(collectionName, id);
+    } catch (e) {
+        console.warn(`[Supabase Sync] Warning deleting ${collectionName}/${id}:`, e);
+    }
+}
+
 // ========================================
 // REAL-TIME LISTENERS
 // ========================================
 export function subscribeCollection(collectionName, callback) {
-    const colRef = collection(db, collectionName);
-    return onSnapshot(colRef, (snapshot) => {
-        const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        callback(items);
-    }, (error) => {
-        console.warn(`[Firestore Realtime] Subscription error for ${collectionName}:`, error);
-    });
+    try {
+        const colRef = collection(db, collectionName);
+        return onSnapshot(colRef, (snapshot) => {
+            const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            callback(items);
+        }, (error) => {
+            console.warn(`[Firestore Realtime] Subscription error for ${collectionName}, falling back to Supabase:`, error);
+            subscribeSupabaseTable(collectionName, callback);
+        });
+    } catch (err) {
+        console.warn(`[Realtime] Fallback to Supabase for ${collectionName}`);
+        return subscribeSupabaseTable(collectionName, callback);
+    }
 }
 
 export function subscribeDocument(collectionName, documentId, callback) {
@@ -81,8 +113,10 @@ export function subscribeDocument(collectionName, documentId, callback) {
         } else {
             callback(null);
         }
-    }, (error) => {
-        console.warn(`[Firestore Realtime] Doc subscription error for ${collectionName}/${documentId}:`, error);
+    }, async (error) => {
+        console.warn(`[Firestore Realtime] Doc subscription error for ${collectionName}/${documentId}, attempting Supabase fetch:`, error);
+        const sbDoc = await getFromSupabaseById(collectionName, documentId);
+        callback(sbDoc);
     });
 }
 
@@ -91,41 +125,38 @@ export function subscribeDocument(collectionName, documentId, callback) {
 // ========================================
 
 export async function createDocument(
-
     collectionName,
-
     data
-
 ) {
+    let docId = null;
+    const nowIso = new Date().toISOString();
     const documentData = {
-
         ...data,
-
-        createdAt:
-            serverTimestamp(),
-
-        updatedAt:
-            serverTimestamp()
-
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
     };
 
-    const documentRef =
-
-        await addDoc(
-
-            collection(
-
-                db,
-
-                collectionName
-
-            ),
-
+    try {
+        const documentRef = await addDoc(
+            collection(db, collectionName),
             documentData
-
         );
+        docId = documentRef.id;
+    } catch (fsErr) {
+        console.warn(`[Firestore] createDocument failed for ${collectionName}, using generated ID:`, fsErr);
+        docId = `sb_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    }
 
-    return documentRef.id;
+    // Dual-sync record to Supabase
+    const supabaseRecord = {
+        id: docId,
+        ...data,
+        createdAt: nowIso,
+        updatedAt: nowIso
+    };
+    syncToSupabase(collectionName, supabaseRecord);
+
+    return docId;
 }
 
 // ========================================
@@ -133,36 +164,30 @@ export async function createDocument(
 // ========================================
 
 export async function setDocument(
-
     collectionName,
-
     documentId,
-
     data
-
 ) {
-    await setDoc(
+    const nowIso = new Date().toISOString();
+    try {
+        await setDoc(
+            doc(db, collectionName, documentId),
+            {
+                ...data,
+                updatedAt: serverTimestamp()
+            }
+        );
+    } catch (fsErr) {
+        console.warn(`[Firestore] setDocument failed for ${collectionName}/${documentId}:`, fsErr);
+    }
 
-        doc(
-
-            db,
-
-            collectionName,
-
-            documentId
-
-        ),
-
-        {
-
-            ...data,
-
-            updatedAt:
-                serverTimestamp()
-
-        }
-
-    );
+    // Dual-sync to Supabase
+    const supabaseRecord = {
+        id: documentId,
+        ...data,
+        updatedAt: nowIso
+    };
+    syncToSupabase(collectionName, supabaseRecord);
 }
 
 // ========================================
@@ -170,44 +195,24 @@ export async function setDocument(
 // ========================================
 
 export async function getDocument(
-
     collectionName,
-
     documentId
-
 ) {
-    const documentRef =
-
-        doc(
-
-            db,
-
-            collectionName,
-
-            documentId
-
-        );
-
-    const snapshot =
-
-        await getDoc(
-            documentRef
-        );
-
-    if (
-        !snapshot.exists()
-    ) {
-        return null;
+    try {
+        const documentRef = doc(db, collectionName, documentId);
+        const snapshot = await getDoc(documentRef);
+        if (snapshot.exists()) {
+            return {
+                id: snapshot.id,
+                ...snapshot.data()
+            };
+        }
+    } catch (fsErr) {
+        console.warn(`[Firestore] getDocument failed for ${collectionName}/${documentId}, attempting Supabase fallback:`, fsErr);
     }
 
-    return {
-
-        id:
-            snapshot.id,
-
-        ...snapshot.data()
-
-    };
+    // Supabase fallback
+    return await getFromSupabaseById(collectionName, documentId);
 }
 
 // ========================================
@@ -217,36 +222,23 @@ export async function getDocument(
 export async function getCollection(
     collectionName
 ) {
-    const snapshot =
-
-        await getDocs(
-
-            collection(
-
-                db,
-
-                collectionName
-
-            )
-
+    try {
+        const snapshot = await getDocs(
+            collection(db, collectionName)
         );
+        if (!snapshot.empty) {
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        }
+    } catch (fsErr) {
+        console.warn(`[Firestore] getCollection failed for ${collectionName}, attempting Supabase fallback:`, fsErr);
+    }
 
-    return snapshot.docs.map(
-
-        document => (
-
-            {
-
-                id:
-                    document.id,
-
-                ...document.data()
-
-            }
-
-        )
-
-    );
+    // Supabase fallback
+    const sbData = await getFromSupabaseTable(collectionName);
+    return sbData || [];
 }
 
 // ========================================
@@ -254,36 +246,25 @@ export async function getCollection(
 // ========================================
 
 export async function updateDocument(
-
     collectionName,
-
     documentId,
-
     data
-
 ) {
-    await updateDoc(
+    const nowIso = new Date().toISOString();
+    try {
+        await updateDoc(
+            doc(db, collectionName, documentId),
+            {
+                ...data,
+                updatedAt: serverTimestamp()
+            }
+        );
+    } catch (fsErr) {
+        console.warn(`[Firestore] updateDocument failed for ${collectionName}/${documentId}:`, fsErr);
+    }
 
-        doc(
-
-            db,
-
-            collectionName,
-
-            documentId
-
-        ),
-
-        {
-
-            ...data,
-
-            updatedAt:
-                serverTimestamp()
-
-        }
-
-    );
+    // Sync update to Supabase
+    syncToSupabase(collectionName, { id: documentId, ...data, updatedAt: nowIso });
 }
 
 // ========================================
@@ -291,25 +272,19 @@ export async function updateDocument(
 // ========================================
 
 export async function deleteDocument(
-
     collectionName,
-
     documentId
-
 ) {
-    await deleteDoc(
+    try {
+        await deleteDoc(
+            doc(db, collectionName, documentId)
+        );
+    } catch (fsErr) {
+        console.warn(`[Firestore] deleteDocument failed for ${collectionName}/${documentId}:`, fsErr);
+    }
 
-        doc(
-
-            db,
-
-            collectionName,
-
-            documentId
-
-        )
-
-    );
+    // Sync delete to Supabase
+    syncDeleteToSupabase(collectionName, documentId);
 }
 
 // ========================================
@@ -317,62 +292,42 @@ export async function deleteDocument(
 // ========================================
 
 export async function queryByField(
-
     collectionName,
-
     field,
-
     operator,
-
     value
-
 ) {
-    const firestoreQuery =
-
-        query(
-
-            collection(
-
-                db,
-
-                collectionName
-
-            ),
-
-            where(
-
-                field,
-
-                operator,
-
-                value
-
-            )
-
+    try {
+        const firestoreQuery = query(
+            collection(db, collectionName),
+            where(field, operator, value)
         );
-
-    const snapshot =
-
-        await getDocs(
-            firestoreQuery
-        );
-
-    return snapshot.docs.map(
-
-        document => (
-
-            {
-
-                id:
-                    document.id,
-
+        const snapshot = await getDocs(firestoreQuery);
+        if (!snapshot.empty) {
+            return snapshot.docs.map(document => ({
+                id: document.id,
                 ...document.data()
+            }));
+        }
+    } catch (fsErr) {
+        console.warn(`[Firestore] queryByField failed for ${collectionName}, attempting Supabase query:`, fsErr);
+    }
 
-            }
-
-        )
-
-    );
+    // Supabase query fallback
+    return await getFromSupabaseTable(collectionName, (req) => {
+        if (operator === "==" || operator === "===") {
+            return req.eq(field, value);
+        } else if (operator === ">") {
+            return req.gt(field, value);
+        } else if (operator === "<") {
+            return req.lt(field, value);
+        } else if (operator === ">=") {
+            return req.gte(field, value);
+        } else if (operator === "<=") {
+            return req.lte(field, value);
+        }
+        return req;
+    });
 }
 
 // ========================================
@@ -380,60 +335,30 @@ export async function queryByField(
 // ========================================
 
 export async function getLatestDocuments(
-
     collectionName,
-
     count = 10
-
 ) {
-    const firestoreQuery =
-
-        query(
-
-            collection(
-
-                db,
-
-                collectionName
-
-            ),
-
-            orderBy(
-
-                "createdAt",
-
-                "desc"
-
-            ),
-
-            limit(
-                count
-            )
-
+    try {
+        const firestoreQuery = query(
+            collection(db, collectionName),
+            orderBy("createdAt", "desc"),
+            limit(count)
         );
-
-    const snapshot =
-
-        await getDocs(
-            firestoreQuery
-        );
-
-    return snapshot.docs.map(
-
-        document => (
-
-            {
-
-                id:
-                    document.id,
-
+        const snapshot = await getDocs(firestoreQuery);
+        if (!snapshot.empty) {
+            return snapshot.docs.map(document => ({
+                id: document.id,
                 ...document.data()
+            }));
+        }
+    } catch (fsErr) {
+        console.warn(`[Firestore] getLatestDocuments failed for ${collectionName}, attempting Supabase query:`, fsErr);
+    }
 
-            }
-
-        )
-
-    );
+    // Supabase fallback
+    return await getFromSupabaseTable(collectionName, (req) => {
+        return req.order("createdAt", { ascending: false }).limit(count);
+    });
 }
 
 // ========================================
