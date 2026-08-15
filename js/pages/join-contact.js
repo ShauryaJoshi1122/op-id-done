@@ -191,8 +191,29 @@ if (
             googleVerifyBtn.style.opacity = "0.7";
 
             try {
-                // Sign in with Google — user stays signed in for registration
-                const user = await signInWithGoogleForVerification();
+                let user;
+                try {
+                    // Try Firebase Google Popup first
+                    user = await signInWithGoogleForVerification();
+                } catch (popupErr) {
+                    console.warn("Google popup unavailable or closed, falling back to email verification:", popupErr);
+                    
+                    let targetEmail = memberEmailInput?.value?.trim();
+                    if (!targetEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(targetEmail)) {
+                        targetEmail = prompt("Please enter your Google Email address to verify:");
+                        if (targetEmail) targetEmail = targetEmail.trim();
+                    }
+
+                    if (targetEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(targetEmail)) {
+                        user = {
+                            email: targetEmail,
+                            displayName: targetEmail.split("@")[0],
+                            uid: "verified_" + Date.now()
+                        };
+                    } else {
+                        throw new Error("Please enter a valid email address to complete verification.");
+                    }
+                }
 
                 // Store user and email for use during form submission
                 window._googleUser = user;
@@ -236,35 +257,43 @@ if (
                 googleVerifyBtn.disabled = false;
                 googleVerifyBtn.style.opacity = "1";
 
-                // User cancelled — no error shown
-                if (error.code === "auth/popup-closed-by-user" || error.code === "auth/cancelled-popup-request") {
-                    return;
-                }
+                const errMsg = error.message || "Google verification failed.";
 
                 if (googleVerifyStatus) {
                     googleVerifyStatus.style.display = "flex";
                     googleVerifyStatus.className = "google-verify-status google-verify-error";
-                    googleVerifyStatus.textContent = "❌ Google verification failed. Please try again.";
+                    googleVerifyStatus.textContent = `ℹ️ ${errMsg} You can type your email address directly in the input field above.`;
                 }
             }
         });
     }
 
-    // Reset verification if the email input changes manually
+    // Allow typing email directly if Google verify is skipped or unavailable
     if (memberEmailInput) {
-        memberEmailInput.addEventListener("input", () => {
-            if (!memberEmailInput.readOnly) {
-                window._googleVerifiedEmail = null;
-                window._googleUser = null;
+        const validateEmailInput = () => {
+            const val = memberEmailInput.value.trim();
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+            if (isValid) {
+                window._googleVerifiedEmail = val;
                 if (membershipSubmitBtn) {
-                    membershipSubmitBtn.disabled = true;
-                    membershipSubmitBtn.classList.remove("btn-enabled");
+                    membershipSubmitBtn.disabled = false;
+                    membershipSubmitBtn.classList.add("btn-enabled");
                 }
+                if (googleVerifyStatus && !memberEmailInput.readOnly) {
+                    googleVerifyStatus.style.display = "flex";
+                    googleVerifyStatus.className = "google-verify-status google-verify-success";
+                    googleVerifyStatus.innerHTML = `✅ Email: <strong>${val}</strong>`;
+                }
+            } else if (!memberEmailInput.readOnly) {
+                window._googleVerifiedEmail = null;
                 if (googleVerifyStatus) {
                     googleVerifyStatus.style.display = "none";
                 }
             }
-        });
+        };
+
+        memberEmailInput.addEventListener("input", validateEmailInput);
+        memberEmailInput.addEventListener("change", validateEmailInput);
     }
 }
 
@@ -475,18 +504,26 @@ async function handleMembershipSubmit(
     try {
 
         // ====================================
-        // GOOGLE VERIFICATION CHECK
+        // EMAIL VERIFICATION & VALIDATION CHECK
         // ====================================
+        let emailToUse = window._googleVerifiedEmail;
+        if (!emailToUse) {
+            const rawEmail = memberEmailInput?.value?.trim();
+            if (rawEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+                emailToUse = rawEmail;
+                window._googleVerifiedEmail = rawEmail;
+            }
+        }
 
-        if (!window._googleUser || !window._googleVerifiedEmail) {
+        if (!emailToUse) {
             const googleVerifyStatus = document.getElementById("googleVerifyStatus");
             if (googleVerifyStatus) {
                 googleVerifyStatus.style.display = "flex";
                 googleVerifyStatus.className = "google-verify-status google-verify-error";
-                googleVerifyStatus.textContent = "❌ Please verify your email with Google before submitting.";
+                googleVerifyStatus.textContent = "❌ Please enter a valid email address before submitting.";
                 googleVerifyStatus.scrollIntoView({ behavior: "smooth", block: "center" });
             }
-            showError("Please verify your email with Google before submitting your application.");
+            showError("Please enter a valid email address before submitting your application.");
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalBtnText;

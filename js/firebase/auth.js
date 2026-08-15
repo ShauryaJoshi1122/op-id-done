@@ -82,8 +82,28 @@ export function watchAuth(callback) {
 // GOOGLE SIGN-IN
 // ========================================
 export async function signInWithGoogle() {
-    const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        return result.user;
+    } catch (error) {
+        console.error("Google Sign-In Error:", error);
+        if (error.code === "auth/popup-blocked") {
+            const err = new Error("Sign-in popup was blocked by your browser. Please allow popups or enter your email address directly.");
+            err.code = error.code;
+            throw err;
+        }
+        if (error.code === "auth/unauthorized-domain") {
+            const err = new Error("Google Sign-in is restricted on this preview domain. You can enter your email address directly.");
+            err.code = error.code;
+            throw err;
+        }
+        if (error.code === "auth/popup-closed-by-user" || error.code === "auth/cancelled-popup-request") {
+            const err = new Error("Sign-in popup was closed before completing. You can try again or enter your email directly.");
+            err.code = error.code;
+            throw err;
+        }
+        throw error;
+    }
 }
 
 export async function signInWithGoogleForVerification() {
