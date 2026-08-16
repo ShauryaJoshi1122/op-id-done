@@ -15,28 +15,51 @@
     <link rel="stylesheet" href="css/responsive.css" />
 
     <style>
+      .tricolor-ribbon {
+        display: flex;
+        height: 6px;
+        width: 100%;
+      }
+      .tricolor-ribbon .saffron { flex: 1; background: #FF9933; }
+      .tricolor-ribbon .white { flex: 1; background: #FFFFFF; }
+      .tricolor-ribbon .green { flex: 1; background: #138808; }
+
       .page-hero-unified {
-        background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+        background: linear-gradient(135deg, #0F2B5C 0%, #1e3a8a 50%, #166534 100%);
         color: #ffffff;
-        padding: 60px 24px;
+        padding: 50px 24px;
         text-align: center;
       }
       .page-hero-unified h1 {
         color: #ffffff;
-        font-size: clamp(1.8rem, 4vw, 2.6rem);
-        margin-bottom: 12px;
-        font-weight: 800;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        margin-bottom: 8px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+      .page-hero-unified .hero-slogan {
+        font-family: 'Caveat', cursive, sans-serif;
+        font-size: 1.45rem;
+        color: #FF9933;
+        font-weight: 700;
+        margin-bottom: 10px;
       }
       .page-hero-unified p {
         color: rgba(255, 255, 255, 0.9);
         max-width: 700px;
         margin: 0 auto;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
       }
     </style>
   </head>
 
   <body>
+    <!-- Top Tricolor Ribbon -->
+    <div class="tricolor-ribbon">
+      <div class="saffron"></div>
+      <div class="white"></div>
+      <div class="green"></div>
+    </div>
     <!-- ======================================== -->
     <!-- HEADER -->
     <!-- ======================================== -->
@@ -96,9 +119,10 @@
     <!-- ======================================== -->
     <section class="page-hero-unified">
       <div class="container">
-        <h1>Member Registration & ID Card Application</h1>
+        <h1>Sardar Vallabhbhai Patel Party</h1>
+        <div class="hero-slogan">"Your Voice. Your Strength. Our Commitment."</div>
         <p>
-          Submit your official application to obtain your verified Digital Membership Card and join our active community.
+          Submit your official membership application to obtain your verified double-sided Digital ID Card and Appointment Letter.
         </p>
       </div>
     </section>

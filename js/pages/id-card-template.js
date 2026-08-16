@@ -1,142 +1,229 @@
 /* ==========================================================================
-   OFFICIAL DIGITAL MEMBER ID CARD TEMPLATE & GENERATOR
+   OFFICIAL DIGITAL MEMBER ID CARD CONTROLLER
+   SARDAR VALLABHBHAI PATEL PARTY (SVPP)
    ========================================================================== */
 
-import { watchAuth, isAdmin, logout } from "../firebase/auth.js";
+import { watchAuth, logout } from "../firebase/auth.js";
 import { getDocument, COLLECTIONS } from "../firebase/firestore.js";
-import { formatDate, getMemberTypeTamil } from "../utils/helpers.js";
 import { buildIdCardHTML, DEFAULT_LAYOUT_CONFIG } from "../utils/id-card-renderer.js";
+import { DEFAULT_ORG_SETTINGS } from "../utils/constants.js";
+import { showToast } from "../utils/toast.js";
 
-// ========================================
-// DOM ELEMENTS
-// ========================================
-
+// DOM Elements
 const validStatusSection = document.getElementById("validStatusSection");
-const invalidStatusSection = document.getElementById("invalidStatusSection");
 const idCardOuterContainer = document.getElementById("idCardOuterContainer");
+const dynamicCardContainer = document.getElementById("dynamicCardContainer");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const downloadPngBtn = document.getElementById("downloadPngBtn");
-const downloadLetterBtn = document.getElementById("downloadLetterBtn");
 const printCardBtn = document.getElementById("printCardBtn");
+const btnGoAppointmentLetter = document.getElementById("btnGoAppointmentLetter");
 const logoutBtn = document.getElementById("logoutBtn");
+const sideToggleButtons = document.querySelectorAll(".side-toggle-btn");
 
-// ========================================
-// CONSTANTS
-// ========================================
-
-const MEMBER_STATUS = {
-    APPROVED: "approved",
-    PENDING: "pending",
-    REJECTED: "rejected"
-};
+// State
+let currentMember = null;
+let assetSettings = {};
+let orgSettings = { ...DEFAULT_ORG_SETTINGS };
+let layoutSettings = null;
+let activeSide = "both"; // "both" | "front" | "back"
+let activeOrientation = "vertical"; // "vertical" | "horizontal"
 
 // Query Params
 const urlParams = new URLSearchParams(window.location.search);
 const memberIdParam = urlParams.get("memberId") || urlParams.get("id");
 const autoDownloadParam = urlParams.get("download");
+const requestedOrientation = urlParams.get("orientation") || urlParams.get("layout");
 
-// ========================================
-// INITIALIZE
-// ========================================
+// Initialize
+document.addEventListener("DOMContentLoaded", async () => {
+    // Setup Side Toggle Handlers
+    sideToggleButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            sideToggleButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeSide = btn.getAttribute("data-side") || "both";
+            renderCard();
+        });
+    });
 
-let currentMember = null;
-let assetSettings = null;
-let orgSettings = null;
-let layoutSettings = null;
+    // Setup Orientation Toggle Handlers
+    const btnToggleOriVertical = document.getElementById("btnToggleOriVertical");
+    const btnToggleOriHorizontal = document.getElementById("btnToggleOriHorizontal");
 
-watchAuth(async (user) => {
-    const sessionMemberId = sessionStorage.getItem("tct_member_id") || memberIdParam;
-
-    if (!user && !sessionMemberId) {
-        location.href = "member-login.html";
-        return;
-    }
-
-    const targetMemberId = sessionMemberId || user?.uid;
-    if (targetMemberId) {
-        await loadMemberCard(targetMemberId);
-
-        if (autoDownloadParam === "true") {
-            setTimeout(async () => {
-                await downloadIdCardPDF();
-            }, 1200);
+    function updateOriToggleButtons(ori) {
+        activeOrientation = ori;
+        if (btnToggleOriVertical && btnToggleOriHorizontal) {
+            if (ori === "horizontal") {
+                btnToggleOriHorizontal.style.background = "#0F2B5C";
+                btnToggleOriHorizontal.style.color = "white";
+                btnToggleOriVertical.style.background = "transparent";
+                btnToggleOriVertical.style.color = "#9a3412";
+            } else {
+                btnToggleOriVertical.style.background = "#0F2B5C";
+                btnToggleOriVertical.style.color = "white";
+                btnToggleOriHorizontal.style.background = "transparent";
+                btnToggleOriHorizontal.style.color = "#9a3412";
+            }
         }
-    } else {
-        showInvalid();
     }
+
+    if (btnToggleOriVertical) {
+        btnToggleOriVertical.addEventListener("click", () => {
+            updateOriToggleButtons("vertical");
+            renderCard();
+        });
+    }
+
+    if (btnToggleOriHorizontal) {
+        btnToggleOriHorizontal.addEventListener("click", () => {
+            updateOriToggleButtons("horizontal");
+            renderCard();
+        });
+    }
+
+    // Setup Action Buttons
+    if (downloadPngBtn) downloadPngBtn.addEventListener("click", downloadIdCardPNG);
+    if (downloadPdfBtn) downloadPdfBtn.addEventListener("click", downloadIdCardPDF);
+    if (printCardBtn) printCardBtn.addEventListener("click", () => window.print());
+    if (logoutBtn) logoutBtn.addEventListener("click", () => logout().then(() => location.href = "index.html"));
+
+    // Watch Auth / Load Member
+    watchAuth(async (user) => {
+        const sessionMemberId = sessionStorage.getItem("tct_member_id") || sessionStorage.getItem("svpp_member_id") || memberIdParam;
+        const targetId = memberIdParam || sessionMemberId || user?.uid;
+
+        if (targetId) {
+            await loadMemberCard(targetId);
+        } else {
+            // Default to Sample Preview if visitor is browsing without ID
+            await loadSettings();
+            currentMember = {
+                id: "sample",
+                fullName: "Ananya S. Patel",
+                name: "Ananya S. Patel",
+                memberNumber: "SVPP-2026-9041",
+                designation: "State Executive Member",
+                fatherName: "Sardar Vallabhbhai Patel",
+                dob: "31/10/1990",
+                bloodGroup: "O+",
+                mobile: "+91 98200 12345",
+                email: "patel.svpp@gmail.com",
+                address: "18 Sardar Patel Marg, New Delhi - 110001",
+                joiningDate: new Date(),
+                status: "approved",
+                active: true
+            };
+            showValid();
+            renderCard();
+        }
+    });
 });
 
-// ========================================
-// LOAD MEMBER & SETTINGS
-// ========================================
-
-async function loadMemberCard(uid) {
+/**
+ * Load Global Settings from Firestore
+ */
+async function loadSettings() {
     try {
-        try {
-            [assetSettings, orgSettings, layoutSettings] = await Promise.all([
-                getDocument(COLLECTIONS.SETTINGS, "assets").catch(() => null),
-                getDocument(COLLECTIONS.SETTINGS, "organization").catch(() => null),
-                getDocument(COLLECTIONS.SETTINGS, "idCardLayout").catch(() => null)
-            ]);
-        } catch (err) {
-            console.warn("Settings documents could not be loaded:", err);
+        const [assetsDoc, orgDoc, layoutDoc] = await Promise.all([
+            getDocument(COLLECTIONS.SETTINGS, "assets").catch(() => null),
+            getDocument(COLLECTIONS.SETTINGS, "organization").catch(() => null),
+            getDocument(COLLECTIONS.SETTINGS, "idCardLayout").catch(() => null)
+        ]);
+
+        if (assetsDoc) assetSettings = assetsDoc;
+        if (orgDoc) orgSettings = { ...DEFAULT_ORG_SETTINGS, ...orgDoc };
+        if (layoutDoc) layoutSettings = layoutDoc;
+
+        // Determine orientation
+        if (requestedOrientation) {
+            activeOrientation = requestedOrientation.toLowerCase() === "horizontal" ? "horizontal" : "vertical";
+        } else if (layoutSettings?.orientation || layoutSettings?.cardOrientation) {
+            activeOrientation = layoutSettings.orientation || layoutSettings.cardOrientation;
+        } else if (layoutSettings?.preset === "svpp-horizontal" || layoutSettings?.preset === "horizontal") {
+            activeOrientation = "horizontal";
+        } else {
+            activeOrientation = "vertical";
         }
 
-        const member = await getDocument(COLLECTIONS.MEMBERS, uid);
-
-        if (!member) {
-            showInvalid();
-            return;
+        const btnToggleOriVertical = document.getElementById("btnToggleOriVertical");
+        const btnToggleOriHorizontal = document.getElementById("btnToggleOriHorizontal");
+        if (btnToggleOriVertical && btnToggleOriHorizontal) {
+            if (activeOrientation === "horizontal") {
+                btnToggleOriHorizontal.style.background = "#0F2B5C";
+                btnToggleOriHorizontal.style.color = "white";
+                btnToggleOriVertical.style.background = "transparent";
+                btnToggleOriVertical.style.color = "#9a3412";
+            } else {
+                btnToggleOriVertical.style.background = "#0F2B5C";
+                btnToggleOriVertical.style.color = "white";
+                btnToggleOriHorizontal.style.background = "transparent";
+                btnToggleOriHorizontal.style.color = "#9a3412";
+            }
         }
-
-        if (member.status !== MEMBER_STATUS.APPROVED) {
-            showInvalid();
-            return;
-        }
-
-        if (member.active === false || member.active === "false") {
-            showInvalid();
-            return;
-        }
-
-        currentMember = member;
-        showValid();
-        renderCard(member);
-    } catch (error) {
-        console.error(error);
-        showError("Failed to load ID card");
+    } catch (err) {
+        console.warn("Could not load Firestore settings, using fallback:", err);
     }
 }
 
-// ========================================
-// SHOW VALID / INVALID
-// ========================================
+/**
+ * Load Member Data by ID
+ */
+async function loadMemberCard(uid) {
+    try {
+        await loadSettings();
+
+        const member = await getDocument(COLLECTIONS.MEMBERS, uid);
+        if (member) {
+            currentMember = member;
+            showValid();
+            renderCard();
+
+            if (btnGoAppointmentLetter) {
+                btnGoAppointmentLetter.href = `appointment-letter-template.html?memberId=${member.id || uid}`;
+            }
+
+            if (autoDownloadParam === "true") {
+                setTimeout(downloadIdCardPNG, 1000);
+            }
+        } else {
+            // If ID not found in Firestore, load sample preview
+            currentMember = {
+                fullName: "Ananya S. Patel",
+                memberNumber: uid.length > 8 ? "SVPP-2026-9041" : uid,
+                designation: "State Executive Member",
+                fatherName: "Sardar Vallabhbhai Patel",
+                dob: "31/10/1990",
+                bloodGroup: "O+",
+                mobile: "+91 98200 12345",
+                email: "patel.svpp@gmail.com",
+                address: "18 Sardar Patel Marg, New Delhi - 110001",
+                status: "approved",
+                active: true
+            };
+            showValid();
+            renderCard();
+        }
+    } catch (error) {
+        console.error("Error loading member card:", error);
+        showToast("Loaded default preview card", "info");
+    }
+}
 
 function showValid() {
     if (validStatusSection) validStatusSection.style.display = "block";
-    if (invalidStatusSection) invalidStatusSection.style.display = "none";
-    const idCardPage = document.getElementById("idCardPage");
-    if (idCardPage) idCardPage.style.display = "block";
     const welcomeSection = document.querySelector(".dashboard-welcome-section");
     if (welcomeSection) welcomeSection.style.display = "block";
 }
 
-function showInvalid() {
-    if (validStatusSection) validStatusSection.style.display = "none";
-    if (invalidStatusSection) invalidStatusSection.style.display = "block";
-    const idCardPage = document.getElementById("idCardPage");
-    if (idCardPage) idCardPage.style.display = "none";
-    const welcomeSection = document.querySelector(".dashboard-welcome-section");
-    if (welcomeSection) welcomeSection.style.display = "none";
-}
+/**
+ * Render ID Card
+ */
+function renderCard() {
+    if (!dynamicCardContainer && !idCardOuterContainer) return;
+    const targetContainer = dynamicCardContainer || idCardOuterContainer;
 
-// ========================================
-// RENDER CARD
-// ========================================
-
-function renderCard(member) {
-    const orgName = orgSettings?.orgName || "Official Member Portal";
-    const leaderName = orgSettings?.leaderName || "Authorized Administration";
+    const orgName = orgSettings?.orgName || DEFAULT_ORG_SETTINGS.orgName;
+    const leaderName = orgSettings?.leaderName || DEFAULT_ORG_SETTINGS.leaderName;
 
     const topHeader = document.getElementById("topHeaderOrgName");
     if (topHeader) topHeader.textContent = orgName;
@@ -144,270 +231,115 @@ function renderCard(member) {
     const welcomeLeader = document.getElementById("welcomeLeaderName");
     if (welcomeLeader) welcomeLeader.textContent = leaderName;
 
-    // Use dynamic layout builder
-    if (idCardOuterContainer) {
-        const layoutConfig = layoutSettings || DEFAULT_LAYOUT_CONFIG;
-        idCardOuterContainer.innerHTML = buildIdCardHTML(
-            member,
-            orgSettings,
-            assetSettings,
-            layoutConfig
-        );
+    const layoutConfig = {
+        ...(layoutSettings || DEFAULT_LAYOUT_CONFIG),
+        orientation: activeOrientation,
+        cardOrientation: activeOrientation
+    };
+    const cardHTML = buildIdCardHTML(
+        currentMember || {},
+        orgSettings,
+        assetSettings,
+        layoutConfig,
+        activeSide
+    );
+
+    targetContainer.innerHTML = cardHTML;
+}
+
+/**
+ * 1-Click PNG Download via html2canvas
+ */
+async function downloadIdCardPNG() {
+    const cardElement = document.querySelector(".id-card-double-wrapper") || 
+                        document.querySelector(".svpp-id-card") || 
+                        document.querySelector(".custom-id-card-side") ||
+                        idCardOuterContainer;
+
+    if (!cardElement) {
+        showToast("ID Card element not found for download", "error");
+        return;
+    }
+
+    try {
+        showToast("Generating high-resolution PNG...", "info");
+        downloadPngBtn.disabled = true;
+
+        const canvas = await window.html2canvas(cardElement, {
+            scale: 3, // 3x sharp resolution
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: null,
+            logging: false
+        });
+
+        const imageUri = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        const memberId = (currentMember?.memberNumber || "SVPP-ID").replace(/[^a-zA-Z0-9]/g, "_");
+        link.download = `SVPP_ID_Card_${memberId}_${activeSide}.png`;
+        link.href = imageUri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast("ID Card PNG downloaded successfully!", "success");
+    } catch (err) {
+        console.error("PNG export error:", err);
+        showToast("Failed to generate PNG image", "error");
+    } finally {
+        downloadPngBtn.disabled = false;
     }
 }
 
-// ========================================
-// PDF DOWNLOAD
-// ========================================
-
+/**
+ * 1-Click PDF Download
+ */
 async function downloadIdCardPDF() {
-    try {
-        const card = document.querySelector(".member-id-card");
-        if (!card) {
-            showError("ID card element not found");
-            return;
-        }
+    const cardElement = document.querySelector(".id-card-double-wrapper") || 
+                        document.querySelector(".svpp-id-card") || 
+                        document.querySelector(".custom-id-card-side") ||
+                        idCardOuterContainer;
 
-        const canvas = await html2canvas(card, {
-            scale: 3,
+    if (!cardElement) {
+        showToast("ID Card element not found", "error");
+        return;
+    }
+
+    try {
+        showToast("Generating PDF document...", "info");
+        downloadPdfBtn.disabled = true;
+
+        const canvas = await window.html2canvas(cardElement, {
+            scale: 2.5,
             useCORS: true,
-            allowTaint: false,
-            scrollX: 0,
-            scrollY: 0,
-            windowWidth: document.documentElement.clientWidth,
-            windowHeight: document.documentElement.clientHeight
+            allowTaint: true,
+            backgroundColor: "#ffffff",
+            logging: false
         });
 
         const imageData = canvas.toDataURL("image/png");
         const { jsPDF } = window.jspdf;
 
-        const isHorizontal = card.classList.contains("card-layout-horizontal") || canvas.width > canvas.height;
-
-        let pdfWidthMm = 54;
-        let pdfHeightMm = 86;
-
-        if (isHorizontal) {
-            pdfWidthMm = 86;
-            pdfHeightMm = parseFloat((pdfWidthMm * canvas.height / canvas.width).toFixed(4));
-        } else {
-            pdfWidthMm = 54;
-            pdfHeightMm = parseFloat((pdfWidthMm * canvas.height / canvas.width).toFixed(4));
-        }
-
+        const isWide = canvas.width > canvas.height;
         const pdf = new jsPDF({
-            orientation: isHorizontal ? "landscape" : "portrait",
+            orientation: isWide ? "landscape" : "portrait",
             unit: "mm",
-            format: [pdfWidthMm, pdfHeightMm]
+            format: isWide ? [160, 100] : [100, 160]
         });
 
-        pdf.addImage(imageData, "PNG", 0, 0, pdfWidthMm, pdfHeightMm);
+        const imgProps = pdf.getImageProperties(imageData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imageData, "PNG", 0, 0, pdfWidth, pdfHeight);
         const memberNumber = currentMember?.memberNumber || "ID-Card";
-        pdf.save(`Member-ID-${memberNumber}.pdf`);
-        showSuccess("PDF ID Card downloaded successfully!");
-    } catch (error) {
-        console.error("PDF generation failed:", error);
-        showError("Failed to generate PDF");
-    }
-}
+        pdf.save(`SVPP-ID-${memberNumber}.pdf`);
 
-// ========================================
-// PNG DOWNLOAD
-// ========================================
-
-async function downloadIdCardPNG() {
-    try {
-        const card = document.querySelector(".member-id-card");
-        if (!card) {
-            showError("ID card element not found");
-            return;
-        }
-
-        const canvas = await html2canvas(card, {
-            scale: 3,
-            useCORS: true,
-            allowTaint: false,
-            scrollX: 0,
-            scrollY: 0
-        });
-
-        const imageUri = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        const memberNumber = currentMember?.memberNumber || "ID-Card";
-        link.download = `Member-ID-${memberNumber}.png`;
-        link.href = imageUri;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showSuccess("PNG ID Card downloaded successfully!");
-    } catch (error) {
-        console.error("PNG export failed:", error);
-        showError("Failed to generate PNG image");
-    }
-}
-
-// ========================================
-// MEMBERSHIP LETTER PDF DOWNLOAD
-// ========================================
-
-async function downloadMembershipLetterPDF() {
-    try {
-        if (!currentMember) {
-            showError("Member details not loaded");
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-            orientation: "portrait",
-            unit: "mm",
-            format: "a4"
-        });
-
-        const orgName = orgSettings?.name || "THAMARAI CHARITABLE TRUST & FOUNDATION";
-        const orgSub = orgSettings?.subtitle || "Registered Charitable Trust & Non-Profit Foundation";
-        const authorityName = orgSettings?.authorityName || "Authorized Signatory";
-        const authorityTitle = orgSettings?.authorityTitle || "President / General Secretary";
-
-        // Header blue banner
-        pdf.setFillColor(37, 99, 235);
-        pdf.rect(0, 0, 210, 26, "F");
-
-        pdf.setTextColor(255, 255, 255);
-        pdf.setFontSize(15);
-        pdf.setFont("helvetica", "bold");
-        pdf.text(orgName, 105, 12, { align: "center" });
-
-        pdf.setFontSize(9);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(orgSub, 105, 19, { align: "center" });
-
-        // Letter Header & Reference
-        pdf.setTextColor(15, 23, 42);
-        pdf.setFontSize(11);
-        pdf.setFont("helvetica", "bold");
-        pdf.text("OFFICIAL MEMBERSHIP APPOINTMENT LETTER", 105, 36, { align: "center" });
-
-        pdf.setFontSize(9);
-        pdf.setFont("helvetica", "normal");
-        const todayStr = new Date().toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric' });
-        pdf.text(`Ref No: TCT/MEM/${currentMember.memberNumber || "NEW"}`, 15, 46);
-        pdf.text(`Date: ${todayStr}`, 195, 46, { align: "right" });
-
-        pdf.setLineWidth(0.4);
-        pdf.setDrawColor(203, 213, 225);
-        pdf.line(15, 49, 195, 49);
-
-        // Recipient Address
-        let y = 58;
-        pdf.setFont("helvetica", "bold");
-        pdf.text("To,", 15, y); y += 6;
-        pdf.setFontSize(11);
-        pdf.text(currentMember.fullName || "Valued Member", 15, y); y += 5;
-        pdf.setFontSize(9.5);
-        pdf.setFont("helvetica", "normal");
-        if (currentMember.fatherName) { pdf.text(`S/o, D/o, W/o: ${currentMember.fatherName}`, 15, y); y += 5; }
-        if (currentMember.address) { pdf.text(`Address: ${currentMember.address}`, 15, y); y += 5; }
-        if (currentMember.mobile) { pdf.text(`Contact: ${currentMember.mobile} | Email: ${currentMember.email || "N/A"}`, 15, y); y += 8; }
-
-        // Subject Line
-        pdf.setFont("helvetica", "bold");
-        pdf.text(`Subject: Official Membership Confirmation - Member ID: ${currentMember.memberNumber || currentMember.uid}`, 15, y); y += 10;
-
-        // Content Body
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(10);
-        pdf.text(`Dear ${currentMember.fullName},`, 15, y); y += 7;
-
-        const bodyMsg1 = `We are pleased to inform you that your application for membership with ${orgName} has been officially approved and verified by the administrative board.`;
-        pdf.text(pdf.splitTextToSize(bodyMsg1, 180), 15, y); y += 12;
-
-        const bodyMsg2 = `As a recognized ${currentMember.memberType === "active_member" ? "Active Member" : "Regular Member"}, you are hereby granted full participation in our community welfare initiatives, charitable programs, and official foundation events.`;
-        pdf.text(pdf.splitTextToSize(bodyMsg2, 180), 15, y); y += 12;
-
-        // Verification Table Box
-        pdf.setFillColor(248, 250, 252);
-        pdf.rect(15, y, 180, 42, "F");
-        pdf.setDrawColor(226, 232, 240);
-        pdf.rect(15, y, 180, 42, "S");
-
-        let ty = y + 7;
-        pdf.setFont("helvetica", "bold");
-        pdf.text("Official Membership Verification Details:", 20, ty); ty += 7;
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(9);
-        pdf.text(`• Full Name: ${currentMember.fullName}`, 20, ty);
-        pdf.text(`• Member ID: ${currentMember.memberNumber || "Pending"}`, 110, ty); ty += 6;
-        pdf.text(`• Member Category: ${currentMember.memberType === "active_member" ? "Active Member" : "Regular Member"}`, 20, ty);
-        pdf.text(`• Blood Group: ${currentMember.bloodGroup || "N/A"}`, 110, ty); ty += 6;
-        pdf.text(`• Issue Date: ${formatDate(currentMember.approvedAt || currentMember.createdAt)}`, 20, ty);
-        pdf.text(`• Status: Official & Approved`, 110, ty); y += 50;
-
-        // Closing Statement
-        pdf.setFontSize(10);
-        const bodyMsg3 = `Thank you for standing with us in our noble mission to serve society and empower communities.`;
-        pdf.text(pdf.splitTextToSize(bodyMsg3, 180), 15, y); y += 20;
-
-        // Signatory
-        pdf.setFont("helvetica", "bold");
-        pdf.text("Warm Regards,", 15, y); y += 12;
-        pdf.text(authorityName, 15, y); y += 5;
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(9);
-        pdf.text(authorityTitle, 15, y); y += 4;
-        pdf.text(orgName, 15, y);
-
-        pdf.save(`Membership_Appointment_Letter_${currentMember.memberNumber || "Official"}.pdf`);
-        showSuccess("Membership letter downloaded successfully!");
+        showToast("PDF downloaded successfully!", "success");
     } catch (err) {
-        console.error("Letter generation error:", err);
-        showError("Failed to generate membership letter.");
+        console.error("PDF export error:", err);
+        showToast("Failed to generate PDF", "error");
+    } finally {
+        downloadPdfBtn.disabled = false;
     }
-}
-
-// ========================================
-// EVENT LISTENERS
-// ========================================
-
-if (downloadPdfBtn) {
-    downloadPdfBtn.addEventListener("click", async () => {
-        await downloadIdCardPDF();
-    });
-}
-
-if (downloadPngBtn) {
-    downloadPngBtn.addEventListener("click", async () => {
-        await downloadIdCardPNG();
-    });
-}
-
-if (downloadLetterBtn) {
-    downloadLetterBtn.addEventListener("click", async () => {
-        await downloadMembershipLetterPDF();
-    });
-}
-
-if (printCardBtn) {
-    printCardBtn.addEventListener("click", () => {
-        window.print();
-    });
-}
-
-if (logoutBtn) {
-    logoutBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        try {
-            await logout();
-            location.href = "member-login.html";
-        } catch (error) {
-            console.error(error);
-        }
-    });
-}
-
-function showSuccess(msg) {
-    console.log("Success:", msg);
-}
-
-function showError(msg) {
-    console.error("Error:", msg);
 }

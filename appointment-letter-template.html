@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Official Appointment Letter Studio | Sardar Vallabhbhai Patel Party</title>
+    <meta name="description" content="Generate and download official appointment letters and certificates for party members and office bearers." />
+    
+    <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Google Fonts: Outfit & Caveat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- html2canvas for 1-Click PNG Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+      body {
+        background-color: #f8fafc;
+        font-family: 'Outfit', sans-serif;
+        color: #0f172a;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Official Tricolor Top Ribbon */
+      .tricolor-ribbon {
+        display: flex;
+        height: 6px;
+        width: 100%;
+      }
+      .tricolor-ribbon .saffron { flex: 1; background: #FF9933; }
+      .tricolor-ribbon .white { flex: 1; background: #FFFFFF; }
+      .tricolor-ribbon .green { flex: 1; background: #138808; }
+
+      .studio-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 24px 20px 60px;
+      }
+
+      .studio-grid {
+        display: grid;
+        grid-template-columns: 440px 1fr;
+        gap: 28px;
+        align-items: flex-start;
+      }
+
+      @media (max-width: 1080px) {
+        .studio-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Control Panel Box */
+      .control-panel-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(15, 43, 92, 0.06);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #0F2B5C;
+        margin-bottom: 6px;
+      }
+      .form-control {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-family: inherit;
+        background: #ffffff;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+      .form-control:focus {
+        outline: none;
+        border-color: #FF9933;
+        box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.15);
+      }
+
+      /* Shortcode Badges */
+      .shortcode-badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        background: #f1f5f9;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+      }
+      .shortcode-chip {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #0F2B5C;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.15s;
+      }
+      .shortcode-chip:hover {
+        background: #0F2B5C;
+        color: #ffffff;
+        border-color: #0F2B5C;
+        transform: translateY(-1px);
+      }
+
+      /* Action Buttons */
+      .btn-action-primary {
+        background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%);
+        color: #ffffff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+      .btn-action-primary:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(15, 43, 92, 0.25);
+      }
+
+      .btn-action-secondary {
+        background: #ffffff;
+        color: #0F2B5C;
+        border: 1.5px solid #cbd5e1;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+      .btn-action-secondary:hover {
+        background: #f8fafc;
+        border-color: #0F2B5C;
+      }
+
+      /* Canvas Preview Stage */
+      .canvas-preview-stage {
+        background: #334155;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: auto;
+      }
+
+      @media print {
+        header, .tricolor-ribbon, .control-panel-card, .studio-header-block, .btn-action-row {
+          display: none !important;
+        }
+        body, .studio-container, .studio-grid, .canvas-preview-stage {
+          background: white !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          box-shadow: none !important;
+        }
+        .appointment-letter-sheet {
+          box-shadow: none !important;
+          border: none !important;
+          margin: 0 auto !important;
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top Tricolor Ribbon -->
+    <div class="tricolor-ribbon">
+      <div class="saffron"></div>
+      <div class="white"></div>
+      <div class="green"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header style="background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 24px;">
+      <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="images/logo.jpg" alt="SVPP Logo" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FF9933;" onerror="this.src='images/logo.jpg'" />
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 900; color: #0F2B5C; text-transform: uppercase;">
+              Sardar Vallabhbhai Patel Party
+            </div>
+            <div style="font-size: 0.72rem; color: #166534; font-weight: 700;">
+              Official Appointment Letter & Credential Studio
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="index.html" style="text-decoration: none; color: #0F2B5C; font-weight: 700; font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; background: #f1f5f9;">🏠 Home Hub</a>
+          <a href="id-card-template.html" style="text-decoration: none; color: #0F2B5C; font-weight: 700; font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; background: #f1f5f9;">🪪 ID Card Studio</a>
+          <a href="admin-dashboard.html" style="text-decoration: none; color: white; background: #0F2B5C; font-weight: 700; font-size: 0.85rem; padding: 6px 14px; border-radius: 6px;">⚙️ Admin Panel</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Studio Content Area -->
+    <div class="studio-container">
+      
+      <!-- Studio Title Block -->
+      <div class="studio-header-block" style="margin-bottom: 24px;">
+        <h1 style="font-size: 1.6rem; font-weight: 900; color: #0F2B5C; margin: 0 0 6px;">
+          🎖️ Appointment Letter Studio
+        </h1>
+        <p style="color: #475569; font-size: 0.9rem; margin: 0;">
+          Generate high-resolution formal appointment orders with live dynamic shortcode replacements, dispatch references, and official seals.
+        </p>
+      </div>
+
+      <div class="studio-grid">
+        
+        <!-- Left: Control Panel & Editor -->
+        <div class="control-panel-card">
+          
+          <h2 style="font-size: 1.1rem; font-weight: 800; color: #0F2B5C; margin: 0 0 16px; border-bottom: 2px solid #FF9933; padding-bottom: 8px;">
+            📝 Appointment Controls
+          </h2>
+
+          <!-- Member Selector -->
+          <div class="form-group">
+            <label for="memberSelectDropdown">👤 Select Member / Candidate:</label>
+            <select id="memberSelectDropdown" class="form-control">
+              <option value="sample">Sample Preview: Ananya S. Patel (SVPP-2026-9041)</option>
+            </select>
+          </div>
+
+          <!-- Designation -->
+          <div class="form-group">
+            <label for="designationInput">🎖️ Assigned Designation / Portfolio:</label>
+            <input type="text" id="designationInput" class="form-control" value="State Executive Member" placeholder="e.g. State Executive Member, Youth Wing President" />
+          </div>
+
+          <!-- Dispatch Reference & Appointment Date in 2 columns -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label for="refNumberInput">📑 Dispatch Ref No:</label>
+              <input type="text" id="refNumberInput" class="form-control" value="SVPP/HQ/2026/089" />
+            </div>
+            <div class="form-group">
+              <label for="appointmentDateInput">📅 Appointment Date:</label>
+              <input type="date" id="appointmentDateInput" class="form-control" />
+            </div>
+          </div>
+
+          <!-- Validity / Valid Upto -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label for="validUptoInput" style="margin: 0;">⏳ Valid Upto:</label>
+              <button type="button" id="btnSetOneYear" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">+ 1 Year</button>
+            </div>
+            <input type="text" id="validUptoInput" class="form-control" value="14/08/2027" placeholder="DD/MM/YYYY" />
+          </div>
+
+          <!-- Clickable Shortcode Badges -->
+          <div class="form-group">
+            <label>⚡ Insert Dynamic Shortcode Tags into Body:</label>
+            <div class="shortcode-badge-container" id="letterShortcodeBadges">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+
+          <!-- Editable Letter Body -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label for="letterBodyTextarea" style="margin: 0;">📜 Letter Body Template:</label>
+              <button type="button" id="btnResetLetterBody" style="background: transparent; border: none; color: #dc2626; font-size: 0.75rem; font-weight: 700; cursor: pointer;">🔄 Reset Default</button>
+            </div>
+            <textarea id="letterBodyTextarea" class="form-control" rows="12" style="font-size: 0.82rem; font-family: monospace; line-height: 1.4;"></textarea>
+          </div>
+
+          <!-- Action Buttons Row -->
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;" class="btn-action-row">
+            <button type="button" id="btnDownloadLetterPng" class="btn-action-primary" style="justify-content: center;">
+              <span>📥</span> Download Official Letter (PNG)
+            </button>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" id="btnPrintLetter" class="btn-action-secondary" style="flex: 1; justify-content: center;">
+                <span>🖨️</span> Print Letter
+              </button>
+              <button type="button" id="btnCopyLetterText" class="btn-action-secondary" style="flex: 1; justify-content: center;">
+                <span>📋</span> Copy Text
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Live Letterhead Canvas -->
+        <div class="canvas-preview-stage">
+          <div style="color: #ffffff; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <span>📄 LIVE OFFICIAL LETTERHEAD PREVIEW</span>
+            <span style="background: #166534; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem;">HIGH-DPI FORMAT</span>
+          </div>
+
+          <div id="appointmentLetterCanvasWrapper">
+            <!-- Rendered by appointment-letter-renderer.js -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Page Script -->
+    <script type="module" src="js/pages/appointment-letter-template.js"></script>
+  </body>
+</html>

@@ -1,10 +1,30 @@
 // ========================================
-// APP NAME
+// APP NAME & PARTY DEFAULTS
 // ========================================
 
-export const APP_NAME =
+export const APP_NAME = "SARDAR VALLABHBHAI PATEL PARTY";
+export const PARTY_SHORT_NAME = "SVPP";
+export const PARTY_WEBSITE = "svpparty.co";
+export const PARTY_SLOGAN = "Your Voice. Your Strength. Our Commitment.";
+export const PARTY_HEADER_ACCENT = "#FF9933";
+export const PARTY_PRIMARY_BLUE = "#0F2B5C";
+export const PARTY_ACCENT_GREEN = "#138808";
 
-    "தாமரை தொண்டு நிறுவன அறக்கட்டளை";
+export const DEFAULT_ORG_SETTINGS = {
+    orgName: "SARDAR VALLABHBHAI PATEL PARTY",
+    name: "SARDAR VALLABHBHAI PATEL PARTY",
+    subtitle: "Rashtriya Rajnitik Dal | National Political Party",
+    leaderName: "National President",
+    authorityName: "Authorized Signatory",
+    authorityTitle: "National General Secretary / President",
+    website: "svpparty.co",
+    slogan: "Your Voice. Your Strength. Our Commitment.",
+    phone: "+91 98200 12345",
+    email: "contact@svpparty.co",
+    address: "National Headquarters, New Delhi, India",
+    validityYears: 1,
+    defaultDesignation: "State Executive Member"
+};
 
 // ========================================
 // MEMBER STATUS

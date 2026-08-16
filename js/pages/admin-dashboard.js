@@ -81,6 +81,11 @@ const clearAllOldMembersBtn = document.getElementById("clearAllOldMembersBtn");
 
 // Organization Settings Elements
 const orgSettingsForm = document.getElementById("orgSettingsForm");
+const portalTitleInput = document.getElementById("portalTitleInput");
+const portalSubtitleInput = document.getElementById("portalSubtitleInput");
+const portalLogoUpload = document.getElementById("portalLogoUpload");
+const portalLogoUrlInput = document.getElementById("portalLogoUrlInput");
+const currentLogoPreview = document.getElementById("currentLogoPreview");
 const orgNameInput = document.getElementById("orgNameInput");
 const orgTaglineInput = document.getElementById("orgTaglineInput");
 const orgPhoneInput = document.getElementById("orgPhoneInput");
@@ -401,14 +406,35 @@ async function loadApprovedMembers(searchFilter = "") {
                         </span>
                     </td>
                     <td style="text-align: center;">
-                        <a
-                            href="id-card-template.html?memberId=${member.id}&download=true"
-                            target="_blank"
-                            class="btn-download-id"
-                            title="Generate and download official PDF ID Card"
-                        >
-                            🎴 Download ID Card
-                        </a>
+                        <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
+                            <button
+                                type="button"
+                                class="btn-edit-member-preview"
+                                data-id="${member.id}"
+                                style="background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;"
+                                title="Edit profile data with real-time live ID preview"
+                            >
+                                ✏️ Edit & Preview
+                            </button>
+                            <a
+                                href="id-card-template.html?memberId=${member.id}"
+                                target="_blank"
+                                class="btn-download-id"
+                                style="background-color: #0F2B5C;"
+                                title="Open Digital ID Card Studio"
+                            >
+                                🪪 ID Card
+                            </a>
+                            <a
+                                href="appointment-letter-template.html?memberId=${member.id}"
+                                target="_blank"
+                                class="btn-download-id"
+                                style="background-color: #138808;"
+                                title="Issue Appointment Letter"
+                            >
+                                🎖️ Letter
+                            </a>
+                        </div>
                     </td>
                     <td>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
@@ -657,6 +683,19 @@ document.addEventListener("click", async (e) => {
 
 async function loadOrgSettings() {
     const settings = dashboardState.orgSettings;
+    const assets = dashboardState.assetSettings;
+
+    if (portalTitleInput) portalTitleInput.value = settings?.portalTitle || "Member & ID Card Portal";
+    if (portalSubtitleInput) portalSubtitleInput.value = settings?.portalSubtitle || "Digital Member Management & Verification System";
+    if (portalLogoUrlInput) portalLogoUrlInput.value = settings?.logoUrl || assets?.logoUrl || "";
+
+    const activeLogoUrl = settings?.logoUrl || assets?.logoUrl || "images/logo.jpg";
+    if (currentLogoPreview) {
+        currentLogoPreview.innerHTML = `
+            <img src="${activeLogoUrl}" alt="Logo Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='images/logo.jpg'" />
+        `;
+    }
+
     if (!settings) return;
 
     if (orgNameInput) orgNameInput.value = settings.orgName || "";
@@ -673,20 +712,44 @@ if (orgSettingsForm) {
         e.preventDefault();
         try {
             if (dashboardLoader) dashboardLoader.style.display = "block";
+
+            let logoUrl = portalLogoUrlInput?.value?.trim() || dashboardState.orgSettings?.logoUrl || "";
+
+            // Check if a new logo file was selected
+            const logoFile = portalLogoUpload?.files?.[0];
+            if (logoFile) {
+                try {
+                    logoUrl = await uploadMemberPhoto("portal-brand-logo", logoFile);
+                } catch (logoErr) {
+                    console.warn("Logo upload fallback:", logoErr);
+                }
+            }
+
             const payload = {
-                orgName: orgNameInput?.value?.trim() || "Official Member Portal",
-                tagline: orgTaglineInput?.value?.trim() || "Official Digital Identification Portal",
-                phone: orgPhoneInput?.value?.trim() || "",
-                email: orgEmailInput?.value?.trim() || "",
-                address: orgAddressInput?.value?.trim() || "",
-                leaderName: orgLeaderNameInput?.value?.trim() || "Authorized Signatory",
+                portalTitle: portalTitleInput?.value?.trim() || "Member & ID Card Portal",
+                portalSubtitle: portalSubtitleInput?.value?.trim() || "Digital Member Management & Verification System",
+                logoUrl: logoUrl,
+                orgName: orgNameInput?.value?.trim() || "SARDAR VALLABHBHAI PATEL PARTY",
+                tagline: orgTaglineInput?.value?.trim() || "Your Voice. Your Strength. Our Commitment.",
+                website: "svpparty.co",
+                phone: orgPhoneInput?.value?.trim() || "+91 98200 12345",
+                email: orgEmailInput?.value?.trim() || "contact@svpparty.co",
+                address: orgAddressInput?.value?.trim() || "18 Sardar Patel Marg, New Delhi - 110001",
+                leaderName: orgLeaderNameInput?.value?.trim() || "National President",
                 leaderTitle: orgLeaderTitleInput?.value?.trim() || "President / General Secretary",
                 updatedAt: serverTimestamp()
             };
 
             await setDocument(COLLECTIONS.SETTINGS, "organization", payload, { merge: true });
-            showSuccess("Organization profile saved successfully!");
+            
+            // Also sync logoUrl to assets settings if available
+            if (logoUrl) {
+                await setDocument(COLLECTIONS.SETTINGS, "assets", { logoUrl }, { merge: true });
+            }
+
+            showSuccess("Organization & Portal Branding saved successfully!");
             await fetchDashboardData();
+            await loadOrgSettings();
             updateStudioLivePreview();
         } catch (err) {
             console.error("Error saving org settings:", err);
@@ -1031,11 +1094,43 @@ const canvasSideBadge = document.getElementById("canvasSideBadge");
 const elementInspectorBox = document.getElementById("elementInspectorBox");
 const inspectorTagLabel = document.getElementById("inspectorTagLabel");
 const btnDeleteSelectedElement = document.getElementById("btnDeleteSelectedElement");
+const btnDuplicateElement = document.getElementById("btnDuplicateElement");
+const inspectorPosX = document.getElementById("inspectorPosX");
+const inspectorPosY = document.getElementById("inspectorPosY");
 const inspectorFontSize = document.getElementById("inspectorFontSize");
 const inspectorFontWeight = document.getElementById("inspectorFontWeight");
 const inspectorColor = document.getElementById("inspectorColor");
+const inspectorColorHex = document.getElementById("inspectorColorHex");
+const inspectorMediaSizeBlock = document.getElementById("inspectorMediaSizeBlock");
+const inspectorDimensionsLabel = document.getElementById("inspectorDimensionsLabel");
+const inspectorWidth = document.getElementById("inspectorWidth");
+const inspectorHeight = document.getElementById("inspectorHeight");
+const inspectorBorderRadius = document.getElementById("inspectorBorderRadius");
+const inspectorQuickSizePresets = document.getElementById("inspectorQuickSizePresets");
+const selectedCoordinatesHint = document.getElementById("selectedCoordinatesHint");
+const cardOrientationSelector = document.getElementById("cardOrientationSelector");
+
+// Canvas Zoom Controls
+const btnZoomIn = document.getElementById("btnZoomIn");
+const btnZoomOut = document.getElementById("btnZoomOut");
+const btnZoomReset = document.getElementById("btnZoomReset");
+const canvasZoomLabel = document.getElementById("canvasZoomLabel");
+
+// Live Preview Controls
+const studioPreviewMemberSelect = document.getElementById("studioPreviewMemberSelect");
+const btnPreviewModeBoth = document.getElementById("btnPreviewModeBoth");
+const btnPreviewModeFront = document.getElementById("btnPreviewModeFront");
+const btnPreviewModeBack = document.getElementById("btnPreviewModeBack");
+const btnPreviewModeFlip = document.getElementById("btnPreviewModeFlip");
+const btnStudioTestPng = document.getElementById("btnStudioTestPng");
+const btnStudioTestPdf = document.getElementById("btnStudioTestPdf");
+const btnStudioTestPrint = document.getElementById("btnStudioTestPrint");
+
+let studioCanvasZoom = 1.0;
+let studioPreviewMode = "both"; // "both" | "front" | "back" | "3d-flip"
 
 let studioState = {
+    orientation: "vertical", // "vertical" | "horizontal"
     activeCanvasSide: "front", // "front" | "back"
     selectedElementId: null,
     useCustomTemplate: false,
@@ -1045,8 +1140,65 @@ let studioState = {
     backElements: []
 };
 
+// Canvas Zoom Helpers
+function setCanvasZoom(newZoom) {
+    studioCanvasZoom = Math.min(1.8, Math.max(0.6, parseFloat(newZoom.toFixed(2))));
+    if (interactiveCardCanvas) {
+        interactiveCardCanvas.style.transform = `scale(${studioCanvasZoom})`;
+    }
+    if (canvasZoomLabel) {
+        canvasZoomLabel.textContent = `${Math.round(studioCanvasZoom * 100)}%`;
+    }
+}
+
+if (btnZoomIn) {
+    btnZoomIn.addEventListener("click", () => setCanvasZoom(studioCanvasZoom + 0.15));
+}
+if (btnZoomOut) {
+    btnZoomOut.addEventListener("click", () => setCanvasZoom(studioCanvasZoom - 0.15));
+}
+if (btnZoomReset) {
+    btnZoomReset.addEventListener("click", () => setCanvasZoom(1.0));
+}
+
+function setStudioOrientationUI(orientation = "vertical") {
+    studioState.orientation = orientation;
+
+    if (cardOrientationSelector) {
+        cardOrientationSelector.querySelectorAll(".orientation-choice-card").forEach((card) => {
+            const cardOri = card.dataset.orientation;
+            const badge = card.querySelector(".active-badge");
+            if (cardOri === orientation) {
+                card.classList.add("active");
+                card.style.borderColor = "#0F2B5C";
+                card.style.background = "#eff6ff";
+                if (badge) badge.style.display = "inline-block";
+            } else {
+                card.classList.remove("active");
+                card.style.borderColor = "#e2e8f0";
+                card.style.background = "white";
+                if (badge) badge.style.display = "none";
+            }
+        });
+    }
+
+    // Adjust interactive canvas dimensions based on orientation
+    if (interactiveCardCanvas) {
+        if (orientation === "horizontal") {
+            interactiveCardCanvas.style.width = "340px";
+            interactiveCardCanvas.style.height = "214px";
+        } else {
+            interactiveCardCanvas.style.width = "240px";
+            interactiveCardCanvas.style.height = "370px";
+        }
+    }
+}
+
 function loadIdCardStudio() {
     const config = dashboardState.layoutSettings || DEFAULT_LAYOUT_CONFIG;
+    const initialOrientation = config.orientation || config.cardOrientation || (config.preset === "svpp-horizontal" || config.preset === "horizontal" ? "horizontal" : "vertical");
+
+    setStudioOrientationUI(initialOrientation);
 
     studioState.useCustomTemplate = config.useCustomTemplate || config.preset === "custom";
     studioState.frontBgUrl = config.frontBgUrl || "";
@@ -1112,10 +1264,35 @@ function loadIdCardStudio() {
     if (toggleIssueDate) toggleIssueDate.checked = config.showIssueDate !== false;
     if (toggleSignatory) toggleSignatory.checked = config.showSignatory !== false;
 
+    populateStudioMemberSelect();
     renderShortcodePalette();
     renderInteractiveCanvas();
     updateInspector();
     updateStudioLivePreview();
+}
+
+function populateStudioMemberSelect() {
+    if (!studioPreviewMemberSelect) return;
+    const curVal = studioPreviewMemberSelect.value || "default";
+
+    const approvedMembers = dashboardState.members.filter((m) => m.status === MEMBER_STATUS.APPROVED);
+    
+    let html = `
+        <option value="default">Sample (Rajeshwar Verma)</option>
+        <option value="president">Sample (State President)</option>
+        <option value="long-name">Sample (Long Name Test)</option>
+    `;
+
+    if (approvedMembers.length > 0) {
+        html += `<optgroup label="Real Approved Members">`;
+        approvedMembers.slice(0, 15).forEach((m) => {
+            html += `<option value="member-${m.id}">${escapeHtml(m.fullName)} (${m.memberNumber || "Approved"})</option>`;
+        });
+        html += `</optgroup>`;
+    }
+
+    studioPreviewMemberSelect.innerHTML = html;
+    studioPreviewMemberSelect.value = curVal;
 }
 
 function renderShortcodePalette() {
@@ -1150,8 +1327,9 @@ function addShortcodeToCanvas(tag) {
         fontSize: sc.isMedia ? undefined : 12,
         fontWeight: sc.isMedia ? undefined : "600",
         color: sc.isMedia ? undefined : "#0f172a",
-        width: sc.tag === "{photo}" ? 75 : (sc.tag === "{qrCode}" ? 55 : (sc.tag === "{signature}" ? 80 : undefined)),
-        height: sc.tag === "{photo}" ? 95 : (sc.tag === "{qrCode}" ? 55 : (sc.tag === "{signature}" ? 35 : undefined))
+        width: sc.tag === "{photo}" ? 88 : (sc.tag === "{qrCode}" ? 55 : (sc.tag === "{signature}" ? 110 : undefined)),
+        height: sc.tag === "{photo}" ? 110 : (sc.tag === "{qrCode}" ? 55 : (sc.tag === "{signature}" ? 38 : undefined)),
+        borderRadius: sc.tag === "{photo}" ? 8 : (sc.tag === "{qrCode}" ? 6 : undefined)
     };
 
     if (studioState.activeCanvasSide === "front") {
@@ -1187,10 +1365,66 @@ function renderInteractiveCanvas() {
         const isSelected = el.id === studioState.selectedElementId;
         const scDef = AVAILABLE_SHORTCODES.find((s) => s.tag === el.tag) || {};
 
+        const isMedia = el.tag === "{photo}" || el.tag === "{qrCode}" || el.tag === "{signature}";
+        
         let content = `${scDef.icon || "🏷️"} ${el.label || el.tag}`;
-        if (el.tag === "{photo}") content = `🖼️ Member Photo`;
-        if (el.tag === "{qrCode}") content = `🔳 QR Code`;
-        if (el.tag === "{signature}") content = `✍️ Signature`;
+        let mediaBadge = "";
+        let resizeHandleHTML = "";
+
+        if (isMedia) {
+            const w = el.width || (el.tag === "{photo}" ? 88 : (el.tag === "{signature}" ? 110 : 55));
+            const h = el.height || (el.tag === "{photo}" ? 110 : (el.tag === "{signature}" ? 38 : 55));
+            const r = el.borderRadius !== undefined ? `${el.borderRadius}px` : (el.tag === "{photo}" ? "8px" : "4px");
+
+            if (el.tag === "{photo}") {
+                content = `
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e0f2fe; border: 1.5px solid #0284c7; border-radius: ${r}; overflow: hidden; pointer-events: none;">
+                        <span style="font-size: 1.1rem;">👤</span>
+                        <span style="font-size: 0.62rem; font-weight: 800; color: #0369a1; text-transform: uppercase;">PHOTO</span>
+                        <span style="font-size: 0.55rem; color: #0284c7; font-family: monospace;">${w}×${h}</span>
+                    </div>
+                `;
+            } else if (el.tag === "{qrCode}") {
+                content = `
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; border: 1.5px solid #64748b; border-radius: ${r}; overflow: hidden; pointer-events: none;">
+                        <span style="font-size: 1.1rem;">🔳</span>
+                        <span style="font-size: 0.55rem; font-weight: 800; color: #334155; text-transform: uppercase;">QR CODE</span>
+                        <span style="font-size: 0.52rem; color: #64748b; font-family: monospace;">${w}×${h}</span>
+                    </div>
+                `;
+            } else if (el.tag === "{signature}") {
+                content = `
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fefce8; border: 1.5px solid #ca8a04; border-radius: ${r}; overflow: hidden; pointer-events: none;">
+                        <span style="font-size: 0.9rem;">✍️</span>
+                        <span style="font-size: 0.58rem; font-weight: 800; color: #854d0e; text-transform: uppercase;">SIGNATURE</span>
+                        <span style="font-size: 0.52rem; color: #ca8a04; font-family: monospace;">${w}×${h}</span>
+                    </div>
+                `;
+            }
+
+            if (isSelected) {
+                resizeHandleHTML = `
+                    <div class="resize-corner-handle" data-id="${el.id}" title="Drag to resize" style="position: absolute; right: -5px; bottom: -5px; width: 14px; height: 14px; background: #2563eb; border: 2px solid white; border-radius: 50%; cursor: nwse-resize; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>
+                `;
+            }
+
+            const styleStr = `
+                position: absolute;
+                left: ${el.x}%;
+                top: ${el.y}%;
+                width: ${w}px;
+                height: ${h}px;
+                cursor: move;
+                border: ${isSelected ? '2px solid #2563eb' : '1.5px dashed rgba(37,99,235,0.6)'};
+                border-radius: ${r};
+                box-shadow: ${isSelected ? '0 0 14px rgba(37,99,235,0.7)' : '0 2px 5px rgba(0,0,0,0.1)'};
+                z-index: ${isSelected ? 15 : 4};
+                touch-action: none;
+                box-sizing: border-box;
+            `;
+
+            return `<div class="draggable-canvas-item draggable-media-item" data-id="${el.id}" style="${styleStr}">${content}${resizeHandleHTML}</div>`;
+        }
 
         const styleStr = `
             position: absolute;
@@ -1202,9 +1436,9 @@ function renderInteractiveCanvas() {
             cursor: move;
             padding: 3px 6px;
             border: ${isSelected ? '2px solid #38bdf8' : '1px dashed rgba(37,99,235,0.5)'};
-            background: ${isSelected ? 'rgba(56,189,248,0.3)' : 'rgba(255,255,255,0.85)'};
+            background: ${isSelected ? 'rgba(56,189,248,0.35)' : 'rgba(255,255,255,0.9)'};
             border-radius: 4px;
-            box-shadow: ${isSelected ? '0 0 10px rgba(56,189,248,0.8)' : '0 1px 3px rgba(0,0,0,0.1)'};
+            box-shadow: ${isSelected ? '0 0 12px rgba(56,189,248,0.9)' : '0 1px 3px rgba(0,0,0,0.1)'};
             white-space: nowrap;
             z-index: ${isSelected ? 10 : 2};
             touch-action: none;
@@ -1220,11 +1454,71 @@ function renderInteractiveCanvas() {
         interactiveCardCanvas.appendChild(emptyMsg);
     }
 
-    // Attach Drag Listeners
+    // Attach Drag & Resize Listeners
     interactiveCardCanvas.querySelectorAll(".draggable-canvas-item").forEach((itemEl) => {
-        itemEl.addEventListener("mousedown", (e) => startDragging(e, itemEl));
-        itemEl.addEventListener("touchstart", (e) => startDragging(e, itemEl), { passive: false });
+        itemEl.addEventListener("mousedown", (e) => {
+            if (e.target.classList.contains("resize-corner-handle")) return;
+            startDragging(e, itemEl);
+        });
+        itemEl.addEventListener("touchstart", (e) => {
+            if (e.target.classList.contains("resize-corner-handle")) return;
+            startDragging(e, itemEl);
+        }, { passive: false });
     });
+
+    interactiveCardCanvas.querySelectorAll(".resize-corner-handle").forEach((handle) => {
+        handle.addEventListener("mousedown", (e) => startResizing(e, handle));
+        handle.addEventListener("touchstart", (e) => startResizing(e, handle), { passive: false });
+    });
+}
+
+function startResizing(e, handleEl) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id = handleEl.dataset.id;
+    const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+    const targetEl = elements.find((el) => el.id === id);
+    if (!targetEl) return;
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const startW = targetEl.width || (targetEl.tag === "{photo}" ? 88 : (targetEl.tag === "{signature}" ? 110 : 55));
+    const startH = targetEl.height || (targetEl.tag === "{photo}" ? 110 : (targetEl.tag === "{signature}" ? 38 : 55));
+
+    function onResizeMove(moveEvent) {
+        const curX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+        const curY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
+        const deltaW = curX - clientX;
+        const deltaH = curY - clientY;
+
+        let newW = Math.max(25, Math.min(300, Math.round(startW + deltaW)));
+        let newH = Math.max(20, Math.min(300, Math.round(startH + deltaH)));
+
+        targetEl.width = newW;
+        targetEl.height = newH;
+
+        if (inspectorWidth) inspectorWidth.value = newW;
+        if (inspectorHeight) inspectorHeight.value = newH;
+        if (inspectorDimensionsLabel) {
+            inspectorDimensionsLabel.textContent = `${newW} × ${newH} px`;
+        }
+
+        renderInteractiveCanvas();
+        updateStudioLivePreview();
+    }
+
+    function onResizeEnd() {
+        window.removeEventListener("mousemove", onResizeMove);
+        window.removeEventListener("mouseup", onResizeEnd);
+        window.removeEventListener("touchmove", onResizeMove);
+        window.removeEventListener("touchend", onResizeEnd);
+    }
+
+    window.addEventListener("mousemove", onResizeMove);
+    window.addEventListener("mouseup", onResizeEnd);
+    window.addEventListener("touchmove", onResizeMove, { passive: false });
+    window.addEventListener("touchend", onResizeEnd);
 }
 
 function startDragging(e, itemEl) {
@@ -1265,6 +1559,10 @@ function startDragging(e, itemEl) {
         itemEl.style.left = newX + "%";
         itemEl.style.top = newY + "%";
 
+        if (inspectorPosX) inspectorPosX.value = newX;
+        if (inspectorPosY) inspectorPosY.value = newY;
+        if (selectedCoordinatesHint) selectedCoordinatesHint.textContent = `X: ${newX}% | Y: ${newY}%`;
+
         updateStudioLivePreview();
     }
 
@@ -1281,6 +1579,7 @@ function startDragging(e, itemEl) {
     window.addEventListener("touchend", onEnd);
 }
 
+// Inspector Controls Updater
 function updateInspector() {
     if (!elementInspectorBox) return;
 
@@ -1289,18 +1588,215 @@ function updateInspector() {
 
     if (!selected) {
         elementInspectorBox.style.display = "none";
+        if (selectedCoordinatesHint) selectedCoordinatesHint.textContent = "";
         return;
     }
 
     elementInspectorBox.style.display = "block";
     if (inspectorTagLabel) {
-        inspectorTagLabel.textContent = `Tag: ${selected.label || selected.tag} (${selected.tag})`;
+        inspectorTagLabel.textContent = `${selected.label || selected.tag} (${selected.tag})`;
     }
+
+    if (inspectorPosX) inspectorPosX.value = selected.x ?? 0;
+    if (inspectorPosY) inspectorPosY.value = selected.y ?? 0;
+    if (selectedCoordinatesHint) selectedCoordinatesHint.textContent = `Selected: X: ${selected.x}% | Y: ${selected.y}%`;
+
+    const isMedia = selected.tag === "{photo}" || selected.tag === "{qrCode}" || selected.tag === "{signature}";
+    const colorGroup = document.getElementById("inspectorColorGroup");
+    const fontGroup = document.getElementById("inspectorFontSizeGroup");
+    const weightGroup = document.getElementById("inspectorFontWeightGroup");
+
+    if (colorGroup) colorGroup.style.display = isMedia ? "none" : "block";
+    if (fontGroup) fontGroup.style.display = isMedia ? "none" : "block";
+    if (weightGroup) weightGroup.style.display = isMedia ? "none" : "block";
 
     if (inspectorFontSize) inspectorFontSize.value = selected.fontSize || 12;
     if (inspectorFontWeight) inspectorFontWeight.value = selected.fontWeight || "600";
     if (inspectorColor) inspectorColor.value = selected.color || "#0f172a";
+    if (inspectorColorHex) inspectorColorHex.value = selected.color || "#0f172a";
+
+    // Media Size Controls Configuration
+    if (isMedia) {
+        if (inspectorMediaSizeBlock) inspectorMediaSizeBlock.style.display = "block";
+        const defaultW = selected.tag === "{photo}" ? 88 : (selected.tag === "{signature}" ? 110 : 55);
+        const defaultH = selected.tag === "{photo}" ? 110 : (selected.tag === "{signature}" ? 38 : 55);
+        const w = selected.width || defaultW;
+        const h = selected.height || defaultH;
+        const r = selected.borderRadius !== undefined ? selected.borderRadius : (selected.tag === "{photo}" ? 8 : (selected.tag === "{qrCode}" ? 6 : 0));
+
+        if (inspectorWidth) inspectorWidth.value = w;
+        if (inspectorHeight) inspectorHeight.value = h;
+        if (inspectorBorderRadius) inspectorBorderRadius.value = r;
+        if (inspectorDimensionsLabel) inspectorDimensionsLabel.textContent = `${w} × ${h} px`;
+
+        if (inspectorQuickSizePresets) {
+            let presets = [];
+            if (selected.tag === "{photo}") {
+                presets = [
+                    { label: "Standard ID (88×110)", w: 88, h: 110, r: 8 },
+                    { label: "Compact (75×95)", w: 75, h: 95, r: 6 },
+                    { label: "Large (105×135)", w: 105, h: 135, r: 10 },
+                    { label: "Square (90×90)", w: 90, h: 90, r: 12 },
+                    { label: "Round Avatar (90×90)", w: 90, h: 90, r: 90 }
+                ];
+            } else if (selected.tag === "{signature}") {
+                presets = [
+                    { label: "Standard (110×38)", w: 110, h: 38, r: 0 },
+                    { label: "Compact (85×30)", w: 85, h: 30, r: 0 },
+                    { label: "Large (140×50)", w: 140, h: 50, r: 0 },
+                    { label: "Wide Seal (165×55)", w: 165, h: 55, r: 0 }
+                ];
+            } else if (selected.tag === "{qrCode}") {
+                presets = [
+                    { label: "Compact (44×44)", w: 44, h: 44, r: 4 },
+                    { label: "Standard (55×55)", w: 55, h: 55, r: 6 },
+                    { label: "Medium (70×70)", w: 70, h: 70, r: 6 },
+                    { label: "Large (88×88)", w: 88, h: 88, r: 8 }
+                ];
+            }
+
+            inspectorQuickSizePresets.innerHTML = presets.map((p) => `
+                <button type="button" class="btn-size-preset" data-w="${p.w}" data-h="${p.h}" data-r="${p.r}" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; cursor: pointer; color: #334155; margin: 2px;">
+                    ${p.label}
+                </button>
+            `).join("");
+
+            inspectorQuickSizePresets.querySelectorAll(".btn-size-preset").forEach((b) => {
+                b.addEventListener("click", () => {
+                    const nw = parseInt(b.dataset.w, 10);
+                    const nh = parseInt(b.dataset.h, 10);
+                    const nr = parseInt(b.dataset.r, 10);
+                    selected.width = nw;
+                    selected.height = nh;
+                    selected.borderRadius = nr;
+                    if (inspectorWidth) inspectorWidth.value = nw;
+                    if (inspectorHeight) inspectorHeight.value = nh;
+                    if (inspectorBorderRadius) inspectorBorderRadius.value = nr;
+                    if (inspectorDimensionsLabel) inspectorDimensionsLabel.textContent = `${nw} × ${nh} px`;
+                    renderInteractiveCanvas();
+                    updateStudioLivePreview();
+                });
+            });
+        }
+    } else {
+        if (inspectorMediaSizeBlock) inspectorMediaSizeBlock.style.display = "none";
+    }
 }
+
+// Precision coordinate inputs
+if (inspectorPosX) {
+    inspectorPosX.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (isNaN(val)) return;
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.x = Math.max(0, Math.min(95, val));
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorPosY) {
+    inspectorPosY.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (isNaN(val)) return;
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.y = Math.max(0, Math.min(95, val));
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+// Quick alignment bar clicks
+document.querySelectorAll(".btn-quick-align").forEach((btn) => {
+    btn.addEventListener("click", () => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (!selected) return;
+
+        const alignType = btn.dataset.align;
+        if (alignType === "left") selected.x = 8;
+        if (alignType === "center-h") selected.x = 50;
+        if (alignType === "right") selected.x = 80;
+        if (alignType === "top") selected.y = 12;
+        if (alignType === "center-v") selected.y = 50;
+        if (alignType === "bottom") selected.y = 84;
+
+        renderInteractiveCanvas();
+        updateInspector();
+        updateStudioLivePreview();
+    });
+});
+
+// Duplicate Selected Tag
+if (btnDuplicateElement) {
+    btnDuplicateElement.addEventListener("click", () => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (!selected) return;
+
+        const dup = {
+            ...selected,
+            id: "el-" + Date.now(),
+            x: Math.min(85, (selected.x || 0) + 4),
+            y: Math.min(85, (selected.y || 0) + 4)
+        };
+
+        if (studioState.activeCanvasSide === "front") {
+            studioState.frontElements.push(dup);
+        } else {
+            studioState.backElements.push(dup);
+        }
+
+        studioState.selectedElementId = dup.id;
+        renderInteractiveCanvas();
+        updateInspector();
+        updateStudioLivePreview();
+        showSuccess("Element duplicated!");
+    });
+}
+
+// Keyboard Arrow Nudging for Selected Tag
+window.addEventListener("keydown", (e) => {
+    // Only nudge if not focused on an input/textarea and an element is selected
+    const activeTagName = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+    if (activeTagName === "input" || activeTagName === "textarea" || activeTagName === "select") return;
+
+    if (!studioState.selectedElementId) return;
+
+    const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+    const selected = elements.find((el) => el.id === studioState.selectedElementId);
+    if (!selected) return;
+
+    const step = e.shiftKey ? 5 : 1;
+    let handled = false;
+
+    if (e.key === "ArrowLeft") {
+        selected.x = Math.max(0, (selected.x || 0) - step);
+        handled = true;
+    } else if (e.key === "ArrowRight") {
+        selected.x = Math.min(95, (selected.x || 0) + step);
+        handled = true;
+    } else if (e.key === "ArrowUp") {
+        selected.y = Math.max(0, (selected.y || 0) - step);
+        handled = true;
+    } else if (e.key === "ArrowDown") {
+        selected.y = Math.min(95, (selected.y || 0) + step);
+        handled = true;
+    }
+
+    if (handled) {
+        e.preventDefault();
+        renderInteractiveCanvas();
+        updateInspector();
+        updateStudioLivePreview();
+    }
+});
 
 // Inspector Event Listeners
 if (inspectorFontSize) {
@@ -1335,6 +1831,72 @@ if (inspectorColor) {
         const selected = elements.find((el) => el.id === studioState.selectedElementId);
         if (selected) {
             selected.color = e.target.value;
+            if (inspectorColorHex) inspectorColorHex.value = e.target.value;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorColorHex) {
+    inspectorColorHex.addEventListener("input", (e) => {
+        const hex = e.target.value;
+        if (hex.startsWith("#") && hex.length === 7) {
+            const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+            const selected = elements.find((el) => el.id === studioState.selectedElementId);
+            if (selected) {
+                selected.color = hex;
+                if (inspectorColor) inspectorColor.value = hex;
+                renderInteractiveCanvas();
+                updateStudioLivePreview();
+            }
+        }
+    });
+}
+
+// Media Sizing Input Event Listeners
+if (inspectorWidth) {
+    inspectorWidth.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (isNaN(val) || val < 20) return;
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.width = val;
+            if (inspectorDimensionsLabel) {
+                inspectorDimensionsLabel.textContent = `${val} × ${selected.height || val} px`;
+            }
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorHeight) {
+    inspectorHeight.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (isNaN(val) || val < 20) return;
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.height = val;
+            if (inspectorDimensionsLabel) {
+                inspectorDimensionsLabel.textContent = `${selected.width || val} × ${val} px`;
+            }
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorBorderRadius) {
+    inspectorBorderRadius.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (isNaN(val) || val < 0) return;
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.borderRadius = val;
             renderInteractiveCanvas();
             updateStudioLivePreview();
         }
@@ -1404,7 +1966,6 @@ if (useCustomTemplateCheckbox) {
     useCustomTemplateCheckbox.addEventListener("change", (e) => {
         studioState.useCustomTemplate = e.target.checked;
         if (e.target.checked) {
-            // Select custom preset card
             const customCard = layoutPresetGrid?.querySelector('.layout-preset-card[data-preset="custom"]');
             if (customCard) customCard.click();
         }
@@ -1426,7 +1987,6 @@ if (frontBgFileInput) {
             if (useCustomTemplateCheckbox) useCustomTemplateCheckbox.checked = true;
             if (frontBgStatus) frontBgStatus.style.display = "block";
 
-            // Select Custom Preset Card
             const customCard = layoutPresetGrid?.querySelector('.layout-preset-card[data-preset="custom"]');
             if (customCard) customCard.click();
 
@@ -1455,7 +2015,6 @@ if (backBgFileInput) {
             if (useCustomTemplateCheckbox) useCustomTemplateCheckbox.checked = true;
             if (backBgStatus) backBgStatus.style.display = "block";
 
-            // Select Custom Preset Card
             const customCard = layoutPresetGrid?.querySelector('.layout-preset-card[data-preset="custom"]');
             if (customCard) customCard.click();
 
@@ -1472,8 +2031,10 @@ if (backBgFileInput) {
 }
 
 function getStudioCurrentConfig() {
+    const activeOrientationCard = cardOrientationSelector?.querySelector(".orientation-choice-card.active");
+    const orientation = activeOrientationCard ? activeOrientationCard.dataset.orientation : (studioState.orientation || "vertical");
     const activePresetCard = layoutPresetGrid?.querySelector(".layout-preset-card.active");
-    let preset = activePresetCard ? activePresetCard.dataset.preset : "modern";
+    let preset = activePresetCard ? activePresetCard.dataset.preset : (orientation === "horizontal" ? "svpp-horizontal" : "svpp-vertical");
     const primaryColor = studioCustomHexText?.value?.trim() || studioCustomColor?.value || "#2563eb";
     const useCustom = useCustomTemplateCheckbox ? useCustomTemplateCheckbox.checked : (preset === "custom");
 
@@ -1481,10 +2042,17 @@ function getStudioCurrentConfig() {
         studioState.useCustomTemplate = true;
     }
 
+    const allElements = [...(studioState.frontElements || []), ...(studioState.backElements || [])];
+    const photoEl = allElements.find((el) => el.tag === "{photo}");
+    const sigEl = allElements.find((el) => el.tag === "{signature}");
+    const qrEl = allElements.find((el) => el.tag === "{qrCode}");
+
     return {
+        orientation: orientation,
+        cardOrientation: orientation,
         preset: preset,
         primaryColor: primaryColor,
-        headerStyle: "gradient",
+        headerStyle: "saffron-wave",
         showBloodGroup: toggleBloodGroup ? toggleBloodGroup.checked : true,
         showFatherName: toggleFatherName ? toggleFatherName.checked : true,
         showDob: toggleDob ? toggleDob.checked : true,
@@ -1492,6 +2060,12 @@ function getStudioCurrentConfig() {
         showQrCode: toggleQrCode ? toggleQrCode.checked : true,
         showIssueDate: toggleIssueDate ? toggleIssueDate.checked : true,
         showSignatory: toggleSignatory ? toggleSignatory.checked : true,
+        photoWidth: photoEl?.width || dashboardState.layoutConfig?.photoWidth || (orientation === "horizontal" ? 82 : 90),
+        photoHeight: photoEl?.height || dashboardState.layoutConfig?.photoHeight || (orientation === "horizontal" ? 102 : 110),
+        photoRadius: photoEl?.borderRadius !== undefined ? photoEl.borderRadius : (dashboardState.layoutConfig?.photoRadius ?? 8),
+        signatureWidth: sigEl?.width || dashboardState.layoutConfig?.signatureWidth || 120,
+        signatureHeight: sigEl?.height || dashboardState.layoutConfig?.signatureHeight || 34,
+        qrCodeSize: qrEl?.width || dashboardState.layoutConfig?.qrCodeSize || (orientation === "horizontal" ? 44 : 48),
         useCustomTemplate: useCustom || studioState.useCustomTemplate,
         frontBgUrl: studioState.frontBgUrl || "",
         backBgUrl: studioState.backBgUrl || "",
@@ -1500,32 +2074,219 @@ function getStudioCurrentConfig() {
     };
 }
 
-function updateStudioLivePreview() {
-    if (!studioLiveCardPreviewContainer) return;
+function getStudioSelectedMemberData() {
+    const selectedKey = studioPreviewMemberSelect ? studioPreviewMemberSelect.value : "default";
 
-    const currentConfig = getStudioCurrentConfig();
+    if (selectedKey.startsWith("member-")) {
+        const memId = selectedKey.replace("member-", "");
+        const found = dashboardState.members.find((m) => m.id === memId);
+        if (found) return found;
+    }
 
-    // Sample member or first approved member for realistic demonstration
-    const sampleMember = dashboardState.members.find((m) => m.status === MEMBER_STATUS.APPROVED) || {
-        fullName: "Dr. Ananya Natarajan",
-        fatherName: "K. Natarajan",
-        dob: "1994-06-15",
-        memberNumber: "TCT-M-1008",
+    if (selectedKey === "president") {
+        return {
+            fullName: "Dr. Arvind V. Patel",
+            fatherName: "Shri Vallabhdas Patel",
+            dob: "1972-04-14",
+            memberNumber: "SVPP-PRES-0001",
+            designation: "National President & Working Committee Head",
+            bloodGroup: "B+",
+            mobile: "+91 94250 99881",
+            email: "president@svpparty.co",
+            address: "Sardar Patel Bhawan, 14 Constitution Avenue, New Delhi - 110001",
+            memberType: "office-bearer",
+            status: "approved",
+            approvedAt: new Date()
+        };
+    }
+
+    if (selectedKey === "long-name") {
+        return {
+            fullName: "Thiru K. S. Somasundaram Balasubramaniam",
+            fatherName: "Thiru Somasundaram Pillai",
+            dob: "1988-12-05",
+            memberNumber: "SVPP-2026-8821",
+            designation: "State Organization & Public Outreach Secretary",
+            bloodGroup: "AB+",
+            mobile: "+91 98401 77654",
+            email: "somu.balasubramaniam@svpparty.co",
+            address: "No. 42/B, Anna Salai West, T. Nagar, Chennai, Tamil Nadu - 600017",
+            memberType: "active-member",
+            status: "approved",
+            approvedAt: new Date()
+        };
+    }
+
+    // Default Sample
+    return {
+        fullName: "Shri Rajeshwar Verma",
+        fatherName: "Late Ramakant Verma",
+        dob: "1984-10-31",
+        memberNumber: "SVPP-2026-9041",
+        designation: "State Executive Member",
         bloodGroup: "O+",
-        mobile: "+91 98401 23456",
-        email: "ananya.n@example.com",
-        address: "42 Heritage Road, Central District, Chennai - 600001",
+        mobile: "+91 98201 54321",
+        email: "rajeshwar.verma@svpparty.co",
+        address: "House 108, Sardar Vallabhbhai Patel Marg, Lucknow, UP - 226001",
         memberType: "active-member",
         status: "approved",
         approvedAt: new Date()
     };
+}
+
+function updateStudioLivePreview() {
+    if (!studioLiveCardPreviewContainer) return;
+
+    const currentConfig = getStudioCurrentConfig();
+    const memberData = getStudioSelectedMemberData();
 
     studioLiveCardPreviewContainer.innerHTML = buildIdCardHTML(
-        sampleMember,
+        memberData,
         dashboardState.orgSettings,
         dashboardState.assetSettings,
-        currentConfig
+        currentConfig,
+        studioPreviewMode
     );
+}
+
+// Live Preview Mode Switcher Buttons
+function setPreviewModeUI(mode) {
+    studioPreviewMode = mode;
+    document.querySelectorAll(".preview-mode-pill").forEach((btn) => {
+        if (btn.dataset.mode === mode) {
+            btn.classList.add("active");
+            btn.style.background = "#0F2B5C";
+            btn.style.color = "white";
+        } else {
+            btn.classList.remove("active");
+            btn.style.background = "transparent";
+            btn.style.color = "#475569";
+        }
+    });
+    updateStudioLivePreview();
+}
+
+if (btnPreviewModeBoth) btnPreviewModeBoth.addEventListener("click", () => setPreviewModeUI("both"));
+if (btnPreviewModeFront) btnPreviewModeFront.addEventListener("click", () => setPreviewModeUI("front"));
+if (btnPreviewModeBack) btnPreviewModeBack.addEventListener("click", () => setPreviewModeUI("back"));
+if (btnPreviewModeFlip) btnPreviewModeFlip.addEventListener("click", () => setPreviewModeUI("3d-flip"));
+
+if (studioPreviewMemberSelect) {
+    studioPreviewMemberSelect.addEventListener("change", updateStudioLivePreview);
+}
+
+// Test Export Actions in Layout Studio
+if (btnStudioTestPng) {
+    btnStudioTestPng.addEventListener("click", async () => {
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+            const target = studioLiveCardPreviewContainer.querySelector(".id-card-double-wrapper") || studioLiveCardPreviewContainer.querySelector(".member-id-card") || studioLiveCardPreviewContainer;
+            
+            if (!window.html2canvas) {
+                showWarning("Canvas generator is loading, please try again in a moment.");
+                return;
+            }
+
+            const canvas = await window.html2canvas(target, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+            const link = document.createElement("a");
+            link.download = `SVPP-ID-Preview-${Date.now()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            showSuccess("High-Resolution ID Card PNG downloaded!");
+        } catch (err) {
+            console.error("Test PNG export error:", err);
+            showError("Failed to export preview PNG.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
+}
+
+if (btnStudioTestPdf) {
+    btnStudioTestPdf.addEventListener("click", async () => {
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+            const target = studioLiveCardPreviewContainer.querySelector(".id-card-double-wrapper") || studioLiveCardPreviewContainer.querySelector(".member-id-card") || studioLiveCardPreviewContainer;
+
+            if (!window.html2canvas || !window.jspdf) {
+                showWarning("PDF export library loading, please try in a moment.");
+                return;
+            }
+
+            const canvas = await window.html2canvas(target, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+            const imgData = canvas.toDataURL("image/png");
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: studioState.orientation === "horizontal" ? "landscape" : "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * (pdfWidth - 40)) / imgProps.width;
+
+            pdf.addImage(imgData, "PNG", 20, 20, pdfWidth - 40, imgHeight);
+            pdf.save(`SVPP-ID-Card-Preview.pdf`);
+            showSuccess("PDF ID Card generated and downloaded!");
+        } catch (err) {
+            console.error("Test PDF export error:", err);
+            showError("Failed to generate PDF.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
+}
+
+if (btnStudioTestPrint) {
+    btnStudioTestPrint.addEventListener("click", () => {
+        window.print();
+    });
+}
+
+// Orientation selector click handlers
+if (cardOrientationSelector) {
+    cardOrientationSelector.addEventListener("click", (e) => {
+        const card = e.target.closest(".orientation-choice-card");
+        if (!card) return;
+
+        const orientation = card.dataset.orientation || "vertical";
+        setStudioOrientationUI(orientation);
+
+        // Synchronize preset card if on default SVPP presets
+        if (layoutPresetGrid) {
+            const currentActivePreset = layoutPresetGrid.querySelector(".layout-preset-card.active")?.dataset.preset;
+            if (orientation === "horizontal" && currentActivePreset === "svpp-vertical") {
+                const horizPresetCard = layoutPresetGrid.querySelector('.layout-preset-card[data-preset="svpp-horizontal"]');
+                if (horizPresetCard) {
+                    layoutPresetGrid.querySelectorAll(".layout-preset-card").forEach((c) => {
+                        c.classList.remove("active");
+                        c.style.borderColor = "#e2e8f0";
+                        c.style.background = "#ffffff";
+                    });
+                    horizPresetCard.classList.add("active");
+                    horizPresetCard.style.borderColor = "#2563eb";
+                    horizPresetCard.style.background = "#eff6ff";
+                }
+            } else if (orientation === "vertical" && currentActivePreset === "svpp-horizontal") {
+                const vertPresetCard = layoutPresetGrid.querySelector('.layout-preset-card[data-preset="svpp-vertical"]');
+                if (vertPresetCard) {
+                    layoutPresetGrid.querySelectorAll(".layout-preset-card").forEach((c) => {
+                        c.classList.remove("active");
+                        c.style.borderColor = "#e2e8f0";
+                        c.style.background = "#ffffff";
+                    });
+                    vertPresetCard.classList.add("active");
+                    vertPresetCard.style.borderColor = "#2563eb";
+                    vertPresetCard.style.background = "#eff6ff";
+                }
+            }
+        }
+
+        renderInteractiveCanvas();
+        updateStudioLivePreview();
+    });
 }
 
 // Preset selection clicks
@@ -1544,6 +2305,14 @@ if (layoutPresetGrid) {
         card.style.borderColor = "#2563eb";
         card.style.background = "#eff6ff";
 
+        const preset = card.dataset.preset;
+        if (preset === "svpp-horizontal") {
+            setStudioOrientationUI("horizontal");
+        } else if (preset === "svpp-vertical" || preset === "classic") {
+            setStudioOrientationUI("vertical");
+        }
+
+        renderInteractiveCanvas();
         updateStudioLivePreview();
     });
 }
@@ -1636,6 +2405,325 @@ if (resetLayoutSettingsBtn) {
         showSuccess("Reset ID Card layout controls to defaults.");
     });
 }
+
+// ========================================
+// MEMBER EDIT & LIVE PREVIEW MODAL
+// ========================================
+
+const editMemberPreviewModal = document.getElementById("editMemberPreviewModal");
+const closeEditMemberModalBtn = document.getElementById("closeEditMemberModalBtn");
+const cancelEditMemberBtn = document.getElementById("cancelEditMemberBtn");
+const editMemberForm = document.getElementById("editMemberForm");
+const editModalMemberIdBadge = document.getElementById("editModalMemberIdBadge");
+const editFormMemberDocId = document.getElementById("editFormMemberDocId");
+const editFullName = document.getElementById("editFullName");
+const editMemberNumber = document.getElementById("editMemberNumber");
+const editDesignation = document.getElementById("editDesignation");
+const editMemberType = document.getElementById("editMemberType");
+const editFatherName = document.getElementById("editFatherName");
+const editBloodGroup = document.getElementById("editBloodGroup");
+const editMobile = document.getElementById("editMobile");
+const editDob = document.getElementById("editDob");
+const editAddress = document.getElementById("editAddress");
+const editPhotoFileInput = document.getElementById("editPhotoFileInput");
+const editPhotoUrlInput = document.getElementById("editPhotoUrlInput");
+const editMemberPhotoThumb = document.getElementById("editMemberPhotoThumb");
+const editMemberCardPreviewContainer = document.getElementById("editMemberCardPreviewContainer");
+
+const btnEditPreviewBoth = document.getElementById("btnEditPreviewBoth");
+const btnEditPreviewFront = document.getElementById("btnEditPreviewFront");
+const btnEditPreviewBack = document.getElementById("btnEditPreviewBack");
+
+const btnEditModalDownloadPng = document.getElementById("btnEditModalDownloadPng");
+const btnEditModalDownloadPdf = document.getElementById("btnEditModalDownloadPdf");
+const btnEditModalPrint = document.getElementById("btnEditModalPrint");
+
+let editModalPreviewSide = "both";
+let activeEditingMember = null;
+
+function getEditModalMemberSnapshot() {
+    if (!activeEditingMember) return null;
+
+    return {
+        ...activeEditingMember,
+        fullName: editFullName?.value?.trim() || activeEditingMember.fullName,
+        memberNumber: editMemberNumber?.value?.trim() || activeEditingMember.memberNumber || "SVPP-PENDING",
+        designation: editDesignation?.value?.trim() || activeEditingMember.designation || "",
+        memberType: editMemberType?.value || activeEditingMember.memberType || "active-member",
+        fatherName: editFatherName?.value?.trim() || activeEditingMember.fatherName || "",
+        bloodGroup: editBloodGroup?.value || activeEditingMember.bloodGroup || "",
+        mobile: editMobile?.value?.trim() || activeEditingMember.mobile || "",
+        dob: editDob?.value || activeEditingMember.dob || "",
+        address: editAddress?.value?.trim() || activeEditingMember.address || "",
+        photoUrl: editPhotoUrlInput?.value?.trim() || activeEditingMember.photoUrl || ""
+    };
+}
+
+function updateEditMemberLivePreview() {
+    if (!editMemberCardPreviewContainer) return;
+    const memberData = getEditModalMemberSnapshot();
+    if (!memberData) return;
+
+    editMemberCardPreviewContainer.innerHTML = buildIdCardHTML(
+        memberData,
+        dashboardState.orgSettings,
+        dashboardState.assetSettings,
+        dashboardState.layoutSettings || DEFAULT_LAYOUT_CONFIG,
+        editModalPreviewSide
+    );
+}
+
+function setEditModalPreviewSide(side) {
+    editModalPreviewSide = side;
+    [btnEditPreviewBoth, btnEditPreviewFront, btnEditPreviewBack].forEach((btn) => {
+        if (!btn) return;
+        if (btn.id.toLowerCase().includes(side)) {
+            btn.style.background = "#0F2B5C";
+            btn.style.color = "white";
+            btn.style.border = "none";
+        } else {
+            btn.style.background = "white";
+            btn.style.color = "#334155";
+            btn.style.border = "1px solid #cbd5e1";
+        }
+    });
+    updateEditMemberLivePreview();
+}
+
+if (btnEditPreviewBoth) btnEditPreviewBoth.addEventListener("click", () => setEditModalPreviewSide("both"));
+if (btnEditPreviewFront) btnEditPreviewFront.addEventListener("click", () => setEditModalPreviewSide("front"));
+if (btnEditPreviewBack) btnEditPreviewBack.addEventListener("click", () => setEditModalPreviewSide("back"));
+
+function openEditMemberModal(memberId) {
+    const member = dashboardState.members.find((m) => m.id === memberId);
+    if (!member) {
+        showError("Member record not found.");
+        return;
+    }
+
+    activeEditingMember = JSON.parse(JSON.stringify(member));
+
+    if (editFormMemberDocId) editFormMemberDocId.value = member.id;
+    if (editModalMemberIdBadge) editModalMemberIdBadge.textContent = `ID: ${member.memberNumber || member.id}`;
+    if (editFullName) editFullName.value = member.fullName || "";
+    if (editMemberNumber) editMemberNumber.value = member.memberNumber || "";
+    if (editDesignation) editDesignation.value = member.designation || "";
+    if (editMemberType) editMemberType.value = member.memberType || "active-member";
+    if (editFatherName) editFatherName.value = member.fatherName || "";
+    if (editBloodGroup) editBloodGroup.value = member.bloodGroup || "";
+    if (editMobile) editMobile.value = member.mobile || "";
+    if (editDob) editDob.value = member.dob || "";
+    if (editAddress) editAddress.value = member.address || "";
+    if (editPhotoUrlInput) editPhotoUrlInput.value = member.photoUrl || "";
+
+    if (editMemberPhotoThumb) {
+        editMemberPhotoThumb.innerHTML = `<img src="${member.photoUrl || 'images/default-user.jpg'}" alt="Thumb" style="width: 100%; height: 100%; object-fit: cover;" />`;
+    }
+
+    setEditModalPreviewSide("both");
+
+    if (editMemberPreviewModal) {
+        editMemberPreviewModal.style.display = "flex";
+    }
+}
+
+function closeEditMemberModal() {
+    if (editMemberPreviewModal) {
+        editMemberPreviewModal.style.display = "none";
+    }
+    activeEditingMember = null;
+}
+
+if (closeEditMemberModalBtn) closeEditMemberModalBtn.addEventListener("click", closeEditMemberModal);
+if (cancelEditMemberBtn) cancelEditMemberBtn.addEventListener("click", closeEditMemberModal);
+
+if (editMemberPreviewModal) {
+    editMemberPreviewModal.addEventListener("click", (e) => {
+        if (e.target === editMemberPreviewModal) closeEditMemberModal();
+    });
+}
+
+// Synchronous live updates on input
+[
+    editFullName,
+    editMemberNumber,
+    editDesignation,
+    editMemberType,
+    editFatherName,
+    editBloodGroup,
+    editMobile,
+    editDob,
+    editAddress,
+    editPhotoUrlInput
+].forEach((inputEl) => {
+    if (inputEl) {
+        inputEl.addEventListener("input", updateEditMemberLivePreview);
+        inputEl.addEventListener("change", updateEditMemberLivePreview);
+    }
+});
+
+// Photo File Input in Edit Modal
+if (editPhotoFileInput) {
+    editPhotoFileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            if (activeEditingMember) {
+                activeEditingMember.photoUrl = dataUrl;
+            }
+            if (editPhotoUrlInput) editPhotoUrlInput.value = dataUrl;
+            if (editMemberPhotoThumb) {
+                editMemberPhotoThumb.innerHTML = `<img src="${dataUrl}" alt="Thumb" style="width: 100%; height: 100%; object-fit: cover;" />`;
+            }
+            updateEditMemberLivePreview();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Edit Member Form Submit (Save changes to Firestore)
+if (editMemberForm) {
+    editMemberForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const docId = editFormMemberDocId?.value;
+        if (!docId) return;
+
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+
+            let photoUrl = editPhotoUrlInput?.value?.trim() || activeEditingMember?.photoUrl || "";
+
+            // If a new photo file was picked, upload to Firebase Storage if needed
+            if (editPhotoFileInput && editPhotoFileInput.files && editPhotoFileInput.files[0]) {
+                try {
+                    photoUrl = await uploadMemberPhoto(docId, editPhotoFileInput.files[0]);
+                } catch (uploadErr) {
+                    console.warn("Storage upload fallback:", uploadErr);
+                }
+            }
+
+            const updatedData = {
+                fullName: editFullName.value.trim(),
+                memberNumber: editMemberNumber.value.trim(),
+                designation: editDesignation.value.trim(),
+                memberType: editMemberType.value,
+                fatherName: editFatherName.value.trim(),
+                bloodGroup: editBloodGroup.value,
+                mobile: editMobile.value.trim(),
+                dob: editDob.value,
+                address: editAddress.value.trim(),
+                photoUrl: photoUrl,
+                updatedAt: serverTimestamp()
+            };
+
+            await updateDocument(COLLECTIONS.MEMBERS, docId, updatedData);
+
+            // Update in-memory state
+            const memIndex = dashboardState.members.findIndex((m) => m.id === docId);
+            if (memIndex !== -1) {
+                dashboardState.members[memIndex] = {
+                    ...dashboardState.members[memIndex],
+                    ...updatedData
+                };
+            }
+
+            showSuccess(`Member "${updatedData.fullName}" profile updated successfully!`);
+            closeEditMemberModal();
+            await loadApprovedMembers();
+            populateStudioMemberSelect();
+            updateStudioLivePreview();
+        } catch (err) {
+            console.error("Save member changes error:", err);
+            showError("Failed to save member profile changes.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
+}
+
+// Modal Export Actions
+if (btnEditModalDownloadPng) {
+    btnEditModalDownloadPng.addEventListener("click", async () => {
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+            const target = editMemberCardPreviewContainer.querySelector(".id-card-double-wrapper") || editMemberCardPreviewContainer.querySelector(".member-id-card") || editMemberCardPreviewContainer;
+
+            if (!window.html2canvas) {
+                showWarning("Canvas generator is loading, please retry in a moment.");
+                return;
+            }
+
+            const canvas = await window.html2canvas(target, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+            const link = document.createElement("a");
+            const memNumber = editMemberNumber?.value || "MEMBER";
+            link.download = `${memNumber}-ID-Card.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            showSuccess("High-Resolution ID Card PNG downloaded!");
+        } catch (err) {
+            console.error("Export PNG error:", err);
+            showError("Failed to export PNG.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
+}
+
+if (btnEditModalDownloadPdf) {
+    btnEditModalDownloadPdf.addEventListener("click", async () => {
+        try {
+            if (dashboardLoader) dashboardLoader.style.display = "block";
+            const target = editMemberCardPreviewContainer.querySelector(".id-card-double-wrapper") || editMemberCardPreviewContainer.querySelector(".member-id-card") || editMemberCardPreviewContainer;
+
+            if (!window.html2canvas || !window.jspdf) {
+                showWarning("PDF generator is loading, please retry in a moment.");
+                return;
+            }
+
+            const canvas = await window.html2canvas(target, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+            const imgData = canvas.toDataURL("image/png");
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: dashboardState.layoutSettings?.orientation === "horizontal" ? "landscape" : "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgHeight = (imgProps.height * (pdfWidth - 40)) / imgProps.width;
+
+            pdf.addImage(imgData, "PNG", 20, 20, pdfWidth - 40, imgHeight);
+            const memNumber = editMemberNumber?.value || "MEMBER";
+            pdf.save(`${memNumber}-ID-Card.pdf`);
+            showSuccess("PDF ID Card generated and downloaded!");
+        } catch (err) {
+            console.error("Export PDF error:", err);
+            showError("Failed to export PDF.");
+        } finally {
+            if (dashboardLoader) dashboardLoader.style.display = "none";
+        }
+    });
+}
+
+if (btnEditModalPrint) {
+    btnEditModalPrint.addEventListener("click", () => {
+        window.print();
+    });
+}
+
+// Global click delegation for "btn-edit-member-preview"
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn-edit-member-preview") || e.target.closest(".btn-edit-member-preview")) {
+        const btn = e.target.classList.contains("btn-edit-member-preview") ? e.target : e.target.closest(".btn-edit-member-preview");
+        const memberId = btn.dataset.id;
+        if (memberId) openEditMemberModal(memberId);
+    }
+});
 
 // ========================================
 // DETAIL MODAL LOGIC
@@ -1735,3 +2823,4 @@ function setText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
 }
+

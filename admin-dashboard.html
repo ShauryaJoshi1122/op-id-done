@@ -326,20 +326,47 @@
         </div>
 
         <div class="settings-container" style="background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0;">
-          <h3 style="margin-top: 0; margin-bottom: 16px; color: #0f172a; font-size: 1.15rem;">🏢 Custom Organization Profile</h3>
+          <h3 style="margin-top: 0; margin-bottom: 16px; color: #0f172a; font-size: 1.15rem;">🏢 Custom Organization & Portal Branding</h3>
           <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">
-            Set your new organization name, address, contact numbers, and ID card details below. These are automatically applied across all pages and newly generated ID Cards.
+            Set your portal header title, subtitle, logo, organization name, address, contact numbers, and ID card details below. These are automatically applied across all pages and newly generated ID Cards.
           </p>
 
           <form id="orgSettingsForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <!-- Portal Header Brand Settings -->
             <div class="settings-form-group">
-              <label for="orgNameInput">Organization / Trust Name *</label>
-              <input type="text" id="orgNameInput" placeholder="e.g. Global Social Welfare Foundation" required />
+              <label for="portalTitleInput">Portal Header Title (Home Page Title)</label>
+              <input type="text" id="portalTitleInput" placeholder="e.g. Member & ID Card Portal" />
             </div>
 
             <div class="settings-form-group">
-              <label for="orgTaglineInput">Portal Tagline / Subtitle</label>
-              <input type="text" id="orgTaglineInput" placeholder="e.g. Official Digital Member Management & ID Portal" />
+              <label for="portalSubtitleInput">Portal Header Subtitle</label>
+              <input type="text" id="portalSubtitleInput" placeholder="e.g. Digital Member Management & Verification System" />
+            </div>
+
+            <!-- Portal Logo / Emblem Upload -->
+            <div class="settings-form-group" style="grid-column: 1 / -1; background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;">
+              <label style="display: block; font-weight: 700; color: #0f172a; margin-bottom: 6px;">🖼️ Portal Logo & Central Emblem</label>
+              <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">This logo is displayed in the home page header, central emblem box, and digital certificates.</p>
+              
+              <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                <div id="currentLogoPreview" style="width: 64px; height: 64px; border-radius: 14px; background: white; border: 1.5px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 4px;">
+                  <img src="images/logo.jpg" alt="Logo Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                </div>
+                <div style="flex: 1; min-width: 240px;">
+                  <input type="file" id="portalLogoUpload" accept="image/*" style="font-size: 0.85rem; width: 100%; margin-bottom: 6px;" />
+                  <input type="text" id="portalLogoUrlInput" placeholder="Or enter Logo Image URL (e.g. https://...)" style="width: 100%; font-size: 0.82rem; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgNameInput">Organization / Trust / Party Name *</label>
+              <input type="text" id="orgNameInput" placeholder="e.g. Sardar Vallabhbhai Patel Party" required />
+            </div>
+
+            <div class="settings-form-group">
+              <label for="orgTaglineInput">Tagline / Motto</label>
+              <input type="text" id="orgTaglineInput" placeholder="e.g. Your Voice. Your Strength. Our Commitment." />
             </div>
 
             <div class="settings-form-group">
@@ -369,7 +396,7 @@
 
             <div style="grid-column: 1 / -1;">
               <button type="submit" id="saveOrgDetailsBtn" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
-                💾 Save Organization Profile
+                💾 Save Organization Profile & Branding
               </button>
             </div>
           </form>
@@ -617,17 +644,63 @@
           <!-- STUDIO CONTROLS -->
           <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
             
-            <!-- 1. Layout Preset Selection -->
+            <!-- 1. Card Orientation Selection (Vertical vs Horizontal) -->
+            <div style="margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                <label style="display: block; font-weight: 800; font-size: 0.98rem; color: #0F2B5C; margin: 0;">
+                  🎴 1. Card Orientation (Super Admin Mode)
+                </label>
+                <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Global Member Setting</span>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" id="cardOrientationSelector">
+                <div class="orientation-choice-card active" data-orientation="vertical" id="orientationVerticalCard" style="border: 2px solid #0F2B5C; background: #eff6ff; padding: 14px 16px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                  <div style="font-size: 1.8rem; width: 44px; height: 44px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #0F2B5C; flex-shrink: 0; box-shadow: 0 2px 6px rgba(15,43,92,0.15);">
+                    📱
+                  </div>
+                  <div>
+                    <div style="font-weight: 800; font-size: 0.95rem; color: #0F2B5C; display: flex; align-items: center; gap: 6px;">
+                      <span>Vertical (Portrait)</span>
+                      <span class="active-badge" style="font-size: 0.65rem; background: #0F2B5C; color: white; padding: 1px 6px; border-radius: 10px; font-weight: 700;">ACTIVE</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">Standard 54 × 86 mm &bull; Lanyard Badge Format</div>
+                  </div>
+                </div>
+
+                <div class="orientation-choice-card" data-orientation="horizontal" id="orientationHorizontalCard" style="border: 2px solid #e2e8f0; background: white; padding: 14px 16px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                  <div style="font-size: 1.8rem; width: 44px; height: 44px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #cbd5e1; flex-shrink: 0;">
+                    💳
+                  </div>
+                  <div>
+                    <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                      <span>Horizontal (Landscape)</span>
+                      <span class="active-badge" style="display: none; font-size: 0.65rem; background: #0F2B5C; color: white; padding: 1px 6px; border-radius: 10px; font-weight: 700;">ACTIVE</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">Standard 86 × 54 mm &bull; Executive Wallet Format</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+
+            <!-- 2. Layout Preset Selection -->
             <div style="margin-bottom: 24px;">
               <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 10px;">
-                1. Select ID Card Layout Template
+                2. Select ID Card Layout Template
               </label>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;" id="layoutPresetGrid">
                 
-                <div class="layout-preset-card active" data-preset="modern" style="border: 2px solid #2563eb; background: #eff6ff; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
-                  <div style="font-size: 1.4rem; margin-bottom: 4px;">✨</div>
-                  <div style="font-weight: 700; font-size: 0.88rem; color: #1e40af;">Modern Badge</div>
-                  <div style="font-size: 0.72rem; color: #64748b;">Vertical &bull; Chips &bull; QR</div>
+                <div class="layout-preset-card active" data-preset="svpp-vertical" style="border: 2px solid #2563eb; background: #eff6ff; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">🇮🇳</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #1e40af;">SVPP Vertical Standard</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Double-Sided &bull; Saffron Wave</div>
+                </div>
+
+                <div class="layout-preset-card" data-preset="svpp-horizontal" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                  <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
+                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">SVPP Horizontal Official</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">CR80 Landscape &bull; 86×54mm</div>
                 </div>
 
                 <div class="layout-preset-card" data-preset="classic" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
@@ -636,22 +709,10 @@
                   <div style="font-size: 0.72rem; color: #64748b;">Traditional &bull; Badge</div>
                 </div>
 
-                <div class="layout-preset-card" data-preset="horizontal" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
-                  <div style="font-size: 1.4rem; margin-bottom: 4px;">💳</div>
-                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Executive Card</div>
-                  <div style="font-size: 0.72rem; color: #64748b;">Landscape 86x54mm</div>
-                </div>
-
-                <div class="layout-preset-card" data-preset="minimal" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
-                  <div style="font-size: 1.4rem; margin-bottom: 4px;">📄</div>
-                  <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Minimalist</div>
-                  <div style="font-size: 0.72rem; color: #64748b;">Compact &bull; Modern</div>
-                </div>
-
                 <div class="layout-preset-card" data-preset="custom" style="border: 2px solid #e2e8f0; background: white; padding: 12px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s;">
                   <div style="font-size: 1.4rem; margin-bottom: 4px;">🎨</div>
                   <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a;">Custom Template</div>
-                  <div style="font-size: 0.72rem; color: #64748b;">Upload Front/Back & Shortcodes</div>
+                  <div style="font-size: 0.72rem; color: #64748b;">Upload Front/Back & Drag Tags</div>
                 </div>
 
               </div>
@@ -690,7 +751,7 @@
                 3. Information & Badge Visibility
               </label>
               
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.88rem; color: #334155;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.88rem; color: #334155; margin-bottom: 16px;">
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                   <input type="checkbox" id="toggleBloodGroup" checked />
                   <span>🩸 Blood Group Badge</span>
@@ -725,6 +786,57 @@
                   <input type="checkbox" id="toggleSignatory" checked />
                   <span>Signatory Signature</span>
                 </label>
+              </div>
+
+              <!-- Card Media Dimensions (Photo, Signature & QR Scale) -->
+              <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-top: 12px;">
+                <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                  <span>📐 Member Photo, Signature & QR Code Size Controls:</span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; font-size: 0.8rem;">
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #475569; margin-bottom: 4px;">🖼️ Member Photo Size:</label>
+                    <select id="selectDefaultPhotoSize" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; color: #0f172a; background: white;">
+                      <option value="compact">Compact (75 × 95 px)</option>
+                      <option value="standard" selected>Standard (90 × 110 px)</option>
+                      <option value="medium">Medium (105 × 130 px)</option>
+                      <option value="large">Large (120 × 150 px)</option>
+                      <option value="jumbo">Jumbo (140 × 175 px)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #475569; margin-bottom: 4px;">✍️ Signatory Signature Size:</label>
+                    <select id="selectDefaultSignatureSize" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; color: #0f172a; background: white;">
+                      <option value="compact">Compact (24 px height)</option>
+                      <option value="standard" selected>Standard (34 px height)</option>
+                      <option value="prominent">Prominent (46 px height)</option>
+                      <option value="large">Large (58 px height)</option>
+                      <option value="jumbo">Jumbo (70 px height)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #475569; margin-bottom: 4px;">🔳 Official QR Code Size:</label>
+                    <select id="selectDefaultQrSize" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; color: #0f172a; background: white;">
+                      <option value="compact">Compact (40 × 40 px)</option>
+                      <option value="standard" selected>Standard (50 × 50 px)</option>
+                      <option value="prominent">Prominent (62 × 62 px)</option>
+                      <option value="large">Large (75 × 75 px)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-weight: 700; color: #475569; margin-bottom: 4px;">🔲 Photo Corner Radius:</label>
+                    <select id="selectDefaultPhotoRadius" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; color: #0f172a; background: white;">
+                      <option value="0">Sharp (0px)</option>
+                      <option value="8" selected>Rounded (8px)</option>
+                      <option value="16">Smooth (16px)</option>
+                      <option value="50">Full Circle / Oval (50%)</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -773,54 +885,140 @@
                 </div>
               </div>
 
-              <!-- Interactive Drag Canvas -->
+              <!-- Interactive Drag Canvas & Zoom Toolbar -->
               <div style="background: #0f172a; border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; color: white; font-size: 0.78rem; margin-bottom: 8px; font-weight: 600;">
-                  <span>🎯 Drag & Position Shortcodes on Canvas</span>
-                  <span id="canvasSideBadge" style="background: #2563eb; padding: 2px 8px; border-radius: 4px;">FRONT CANVAS</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; color: white; font-size: 0.78rem; margin-bottom: 10px; font-weight: 600; flex-wrap: wrap; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span>🎯 Canvas Editor</span>
+                    <span id="canvasSideBadge" style="background: #2563eb; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem;">FRONT CANVAS</span>
+                  </div>
+
+                  <!-- Zoom Toolbar -->
+                  <div style="display: flex; align-items: center; gap: 4px; background: #1e293b; padding: 2px 6px; border-radius: 6px;">
+                    <span style="font-size: 0.72rem; color: #94a3b8;">Zoom:</span>
+                    <button type="button" id="btnZoomOut" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">-</button>
+                    <span id="canvasZoomLabel" style="font-size: 0.72rem; font-family: monospace; padding: 0 4px; color: #38bdf8;">100%</span>
+                    <button type="button" id="btnZoomIn" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">+</button>
+                    <button type="button" id="btnZoomReset" style="background: #334155; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Reset</button>
+                  </div>
                 </div>
 
-                <div style="display: flex; justify-content: center; overflow-x: auto; padding: 4px 0;">
-                  <div id="interactiveCardCanvas" style="position: relative; width: 340px; height: 214px; border-radius: 12px; overflow: hidden; background: #ffffff; border: 2px solid #38bdf8; box-shadow: 0 10px 25px rgba(0,0,0,0.3); user-select: none;">
+                <div style="display: flex; justify-content: center; overflow-x: auto; padding: 8px 0;" id="canvasViewportWrapper">
+                  <div id="interactiveCardCanvas" style="position: relative; width: 340px; height: 214px; border-radius: 12px; overflow: hidden; background: #ffffff; border: 2px solid #38bdf8; box-shadow: 0 10px 25px rgba(0,0,0,0.3); user-select: none; transform-origin: center center; transition: transform 0.15s ease;">
                     <!-- Shortcode elements rendered here with drag handles -->
                   </div>
                 </div>
+
+                <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>💡 Tip: Click & drag tags, drag the bottom-right corner to resize, or use arrow keys to nudge!</span>
+                  <span id="selectedCoordinatesHint" style="color: #38bdf8; font-family: monospace;"></span>
+                </div>
               </div>
 
-              <!-- Element Inspector & Styling Controls -->
-              <div id="elementInspectorBox" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <span style="font-weight: 700; font-size: 0.82rem; color: #0f172a;" id="inspectorTagLabel">Selected Shortcode</span>
-                  <button type="button" id="btnDeleteSelectedElement" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">🗑️ Delete Tag</button>
+              <!-- Element Inspector & Precision Alignment Toolkit -->
+              <div id="elementInspectorBox" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 14px; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="background: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 800;">EDITING</span>
+                    <span style="font-weight: 800; font-size: 0.88rem; color: #0f172a;" id="inspectorTagLabel">Selected Shortcode</span>
+                  </div>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" id="btnDuplicateElement" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">📋 Duplicate</button>
+                    <button type="button" id="btnDeleteSelectedElement" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">🗑️ Delete</button>
+                  </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; font-size: 0.78rem;">
-                  <div>
-                    <label style="display: block; color: #64748b; margin-bottom: 2px;">Font Size (px):</label>
-                    <input type="number" id="inspectorFontSize" min="8" max="28" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                <!-- Quick Alignment Bar -->
+                <div style="margin-bottom: 12px; background: white; padding: 8px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                  <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; margin-bottom: 6px;">⚡ Quick Align:</div>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button type="button" class="btn-quick-align" data-align="left" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">⬅️ Left (8%)</button>
+                    <button type="button" class="btn-quick-align" data-align="center-h" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">↔️ Center (50%)</button>
+                    <button type="button" class="btn-quick-align" data-align="right" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">➡️ Right (80%)</button>
+                    <button type="button" class="btn-quick-align" data-align="top" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">⬆️ Top (12%)</button>
+                    <button type="button" class="btn-quick-align" data-align="center-v" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">↕️ Middle (50%)</button>
+                    <button type="button" class="btn-quick-align" data-align="bottom" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">⬇️ Bottom (84%)</button>
                   </div>
+                </div>
+
+                <!-- Position & Coordinates -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; font-size: 0.78rem; margin-bottom: 10px;">
                   <div>
-                    <label style="display: block; color: #64748b; margin-bottom: 2px;">Font Weight:</label>
-                    <select id="inspectorFontWeight" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
-                      <option value="400">Normal</option>
-                      <option value="600">SemiBold</option>
-                      <option value="700">Bold</option>
-                      <option value="800">ExtraBold</option>
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">X Position (%):</label>
+                    <input type="number" id="inspectorPosX" min="0" max="95" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace;" />
+                  </div>
+
+                  <div>
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Y Position (%):</label>
+                    <input type="number" id="inspectorPosY" min="0" max="95" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace;" />
+                  </div>
+
+                  <div id="inspectorFontSizeGroup">
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Font Size (px):</label>
+                    <input type="number" id="inspectorFontSize" min="8" max="36" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                  </div>
+
+                  <div id="inspectorFontWeightGroup">
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Font Weight:</label>
+                    <select id="inspectorFontWeight" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <option value="400">Normal (400)</option>
+                      <option value="600">SemiBold (600)</option>
+                      <option value="700">Bold (700)</option>
+                      <option value="800">ExtraBold (800)</option>
+                      <option value="900">Black (900)</option>
                     </select>
                   </div>
-                  <div>
-                    <label style="display: block; color: #64748b; margin-bottom: 2px;">Text Color:</label>
-                    <input type="color" id="inspectorColor" style="width: 100%; height: 26px; padding: 0; border: none; cursor: pointer;" />
+
+                  <div id="inspectorColorGroup">
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Text Color:</label>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      <input type="color" id="inspectorColor" style="width: 32px; height: 30px; padding: 0; border: none; cursor: pointer; border-radius: 4px;" />
+                      <input type="text" id="inspectorColorHex" style="flex: 1; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.75rem;" />
+                    </div>
                   </div>
                 </div>
+
+                <!-- Media Size & Resizing Toolkit (For Photo, Signature & QR) -->
+                <div id="inspectorMediaSizeBlock" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-top: 6px;">
+                  <div style="font-size: 0.76rem; font-weight: 800; color: #0f172a; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                    <span>📐 Image & Dimensions Customizer:</span>
+                    <span id="inspectorDimensionsLabel" style="font-size: 0.72rem; color: #2563eb; font-family: monospace; font-weight: 700;">88 × 110 px</span>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 0.75rem; margin-bottom: 8px;">
+                    <div>
+                      <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Width (px):</label>
+                      <input type="number" id="inspectorWidth" min="20" max="400" step="2" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace;" />
+                    </div>
+
+                    <div>
+                      <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Height (px):</label>
+                      <input type="number" id="inspectorHeight" min="15" max="400" step="2" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace;" />
+                    </div>
+
+                    <div>
+                      <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Border Radius (px):</label>
+                      <input type="number" id="inspectorBorderRadius" min="0" max="100" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+                    </div>
+                  </div>
+
+                  <!-- Quick Size Presets Bar -->
+                  <div style="font-size: 0.7rem; font-weight: 700; color: #64748b; margin-bottom: 4px;">⚡ Quick Size Presets:</div>
+                  <div id="inspectorQuickSizePresets" style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <!-- Populated dynamically based on selected media tag -->
+                  </div>
+                </div>
+
               </div>
+
+            </div>
 
             </div>
 
             <!-- ACTION BUTTONS -->
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;">
-              <button id="saveLayoutSettingsBtn" type="button" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px;">
-                <span>💾 Save & Apply ID Card Layout</span>
+              <button id="saveLayoutSettingsBtn" type="button" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
+                <span>💾 Save & Apply ID Card Layout Globally</span>
               </button>
 
               <button id="resetLayoutSettingsBtn" type="button" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 12px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem;">
@@ -830,20 +1028,55 @@
 
           </div>
 
-          <!-- LIVE PREVIEW CONTAINER -->
+          <!-- ENHANCED LIVE PREVIEW CONTAINER -->
           <div style="position: sticky; top: 20px;">
-            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; text-align: center;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <span style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">👁️ Real-Time Live Preview</span>
-                <span style="font-size: 0.75rem; background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 4px; font-weight: 600;">PVC High-Res Standard</span>
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 20px; box-shadow: 0 8px 24px rgba(15,23,42,0.06);">
+              
+              <!-- Header Bar with Mode & Member Switcher -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-weight: 800; font-size: 0.98rem; color: #0f172a;">👁️ Live Card Preview</span>
+                  <span style="font-size: 0.7rem; background: #ecfdf5; color: #15803d; border: 1px solid #bbf7d0; padding: 1px 7px; border-radius: 12px; font-weight: 700;">Synced</span>
+                </div>
+
+                <!-- Sample Member Selector -->
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <label for="studioPreviewMemberSelect" style="font-size: 0.78rem; color: #64748b; font-weight: 600;">Data:</label>
+                  <select id="studioPreviewMemberSelect" style="font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #0f172a; max-width: 170px;">
+                    <option value="default">Sample (Rajeshwar Verma)</option>
+                    <option value="president">Sample (State President)</option>
+                    <option value="long-name">Sample (Long Name Test)</option>
+                  </select>
+                </div>
               </div>
 
-              <!-- Preview wrapper -->
-              <div id="studioLiveCardPreviewContainer" style="display: flex; justify-content: center; align-items: center; min-height: 420px; overflow-x: auto; padding: 10px 0;">
+              <!-- View Mode Pills (Side-by-Side, Front, Back, 3D Flip) -->
+              <div style="display: flex; justify-content: center; gap: 6px; margin-bottom: 14px; background: #f8fafc; padding: 4px; border-radius: 10px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
+                <button type="button" class="preview-mode-pill active" data-mode="both" id="btnPreviewModeBoth" style="background: #0F2B5C; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">👥 Both Sides</button>
+                <button type="button" class="preview-mode-pill" data-mode="front" id="btnPreviewModeFront" style="background: transparent; color: #475569; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">🖼️ Front</button>
+                <button type="button" class="preview-mode-pill" data-mode="back" id="btnPreviewModeBack" style="background: transparent; color: #475569; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">🔄 Back</button>
+                <button type="button" class="preview-mode-pill" data-mode="3d-flip" id="btnPreviewModeFlip" style="background: transparent; color: #475569; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">✨ 3D Flip</button>
+              </div>
+
+              <!-- Preview render target wrapper -->
+              <div id="studioLiveCardPreviewContainer" style="display: flex; justify-content: center; align-items: center; min-height: 420px; overflow-x: auto; padding: 8px 0; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
                 <!-- Dynamically populated card -->
               </div>
 
-              <p style="font-size: 0.78rem; color: #64748b; margin-top: 12px; margin-bottom: 0;">
+              <!-- Quick Test Export Actions -->
+              <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" id="btnStudioTestPng" style="background: #0F2B5C; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                  <span>📥 Test PNG (300 DPI)</span>
+                </button>
+                <button type="button" id="btnStudioTestPdf" style="background: #ea580c; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                  <span>📄 Test PDF</span>
+                </button>
+                <button type="button" id="btnStudioTestPrint" style="background: #f1f5f9; color: #0F2B5C; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                  <span>🖨️ Test Print</span>
+                </button>
+              </div>
+
+              <p style="font-size: 0.75rem; color: #64748b; margin-top: 10px; margin-bottom: 0; text-align: center;">
                 All approved members will receive this exact ID card layout when viewing or downloading their official ID card.
               </p>
             </div>
@@ -851,6 +1084,165 @@
         </div>
       </section>
     </main>
+
+    <!-- ======================================== -->
+    <!-- EDIT MEMBER & LIVE ID PREVIEW MODAL -->
+    <!-- ======================================== -->
+    <div id="editMemberPreviewModal" class="admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.7); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;">
+      <div class="admin-modal-content" style="background: white; width: 100%; max-width: 1080px; max-height: 92vh; overflow-y: auto; border-radius: 18px; padding: 24px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+        
+        <!-- Modal Close Button -->
+        <button id="closeEditMemberModalBtn" style="position: absolute; top: 16px; right: 16px; background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b; transition: all 0.2s;">✕</button>
+
+        <!-- Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px; padding-right: 40px;">
+          <div>
+            <h3 style="margin: 0; color: #0F2B5C; font-size: 1.3rem; display: flex; align-items: center; gap: 8px;">
+              <span>✏️ Edit Member & Live ID Preview</span>
+            </h3>
+            <p style="margin: 3px 0 0; font-size: 0.82rem; color: #64748b;">
+              Modify member profile data with synchronized real-time ID card rendering.
+            </p>
+          </div>
+          <span id="editModalMemberIdBadge" style="background: #eff6ff; color: #1d4ed8; font-family: monospace; font-weight: 800; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; border: 1px solid #bfdbfe;">
+            ID: -
+          </span>
+        </div>
+
+        <!-- Split Grid: Left Form & Right Live Preview -->
+        <div style="display: grid; grid-template-columns: minmax(320px, 1fr) minmax(360px, 1fr); gap: 24px; align-items: start;">
+          
+          <!-- LEFT FORM COLUMN -->
+          <form id="editMemberForm" style="display: flex; flex-direction: column; gap: 14px;">
+            <input type="hidden" id="editFormMemberDocId" />
+
+            <!-- Row 1: Full Name & Member Number -->
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Full Name *</label>
+                <input type="text" id="editFullName" required style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Member ID / Number</label>
+                <input type="text" id="editMemberNumber" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; font-family: monospace; font-weight: bold;" />
+              </div>
+            </div>
+
+            <!-- Row 2: Designation & Member Type -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Designation / Title</label>
+                <input type="text" id="editDesignation" placeholder="e.g. District General Secretary" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Member Tier</label>
+                <select id="editMemberType" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; background: white;">
+                  <option value="active-member">🎖️ Active Member (सक्रिय सदस्य)</option>
+                  <option value="primary-member">👤 Primary Member (प्राथमिक सदस्य)</option>
+                  <option value="office-bearer">🏛️ Office Bearer (पदाधिकारी)</option>
+                  <option value="volunteer">🤝 Volunteer (स्वयंसेवक)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 3: Father Name & Blood Group -->
+            <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Father / Guardian Name</label>
+                <input type="text" id="editFatherName" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Blood Group</label>
+                <select id="editBloodGroup" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; background: white;">
+                  <option value="">Select Blood Group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 4: Mobile & Date of Birth -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Mobile Number</label>
+                <input type="tel" id="editMobile" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem;" />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Date of Birth</label>
+                <input type="date" id="editDob" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem;" />
+              </div>
+            </div>
+
+            <!-- Row 5: Residential Address -->
+            <div>
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Residential Address</label>
+              <textarea id="editAddress" rows="2" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; resize: vertical;"></textarea>
+            </div>
+
+            <!-- Row 6: Photo Upload / Photo URL -->
+            <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Member Photo</label>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <div id="editMemberPhotoThumb" style="width: 48px; height: 58px; border-radius: 6px; border: 1.5px solid #cbd5e1; background: white; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <img src="images/default-user.jpg" alt="Thumb" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div style="flex: 1;">
+                  <input type="file" id="editPhotoFileInput" accept="image/*" style="font-size: 0.78rem; width: 100%; margin-bottom: 4px;" />
+                  <input type="text" id="editPhotoUrlInput" placeholder="Or enter direct photo URL..." style="width: 100%; font-size: 0.78rem; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px;" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 10px; margin-top: 6px;">
+              <button type="submit" id="saveMemberChangesBtn" style="flex: 1; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
+                💾 Save Changes
+              </button>
+              <button type="button" id="cancelEditMemberBtn" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 12px 18px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                Cancel
+              </button>
+            </div>
+          </form>
+
+          <!-- RIGHT LIVE PREVIEW COLUMN -->
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-weight: 700; font-size: 0.88rem; color: #0F2B5C;">🎴 Live Card Preview</span>
+              <div style="display: flex; gap: 4px;">
+                <button type="button" id="btnEditPreviewBoth" class="edit-preview-tab active" style="background: #0F2B5C; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">Both</button>
+                <button type="button" id="btnEditPreviewFront" class="edit-preview-tab" style="background: white; color: #334155; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">Front</button>
+                <button type="button" id="btnEditPreviewBack" class="edit-preview-tab" style="background: white; color: #334155; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">Back</button>
+              </div>
+            </div>
+
+            <!-- Card Render Container -->
+            <div id="editMemberCardPreviewContainer" style="display: flex; justify-content: center; align-items: center; min-height: 380px; overflow-x: auto; padding: 6px 0;">
+              <!-- Live card rendered dynamically -->
+            </div>
+
+            <!-- Export Buttons for this member -->
+            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap;">
+              <button type="button" id="btnEditModalDownloadPng" style="background: #0F2B5C; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                <span>📥 Download PNG</span>
+              </button>
+              <button type="button" id="btnEditModalDownloadPdf" style="background: #ea580c; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                <span>📄 PDF Card</span>
+              </button>
+              <button type="button" id="btnEditModalPrint" style="background: #138808; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                <span>🖨️ Direct Print</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
 
     <!-- ======================================== -->
     <!-- DETAIL MODAL FOR INSPECTING APPLICANTS / MEMBERS -->

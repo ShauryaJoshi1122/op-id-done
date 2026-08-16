@@ -1,6 +1,6 @@
 {
-  "name": "Thamarai Charitable Trust Foundation",
-  "description": "English Member Management, Application Screening, Digital ID Card Generation, and Admin Control Portal with unified modern design.",
+  "name": "Sardar Vallabhbhai Patel Party",
+  "description": "Official Web Application for Sardar Vallabhbhai Patel Party — Member Management, Digital ID Card Studio, and Appointment Letter Generation Portal.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

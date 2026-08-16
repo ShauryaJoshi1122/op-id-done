@@ -6,30 +6,37 @@
 /* ==========================================
    GOOGLE FONTS & BASE IMPORT
    ========================================== */
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Pavanam&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Pavanam&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&display=swap");
 
 /* ==========================================
-   ROOT DESIGN SYSTEM & BRAND TOKENS (UNIFIED PALETTE)
+   ROOT DESIGN SYSTEM & BRAND TOKENS (SVPP PALETTE)
    ========================================== */
 :root {
+  /* SVPP Party Brand Colors */
+  --svpp-saffron: #FF9933;
+  --svpp-navy: #0F2B5C;
+  --svpp-green: #138808;
+  --svpp-green-dark: #166534;
+  --svpp-neutral: #F8FAFC;
+
   /* Main Unified Brand Palette */
-  --primary: #2563eb;
-  /* Royal Indigo Blue */
-  --primary-dark: #1d4ed8;
-  /* Darker royal blue for hovers/headers */
+  --primary: #0F2B5C;
+  /* Deep Patriot Navy Blue */
+  --primary-dark: #091a38;
+  /* Darker navy */
   --primary-light: #eff6ff;
-  /* Light blue tint for subtle callouts */
-  --secondary: #3b82f6;
-  /* Bright Blue Accent */
-  --secondary-dark: #1e40af;
-  /* Deep Navy */
-  --secondary-light: #f0f7ff;
-  /* Soft Ice Blue */
-  --accent: #0f172a;
-  /* Midnight Slate */
-  --accent-light: #1e293b;
-  /* Slate highlight */
-  --accent-tint: #f8fafc;
+  /* Light blue tint */
+  --secondary: #FF9933;
+  /* Vibrant Saffron Header Accent */
+  --secondary-dark: #d97706;
+  /* Deep Amber Saffron */
+  --secondary-light: #fff7ed;
+  /* Warm Saffron Ice */
+  --accent: #138808;
+  /* Accent Green */
+  --accent-light: #166534;
+  /* Deep Forest Green */
+  --accent-tint: #f0fdf4;
 
   /* Blood Donation / Status Red */
   --blood: #dc2626;
