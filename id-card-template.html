@@ -199,7 +199,7 @@
     <section id="validStatusSection" style="display: none">
       <div class="valid-badge">
         <span style="font-size: 1.2rem;">🇮🇳</span>
-        <span>Verified Official Member Identity Card &bull; Sardar Vallabhbhai Patel Party</span>
+        <span id="validBadgeText">Verified Official Member Identity Card &bull; Sardar Vallabhbhai Patel Party</span>
       </div>
     </section>
 
@@ -210,7 +210,7 @@
           🇮🇳
         </div>
         <div class="dashboard-welcome-text">
-          <h3 style="margin: 0 0 4px; font-size: 1.05rem; color: #0F2B5C; font-weight: 800;">Welcome to Sardar Vallabhbhai Patel Party</h3>
+          <h3 style="margin: 0 0 4px; font-size: 1.05rem; color: #0F2B5C; font-weight: 800;" id="welcomeHeading">Welcome to Sardar Vallabhbhai Patel Party</h3>
           <p style="margin: 0 0 4px; font-size: 0.85rem; color: #475569; line-height: 1.4;">Your membership credentials and appointment record are officially registered in the central party directory.</p>
           <span style="font-size: 0.82rem; color: #166534; font-weight: 700;" id="welcomeSignatory">- <strong id="welcomeLeaderName">National President</strong></span>
         </div>
@@ -240,28 +240,97 @@
       </div>
 
       <!-- Action Buttons Row -->
-      <div class="id-card-actions">
-        <button id="downloadPngBtn" class="id-card-action-btn btn-saffron">
+      <div class="id-card-actions" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 900px; margin: 20px auto;">
+        <button id="downloadPngBtn" class="id-card-action-btn btn-saffron" title="Download High-Resolution PNG of current view">
           <span>📥</span>
-          <span>Download High-Res PNG</span>
+          <span>Download PNG</span>
         </button>
 
-        <button id="downloadPdfBtn" class="id-card-action-btn">
+        <button id="downloadFrontPngBtn" class="id-card-action-btn btn-secondary" title="Download Front Side PNG separately">
+          <span>🖼️</span>
+          <span>Front Side PNG</span>
+        </button>
+
+        <button id="downloadBackPngBtn" class="id-card-action-btn btn-secondary" title="Download Back Side PNG separately">
+          <span>📜</span>
+          <span>Back Side PNG</span>
+        </button>
+
+        <button id="downloadPdfBtn" class="id-card-action-btn" title="Download Official High-DPI PDF Document">
           <span>📄</span>
           <span>Download PDF</span>
         </button>
 
-        <button id="printCardBtn" class="id-card-action-btn btn-secondary">
+        <button id="printCardBtn" class="id-card-action-btn btn-secondary" title="Print card or save as PDF via system dialog">
           <span>🖨️</span>
-          <span>Print ID Card</span>
+          <span>Print Card</span>
         </button>
 
-        <a id="btnGoAppointmentLetter" href="appointment-letter-template.html" class="id-card-action-btn btn-green">
+        <a id="btnGoAppointmentLetter" href="appointment-letter-template.html" class="id-card-action-btn btn-green" title="Open Appointment Letter Studio">
           <span>🎖️</span>
           <span>Appointment Letter</span>
         </a>
       </div>
     </section>
+
+    <!-- Modal: Member ID & DoB Authentication Modal (Shown when not authenticated) -->
+    <div id="memberAuthModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 20px;">
+      <div style="background: #ffffff; border-radius: 18px; max-width: 460px; width: 100%; padding: 32px 26px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); border: 1px solid #e2e8f0; position: relative;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="width: 56px; height: 56px; margin: 0 auto 12px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 2px solid #bfdbfe;">
+            🔐
+          </div>
+          <h3 style="font-size: 1.3rem; color: #0F2B5C; margin: 0 0 6px; font-weight: 800;">Member Login & Verification</h3>
+          <p style="color: #64748b; font-size: 0.86rem; margin: 0; line-height: 1.4;">
+            To download your official ID Card and Appointment Letter, please verify your credentials with your <strong>Member ID</strong> and <strong>Date of Birth (DoB)</strong>.
+          </p>
+        </div>
+
+        <div id="modalAuthError" style="display: none; background: #fef2f2; color: #991b1b; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; margin-bottom: 16px; border: 1px solid #fecaca; text-align: center;"></div>
+
+        <form id="inPageMemberAuthForm">
+          <div style="margin-bottom: 14px;">
+            <label for="modalMemberIdInput" style="display: block; font-size: 0.85rem; font-weight: 700; color: #0F2B5C; margin-bottom: 6px;">
+              🪪 Member ID / Registration No. <span style="color: #dc2626;">*</span>
+            </label>
+            <input
+              type="text"
+              id="modalMemberIdInput"
+              placeholder="e.g. SVPP-2026-9041 or registered email"
+              required
+              style="width: 100%; padding: 11px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; box-sizing: border-box; font-family: inherit;"
+            />
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <label for="modalMemberDobInput" style="display: block; font-size: 0.85rem; font-weight: 700; color: #0F2B5C; margin-bottom: 6px;">
+              📅 Date of Birth (DoB) <span style="color: #dc2626;">*</span>
+            </label>
+            <input
+              type="date"
+              id="modalMemberDobInput"
+              required
+              style="width: 100%; padding: 11px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; box-sizing: border-box; font-family: inherit; background: #ffffff;"
+            />
+          </div>
+
+          <button
+            type="submit"
+            id="modalAuthSubmitBtn"
+            style="width: 100%; padding: 13px; background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%); color: white; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(15,43,92,0.25);"
+          >
+            🔐 Verify Credentials & Unlock ID Card
+          </button>
+        </form>
+
+        <div style="margin-top: 18px; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 14px; font-size: 0.82rem; color: #64748b;">
+          <span>Need help? </span>
+          <a href="member-login.html" style="color: #2563eb; font-weight: 700; text-decoration: none;">Go to Member Login Portal</a>
+          <span style="margin: 0 4px;">&bull;</span>
+          <a href="join-contact.html" style="color: #FF9933; font-weight: 700; text-decoration: none;">Apply Online</a>
+        </div>
+      </div>
+    </div>
 
     <!-- Security & Verification Box -->
     <section class="security-box" style="max-width: 680px; margin: 20px auto 40px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">

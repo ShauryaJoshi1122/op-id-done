@@ -95,9 +95,9 @@
     <!-- ======================================== -->
     <section class="page-hero-unified">
       <div class="container">
-        <h1>Member Portal & ID Card Download</h1>
+        <h1>Official Member Login & Download Portal</h1>
         <p>
-          Approved members can securely sign in with Google to view and download their verified Digital ID Card.
+          Enter your registered <strong>Member ID</strong> and <strong>Date of Birth (DoB)</strong> to view and download your official Digital ID Card and Appointment Letter.
         </p>
       </div>
     </section>
@@ -106,51 +106,89 @@
     <!-- LOGIN FORM -->
     <!-- ======================================== -->
     <section class="login-section" style="padding: 40px 20px;">
-      <div class="login-container" style="max-width: 440px; margin: 0 auto; background: white; padding: 32px 24px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-        <h2 style="font-size: 1.4rem; color: #0f172a; margin-top: 0; text-align: center;">Secure Member Sign-In</h2>
-        <p class="login-subtitle" style="text-align: center; color: #64748b; font-size: 0.95rem; margin-bottom: 24px;">
-          Enter your registered email address or Member ID to access your Digital ID Card.
-        </p>
+      <div class="login-container" style="max-width: 460px; margin: 0 auto; background: white; padding: 32px 26px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="width: 56px; height: 56px; margin: 0 auto 12px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 2px solid #bfdbfe;">
+            🪪
+          </div>
+          <h2 style="font-size: 1.35rem; color: #0F2B5C; margin: 0 0 6px; font-weight: 800;">Member Credential Verification</h2>
+          <p class="login-subtitle" style="text-align: center; color: #64748b; font-size: 0.88rem; margin: 0; line-height: 1.4;">
+            Authenticate using your official party Member ID and registered Date of Birth.
+          </p>
+        </div>
 
         <div
           id="loginInfo"
           class="info-message"
-          style="display: none; background-color: #eff6ff; color: #1e40af; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 600; border: 1px solid #bfdbfe;"
+          style="display: none; background-color: #eff6ff; color: #1e40af; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 600; border: 1px solid #bfdbfe; font-size: 0.88rem;"
         ></div>
 
         <div
           id="loginError"
           class="error-message"
-          style="display: none; background-color: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #fecaca;"
+          style="display: none; background-color: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #fecaca; font-size: 0.88rem;"
         ></div>
 
         <form id="memberDirectLoginForm" style="text-align: left;">
+          <!-- 1. Member ID Input -->
           <div style="margin-bottom: 16px;">
-            <label for="memberEmailOrIdInput" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #334155;">
-              Registered Email or Member ID Number
+            <label for="memberEmailOrIdInput" style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: #0F2B5C;">
+              🪪 Member ID / Registration No. <span style="color: #dc2626;">*</span>
             </label>
             <input
               type="text"
               id="memberEmailOrIdInput"
-              placeholder="e.g. email@gmail.com or MEM-2025-001"
+              placeholder="e.g. SVPP-2026-9041 or your registered email"
               required
-              style="width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 1rem; box-sizing: border-box;"
+              style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box; font-family: inherit;"
             />
+            <span style="display: block; font-size: 0.75rem; color: #64748b; margin-top: 4px;">Enter your assigned Member ID (e.g. SVPP-2026-XXXX) or registered email.</span>
+          </div>
+
+          <!-- 2. Date of Birth Input -->
+          <div style="margin-bottom: 22px;">
+            <label for="memberDobInput" style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: #0F2B5C;">
+              📅 Date of Birth (DoB) <span style="color: #dc2626;">*</span>
+            </label>
+            <input
+              type="date"
+              id="memberDobInput"
+              required
+              style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box; font-family: inherit; background: #ffffff;"
+            />
+            <span style="display: block; font-size: 0.75rem; color: #64748b; margin-top: 4px;">Select your Date of Birth as submitted during membership registration.</span>
           </div>
 
           <button
             type="submit"
             id="memberDirectSubmitBtn"
-            style="width: 100%; padding: 14px; background: #2563eb; color: #ffffff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s;"
+            style="width: 100%; padding: 14px; background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%); color: #ffffff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(15,43,92,0.25);"
           >
-            Access Digital ID Card &rarr;
+            🔐 Log In & Access Documents &rarr;
           </button>
         </form>
 
+        <!-- Member Hub / Quick Download Options (Shown when authenticated) -->
+        <div id="authenticatedMemberHub" style="display: none; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+          <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px; padding: 14px; margin-bottom: 16px; text-align: center;">
+            <div style="font-size: 1.1rem; font-weight: 800; color: #166534;" id="authMemberName">Welcome Member</div>
+            <div style="font-size: 0.82rem; color: #15803d; font-weight: 700; margin-top: 2px;" id="authMemberId">ID: Verified</div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a id="btnAuthGoIdCard" href="id-card-template.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 12px 18px; background: #0F2B5C; color: white; border-radius: 8px; font-weight: 700; font-size: 0.92rem;">
+              <span>🪪</span> <span>Download Digital ID Card</span>
+            </a>
+            <a id="btnAuthGoLetter" href="appointment-letter-template.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 12px 18px; background: #138808; color: white; border-radius: 8px; font-weight: 700; font-size: 0.92rem;">
+              <span>🎖️</span> <span>Download Appointment Letter</span>
+            </a>
+          </div>
+        </div>
+
         <div style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-          <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 12px;">Not registered as a member yet?</p>
-          <a href="join-contact.html" style="display: inline-block; text-decoration: none; padding: 12px 20px; background: #2563eb; color: white; border-radius: 10px; font-weight: 700; font-size: 0.95rem;">
-            Apply for Membership & ID Card
+          <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 10px;">Not registered as a member yet?</p>
+          <a href="join-contact.html" style="display: inline-block; text-decoration: none; padding: 10px 18px; background: #FF9933; color: white; border-radius: 8px; font-weight: 700; font-size: 0.88rem;">
+            ✍️ Apply for SVPP Membership
           </a>
         </div>
       </div>

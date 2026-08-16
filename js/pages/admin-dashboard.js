@@ -1126,8 +1126,13 @@ const btnStudioTestPng = document.getElementById("btnStudioTestPng");
 const btnStudioTestPdf = document.getElementById("btnStudioTestPdf");
 const btnStudioTestPrint = document.getElementById("btnStudioTestPrint");
 
+// Canvas View Mode Buttons
+const btnCanvasViewRealistic = document.getElementById("btnCanvasViewRealistic");
+const btnCanvasViewTags = document.getElementById("btnCanvasViewTags");
+
 let studioCanvasZoom = 1.0;
 let studioPreviewMode = "both"; // "both" | "front" | "back" | "3d-flip"
+let studioCanvasRenderMode = "realistic"; // "realistic" | "tags"
 
 let studioState = {
     orientation: "vertical", // "vertical" | "horizontal"
@@ -1139,6 +1144,37 @@ let studioState = {
     frontElements: [],
     backElements: []
 };
+
+// Canvas View Mode Toggle Listeners
+if (btnCanvasViewRealistic) {
+    btnCanvasViewRealistic.addEventListener("click", () => {
+        studioCanvasRenderMode = "realistic";
+        btnCanvasViewRealistic.classList.add("active");
+        btnCanvasViewRealistic.style.background = "#2563eb";
+        btnCanvasViewRealistic.style.color = "white";
+        if (btnCanvasViewTags) {
+            btnCanvasViewTags.classList.remove("active");
+            btnCanvasViewTags.style.background = "transparent";
+            btnCanvasViewTags.style.color = "#94a3b8";
+        }
+        renderInteractiveCanvas();
+    });
+}
+
+if (btnCanvasViewTags) {
+    btnCanvasViewTags.addEventListener("click", () => {
+        studioCanvasRenderMode = "tags";
+        btnCanvasViewTags.classList.add("active");
+        btnCanvasViewTags.style.background = "#2563eb";
+        btnCanvasViewTags.style.color = "white";
+        if (btnCanvasViewRealistic) {
+            btnCanvasViewRealistic.classList.remove("active");
+            btnCanvasViewRealistic.style.background = "transparent";
+            btnCanvasViewRealistic.style.color = "#94a3b8";
+        }
+        renderInteractiveCanvas();
+    });
+}
 
 // Canvas Zoom Helpers
 function setCanvasZoom(newZoom) {
@@ -1361,51 +1397,84 @@ function renderInteractiveCanvas() {
         interactiveCardCanvas.style.border = "2px dashed #94a3b8";
     }
 
+    const sampleMember = getStudioSampleMember();
+    const shortcodeCtx = buildShortcodeContext(sampleMember, dashboardState.orgSettings);
+
     interactiveCardCanvas.innerHTML = elements.map((el) => {
         const isSelected = el.id === studioState.selectedElementId;
         const scDef = AVAILABLE_SHORTCODES.find((s) => s.tag === el.tag) || {};
 
         const isMedia = el.tag === "{photo}" || el.tag === "{qrCode}" || el.tag === "{signature}";
-        
-        let content = `${scDef.icon || "🏷️"} ${el.label || el.tag}`;
-        let mediaBadge = "";
         let resizeHandleHTML = "";
+
+        if (isSelected) {
+            resizeHandleHTML = `
+                <div class="resize-corner-handle" data-id="${el.id}" title="Drag corner to change size" style="position: absolute; right: -6px; bottom: -6px; width: 15px; height: 15px; background: #2563eb; border: 2.5px solid #ffffff; border-radius: 50%; cursor: nwse-resize; z-index: 30; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 4px; height: 4px; background: white; border-radius: 50%;"></div>
+                </div>
+            `;
+        }
 
         if (isMedia) {
             const w = el.width || (el.tag === "{photo}" ? 88 : (el.tag === "{signature}" ? 110 : 55));
             const h = el.height || (el.tag === "{photo}" ? 110 : (el.tag === "{signature}" ? 38 : 55));
             const r = el.borderRadius !== undefined ? `${el.borderRadius}px` : (el.tag === "{photo}" ? "8px" : "4px");
 
-            if (el.tag === "{photo}") {
-                content = `
-                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e0f2fe; border: 1.5px solid #0284c7; border-radius: ${r}; overflow: hidden; pointer-events: none;">
-                        <span style="font-size: 1.1rem;">👤</span>
-                        <span style="font-size: 0.62rem; font-weight: 800; color: #0369a1; text-transform: uppercase;">PHOTO</span>
-                        <span style="font-size: 0.55rem; color: #0284c7; font-family: monospace;">${w}×${h}</span>
-                    </div>
-                `;
-            } else if (el.tag === "{qrCode}") {
-                content = `
-                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; border: 1.5px solid #64748b; border-radius: ${r}; overflow: hidden; pointer-events: none;">
-                        <span style="font-size: 1.1rem;">🔳</span>
-                        <span style="font-size: 0.55rem; font-weight: 800; color: #334155; text-transform: uppercase;">QR CODE</span>
-                        <span style="font-size: 0.52rem; color: #64748b; font-family: monospace;">${w}×${h}</span>
-                    </div>
-                `;
-            } else if (el.tag === "{signature}") {
-                content = `
-                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fefce8; border: 1.5px solid #ca8a04; border-radius: ${r}; overflow: hidden; pointer-events: none;">
-                        <span style="font-size: 0.9rem;">✍️</span>
-                        <span style="font-size: 0.58rem; font-weight: 800; color: #854d0e; text-transform: uppercase;">SIGNATURE</span>
-                        <span style="font-size: 0.52rem; color: #ca8a04; font-family: monospace;">${w}×${h}</span>
-                    </div>
-                `;
-            }
+            let content = "";
 
-            if (isSelected) {
-                resizeHandleHTML = `
-                    <div class="resize-corner-handle" data-id="${el.id}" title="Drag to resize" style="position: absolute; right: -5px; bottom: -5px; width: 14px; height: 14px; background: #2563eb; border: 2px solid white; border-radius: 50%; cursor: nwse-resize; z-index: 20; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>
-                `;
+            if (studioCanvasRenderMode === "realistic") {
+                if (el.tag === "{photo}") {
+                    const photoSrc = shortcodeCtx.photoUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=380&fit=crop&crop=face";
+                    content = `
+                        <div style="width: 100%; height: 100%; position: relative; border-radius: ${r}; overflow: hidden; background: #e2e8f0; pointer-events: none;">
+                            <img src="${photoSrc}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=380&fit=crop&crop=face'" />
+                            <span style="position: absolute; bottom: 2px; right: 2px; font-size: 0.52rem; background: rgba(15,23,42,0.75); color: #fff; padding: 1px 4px; border-radius: 3px; font-family: monospace; line-height: 1;">${w}×${h}</span>
+                        </div>
+                    `;
+                } else if (el.tag === "{qrCode}") {
+                    const qrSrc = shortcodeCtx.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shortcodeCtx.verificationUrl || "https://svpp.org")}`;
+                    content = `
+                        <div style="width: 100%; height: 100%; position: relative; border-radius: ${r}; overflow: hidden; background: #ffffff; padding: 2px; box-sizing: border-box; pointer-events: none; display: flex; align-items: center; justify-content: center;">
+                            <img src="${qrSrc}" alt="QR Code" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
+                            <span style="position: absolute; bottom: 1px; right: 1px; font-size: 0.5rem; background: rgba(15,23,42,0.75); color: #fff; padding: 1px 3px; border-radius: 2px; font-family: monospace; line-height: 1;">${w}×${h}</span>
+                        </div>
+                    `;
+                } else if (el.tag === "{signature}") {
+                    const sigSrc = shortcodeCtx.signatureUrl || "https://upload.wikimedia.org/wikipedia/commons/f/f8/Signature_sample.svg";
+                    content = `
+                        <div style="width: 100%; height: 100%; position: relative; border-radius: ${r}; overflow: hidden; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; pointer-events: none;">
+                            <img src="${sigSrc}" alt="Signature" style="max-width: 95%; max-height: 90%; object-fit: contain; display: block;" />
+                            <span style="position: absolute; bottom: 1px; right: 1px; font-size: 0.5rem; background: rgba(15,23,42,0.75); color: #fff; padding: 1px 3px; border-radius: 2px; font-family: monospace; line-height: 1;">${w}×${h}</span>
+                        </div>
+                    `;
+                }
+            } else {
+                // Tag mode
+                if (el.tag === "{photo}") {
+                    content = `
+                        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e0f2fe; border: 1.5px solid #0284c7; border-radius: ${r}; overflow: hidden; pointer-events: none;">
+                            <span style="font-size: 1.1rem;">👤</span>
+                            <span style="font-size: 0.62rem; font-weight: 800; color: #0369a1; text-transform: uppercase;">PHOTO</span>
+                            <span style="font-size: 0.55rem; color: #0284c7; font-family: monospace;">${w}×${h}</span>
+                        </div>
+                    `;
+                } else if (el.tag === "{qrCode}") {
+                    content = `
+                        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; border: 1.5px solid #64748b; border-radius: ${r}; overflow: hidden; pointer-events: none;">
+                            <span style="font-size: 1.1rem;">🔳</span>
+                            <span style="font-size: 0.55rem; font-weight: 800; color: #334155; text-transform: uppercase;">QR CODE</span>
+                            <span style="font-size: 0.52rem; color: #64748b; font-family: monospace;">${w}×${h}</span>
+                        </div>
+                    `;
+                } else if (el.tag === "{signature}") {
+                    content = `
+                        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fefce8; border: 1.5px solid #ca8a04; border-radius: ${r}; overflow: hidden; pointer-events: none;">
+                            <span style="font-size: 0.9rem;">✍️</span>
+                            <span style="font-size: 0.58rem; font-weight: 800; color: #854d0e; text-transform: uppercase;">SIGNATURE</span>
+                            <span style="font-size: 0.52rem; color: #ca8a04; font-family: monospace;">${w}×${h}</span>
+                        </div>
+                    `;
+                }
             }
 
             const styleStr = `
@@ -1415,15 +1484,21 @@ function renderInteractiveCanvas() {
                 width: ${w}px;
                 height: ${h}px;
                 cursor: move;
-                border: ${isSelected ? '2px solid #2563eb' : '1.5px dashed rgba(37,99,235,0.6)'};
+                border: ${isSelected ? '2.5px solid #2563eb' : '1.5px dashed rgba(37,99,235,0.6)'};
                 border-radius: ${r};
-                box-shadow: ${isSelected ? '0 0 14px rgba(37,99,235,0.7)' : '0 2px 5px rgba(0,0,0,0.1)'};
-                z-index: ${isSelected ? 15 : 4};
+                box-shadow: ${isSelected ? '0 0 16px rgba(37,99,235,0.8), 0 4px 10px rgba(0,0,0,0.2)' : '0 2px 5px rgba(0,0,0,0.1)'};
+                z-index: ${isSelected ? 25 : 5};
                 touch-action: none;
                 box-sizing: border-box;
             `;
 
             return `<div class="draggable-canvas-item draggable-media-item" data-id="${el.id}" style="${styleStr}">${content}${resizeHandleHTML}</div>`;
+        }
+
+        // Text element rendering
+        let textValue = replaceShortcodes(el.label || el.tag, shortcodeCtx);
+        if (studioCanvasRenderMode === "tags") {
+            textValue = `${scDef.icon || "🏷️"} ${el.label || el.tag}`;
         }
 
         const styleStr = `
@@ -1434,17 +1509,19 @@ function renderInteractiveCanvas() {
             font-weight: ${el.fontWeight || '600'};
             color: ${el.color || '#0f172a'};
             cursor: move;
-            padding: 3px 6px;
-            border: ${isSelected ? '2px solid #38bdf8' : '1px dashed rgba(37,99,235,0.5)'};
-            background: ${isSelected ? 'rgba(56,189,248,0.35)' : 'rgba(255,255,255,0.9)'};
+            padding: ${studioCanvasRenderMode === 'realistic' ? '1px 3px' : '3px 6px'};
+            border: ${isSelected ? '2px solid #38bdf8' : (studioCanvasRenderMode === 'realistic' ? '1px dashed rgba(56,189,248,0.4)' : '1px dashed rgba(37,99,235,0.5)')};
+            background: ${isSelected ? 'rgba(56,189,248,0.35)' : (studioCanvasRenderMode === 'realistic' ? 'transparent' : 'rgba(255,255,255,0.9)')};
             border-radius: 4px;
-            box-shadow: ${isSelected ? '0 0 12px rgba(56,189,248,0.9)' : '0 1px 3px rgba(0,0,0,0.1)'};
+            box-shadow: ${isSelected ? '0 0 12px rgba(56,189,248,0.9)' : 'none'};
             white-space: nowrap;
-            z-index: ${isSelected ? 10 : 2};
+            z-index: ${isSelected ? 20 : 3};
             touch-action: none;
+            line-height: 1.25;
+            user-select: none;
         `;
 
-        return `<div class="draggable-canvas-item" data-id="${el.id}" style="${styleStr}">${content}</div>`;
+        return `<div class="draggable-canvas-item" data-id="${el.id}" style="${styleStr}">${textValue}${resizeHandleHTML}</div>`;
     }).join("");
 
     if (!bgUrl) {
@@ -1457,11 +1534,11 @@ function renderInteractiveCanvas() {
     // Attach Drag & Resize Listeners
     interactiveCardCanvas.querySelectorAll(".draggable-canvas-item").forEach((itemEl) => {
         itemEl.addEventListener("mousedown", (e) => {
-            if (e.target.classList.contains("resize-corner-handle")) return;
+            if (e.target.classList.contains("resize-corner-handle") || e.target.closest(".resize-corner-handle")) return;
             startDragging(e, itemEl);
         });
         itemEl.addEventListener("touchstart", (e) => {
-            if (e.target.classList.contains("resize-corner-handle")) return;
+            if (e.target.classList.contains("resize-corner-handle") || e.target.closest(".resize-corner-handle")) return;
             startDragging(e, itemEl);
         }, { passive: false });
     });

@@ -893,13 +893,20 @@
                     <span id="canvasSideBadge" style="background: #2563eb; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem;">FRONT CANVAS</span>
                   </div>
 
-                  <!-- Zoom Toolbar -->
-                  <div style="display: flex; align-items: center; gap: 4px; background: #1e293b; padding: 2px 6px; border-radius: 6px;">
-                    <span style="font-size: 0.72rem; color: #94a3b8;">Zoom:</span>
-                    <button type="button" id="btnZoomOut" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">-</button>
-                    <span id="canvasZoomLabel" style="font-size: 0.72rem; font-family: monospace; padding: 0 4px; color: #38bdf8;">100%</span>
-                    <button type="button" id="btnZoomIn" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">+</button>
-                    <button type="button" id="btnZoomReset" style="background: #334155; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Reset</button>
+                  <!-- View Mode & Zoom Toolbar -->
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; background: #1e293b; padding: 2px 4px; border-radius: 6px; border: 1px solid #334155;">
+                      <button type="button" id="btnCanvasViewRealistic" class="canvas-render-mode-btn active" style="background: #2563eb; color: white; border: none; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">✨ Realistic Live</button>
+                      <button type="button" id="btnCanvasViewTags" class="canvas-render-mode-btn" style="background: transparent; color: #94a3b8; border: none; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">🏷️ Tag Labels</button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 4px; background: #1e293b; padding: 2px 6px; border-radius: 6px;">
+                      <span style="font-size: 0.72rem; color: #94a3b8;">Zoom:</span>
+                      <button type="button" id="btnZoomOut" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">-</button>
+                      <span id="canvasZoomLabel" style="font-size: 0.72rem; font-family: monospace; padding: 0 4px; color: #38bdf8;">100%</span>
+                      <button type="button" id="btnZoomIn" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">+</button>
+                      <button type="button" id="btnZoomReset" style="background: #334155; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Reset</button>
+                    </div>
                   </div>
                 </div>
 

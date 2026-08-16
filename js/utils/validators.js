@@ -362,8 +362,56 @@ export function validateGovernmentProof(
 }
 
 // ========================================
-// MEMBER PHOTO
+// DATE OF BIRTH NORMALIZATION & MATCHING
 // ========================================
+
+export function normalizeDobString(dobStr) {
+    if (!dobStr) return "";
+    const clean = String(dobStr).trim();
+    // If format is YYYY-MM-DD
+    if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(clean)) {
+        const [y, m, d] = clean.split("-");
+        return `${String(d).padStart(2, "0")}/${String(m).padStart(2, "0")}/${y}`;
+    }
+    // If format is DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+    if (/^\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}$/.test(clean)) {
+        const parts = clean.split(/[\/\-\.]/);
+        return `${String(parts[0]).padStart(2, "0")}/${String(parts[1]).padStart(2, "0")}/${parts[2]}`;
+    }
+    // If parseable Date / Timestamp
+    try {
+        const dt = new Date(clean);
+        if (!isNaN(dt.getTime())) {
+            const dd = String(dt.getDate()).padStart(2, "0");
+            const mm = String(dt.getMonth() + 1).padStart(2, "0");
+            const yyyy = dt.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+    } catch (_) {}
+    return clean.replace(/\D/g, "");
+}
+
+export function matchBirthDates(storedDob, inputDob) {
+    if (!storedDob || !inputDob) return false;
+    const n1 = normalizeDobString(storedDob);
+    const n2 = normalizeDobString(inputDob);
+    if (n1 && n2 && n1 === n2) return true;
+
+    // Digits comparison
+    const digits1 = String(storedDob).replace(/\D/g, "");
+    const digits2 = String(inputDob).replace(/\D/g, "");
+    if (digits1.length >= 6 && digits1 === digits2) return true;
+
+    // Compare swapped ISO format YYYYMMDD vs DDMMYYYY
+    if (digits1.length === 8 && digits2.length === 8) {
+        const d1_iso = (digits1.startsWith("19") || digits1.startsWith("20")) ? digits1 : digits1.slice(4, 8) + digits1.slice(2, 4) + digits1.slice(0, 2);
+        const d2_iso = (digits2.startsWith("19") || digits2.startsWith("20")) ? digits2 : digits2.slice(4, 8) + digits2.slice(2, 4) + digits2.slice(0, 2);
+        if (d1_iso === d2_iso) return true;
+    }
+
+    return false;
+}
+
 
 export function validateMemberPhoto(
     file
