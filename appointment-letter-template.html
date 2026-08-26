@@ -275,6 +275,32 @@
             </div>
           </div>
 
+          <!-- Letterhead Style Customizer (Accent Color & Watermark) -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+            <div style="font-size: 0.8rem; font-weight: 800; color: #0F2B5C; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+              <span>🎨 Letterhead Theme & Seal Options:</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.78rem;">
+              <div>
+                <label for="letterHeaderColorInput" style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Header Color:</label>
+                <select id="letterHeaderColorInput" class="form-control" style="font-size: 0.78rem; padding: 4px 8px;">
+                  <option value="#0F2B5C">Deep Navy Blue (Official)</option>
+                  <option value="#FF9933">National Saffron</option>
+                  <option value="#166534">Patriot Emerald Green</option>
+                  <option value="#B45309">Executive Maroon Gold</option>
+                </select>
+              </div>
+              <div>
+                <label for="watermarkToggleInput" style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Background Watermark:</label>
+                <select id="watermarkToggleInput" class="form-control" style="font-size: 0.78rem; padding: 4px 8px;">
+                  <option value="subtle">Subtle Emblem Watermark</option>
+                  <option value="none">No Watermark (Clean)</option>
+                  <option value="prominent">Prominent Emblem</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <!-- Validity / Valid Upto -->
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -303,9 +329,14 @@
 
           <!-- Action Buttons Row -->
           <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;" class="btn-action-row">
-            <button type="button" id="btnDownloadLetterPng" class="btn-action-primary" style="justify-content: center;">
-              <span>📥</span> Download Official Letter (PNG)
-            </button>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" id="btnDownloadLetterPng" class="btn-action-primary" style="flex: 1; justify-content: center;">
+                <span>📥</span> Download PNG Image
+              </button>
+              <button type="button" id="btnDownloadLetterPdf" class="btn-action-primary" style="flex: 1; justify-content: center; background: #166534;">
+                <span>📄</span> Download High-DPI PDF
+              </button>
+            </div>
             <div style="display: flex; gap: 10px;">
               <button type="button" id="btnPrintLetter" class="btn-action-secondary" style="flex: 1; justify-content: center;">
                 <span>🖨️</span> Print Letter
@@ -320,9 +351,20 @@
 
         <!-- Right: Live Letterhead Canvas -->
         <div class="canvas-preview-stage">
-          <div style="color: #ffffff; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            <span>📄 LIVE OFFICIAL LETTERHEAD PREVIEW</span>
-            <span style="background: #166534; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem;">HIGH-DPI FORMAT</span>
+          <div style="color: #ffffff; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📄 LIVE OFFICIAL LETTERHEAD PREVIEW</span>
+              <span style="background: #166534; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem;">A4 HIGH-DPI FORMAT</span>
+            </div>
+
+            <!-- Zoom Controls Bar -->
+            <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 6px;">
+              <span style="font-size: 0.72rem; color: #cbd5e1;">Zoom:</span>
+              <button type="button" id="btnLetterZoomOut" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold;">-</button>
+              <span id="letterZoomLabel" style="font-size: 0.75rem; font-family: monospace; color: #38bdf8; min-width: 38px; text-align: center;">100%</span>
+              <button type="button" id="btnLetterZoomIn" style="background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold;">+</button>
+              <button type="button" id="btnLetterZoomReset" style="background: #334155; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-size: 0.7rem;">Fit</button>
+            </div>
           </div>
 
           <div id="appointmentLetterCanvasWrapper">

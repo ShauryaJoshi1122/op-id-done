@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standalone Appointment Letter Editor Studio | SVPP</title>
+  
+  <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body style="background: #0f172a; color: #f8fafc; margin: 0; padding: 0; font-family: 'Outfit', sans-serif;">
+
+  <!-- Navigation Header -->
+  <header style="background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="admin-dashboard.html" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 700;">&larr; Admin Dashboard</a>
+      <span style="color: #475569;">|</span>
+      <h1 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #ffffff;">📄 Appointment Letterhead Customizer</h1>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <select id="selectLetterPhpTemplate" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;">
+        <option value="">-- Load Saved Template (MySQL) --</option>
+      </select>
+      <button id="btnSaveLetterTemplate" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+        💾 Save to Database
+      </button>
+      <button id="btnDownloadPdf" style="background: #166534; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+        📄 Download PDF
+      </button>
+    </div>
+  </header>
+
+  <main style="display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 60px);">
+    
+    <!-- Left Configuration Sidebar -->
+    <aside style="background: #1e293b; border-right: 1px solid #334155; padding: 20px; overflow-y: auto;">
+      <h3 style="margin-top: 0; font-size: 0.95rem; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 8px;">⚙️ Letterhead Settings</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.8rem;">
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Member Full Name:</label>
+          <input type="text" id="inputMemberName" value="Rajesh Sharma" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Assigned Designation:</label>
+          <input type="text" id="inputDesignation" value="District President - Youth Wing" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Ref Number:</label>
+            <input type="text" id="inputRefNumber" value="SVPP/HQ/2026/089" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+          </div>
+          <div>
+            <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Valid Upto:</label>
+            <input type="date" id="inputValidUpto" value="2027-08-24" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Header Color:</label>
+            <select id="selectHeaderColor" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px;">
+              <option value="#0F2B5C">Deep Navy Blue</option>
+              <option value="#FF9933">National Saffron</option>
+              <option value="#166534">Patriot Emerald</option>
+              <option value="#B45309">Executive Maroon</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Watermark:</label>
+            <select id="selectWatermarkMode" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px;">
+              <option value="subtle">Subtle Emblem</option>
+              <option value="prominent">Prominent</option>
+              <option value="none">No Watermark</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Official Letter Content Body:</label>
+          <textarea id="textareaLetterBody" rows="7" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box; font-size: 0.8rem; line-height: 1.4;"></textarea>
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px;">Canvas Zoom:</label>
+          <div style="display: flex; align-items: center; gap: 8px; background: #0f172a; padding: 6px; border-radius: 6px;">
+            <button id="btnLetterZoomOut" style="background: #334155; color: white; border: none; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer;">-</button>
+            <span id="letterZoomLabel" style="flex: 1; text-align: center; color: #38bdf8; font-family: monospace;">100%</span>
+            <button id="btnLetterZoomIn" style="background: #334155; color: white; border: none; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer;">+</button>
+            <button id="btnLetterZoomReset" style="background: #334155; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Fit</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Live Preview Section -->
+    <section style="background: #020617; padding: 40px; overflow: auto; display: flex; justify-content: center;">
+      <div id="letterCanvasPreview" style="transform-origin: top center;"></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/editors/appointment-letter-editor.js"></script>
+</body>
+</html>

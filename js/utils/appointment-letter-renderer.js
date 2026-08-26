@@ -56,21 +56,37 @@ export function buildAppointmentLetterHTML(member = {}, orgSettings = {}, letter
     const signatureUrl = assetSettings?.founderSignatureUrl || "images/signature.png";
     const partyLogoUrl = assetSettings?.logoUrl || "images/logo.jpg";
 
+    const headerColor = letterParams?.headerColor || "#0F2B5C";
+    const watermarkMode = letterParams?.watermark || "subtle";
+
+    let watermarkOpacity = 0.06;
+    if (watermarkMode === "none") watermarkOpacity = 0;
+    if (watermarkMode === "prominent") watermarkOpacity = 0.12;
+
+    const watermarkHTML = watermarkOpacity > 0 ? `
+      <!-- Background Watermark Emblem -->
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 450px; height: 450px; opacity: ${watermarkOpacity}; pointer-events: none; z-index: 0; display: flex; align-items: center; justify-content: center;">
+        <img src="${partyLogoUrl}" alt="Watermark" crossorigin="anonymous" style="width: 100%; height: 100%; object-fit: contain; filter: grayscale(30%);" onerror="this.style.display='none'" />
+      </div>
+    ` : "";
+
     return `
-    <div class="appointment-letter-sheet" style="position: relative; width: 794px; min-height: 1123px; background: #ffffff; margin: 0 auto; padding: 36px 44px 44px; box-shadow: 0 10px 35px rgba(0,0,0,0.12); font-family: 'Outfit', sans-serif; color: #1e293b; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e2e8f0;">
+    <div class="appointment-letter-sheet" style="position: relative; width: 794px; min-height: 1123px; background: #ffffff; margin: 0 auto; padding: 36px 44px 44px; box-shadow: 0 10px 35px rgba(0,0,0,0.12); font-family: 'Outfit', sans-serif; color: #1e293b; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #e2e8f0; overflow: hidden;">
       
+      ${watermarkHTML}
+
       <!-- Top Tricolor Ribbon -->
-      <div style="position: absolute; top: 0; left: 0; right: 0; height: 8px; display: flex;">
+      <div style="position: absolute; top: 0; left: 0; right: 0; height: 8px; display: flex; z-index: 2;">
         <div style="flex: 1; background: #FF9933;"></div>
         <div style="flex: 1; background: #FFFFFF; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;"></div>
         <div style="flex: 1; background: #138808;"></div>
       </div>
 
       <!-- Main Document Content Container -->
-      <div>
+      <div style="position: relative; z-index: 1;">
         
         <!-- Header Letterhead Block -->
-        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 3px double #0F2B5C; padding-bottom: 16px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 3px double ${headerColor}; padding-bottom: 16px; margin-bottom: 20px;">
           
           <!-- Party Logo / Emblem -->
           <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2.5px solid #FF9933; box-shadow: 0 4px 10px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: center; background: #ffffff; flex-shrink: 0;">
@@ -82,7 +98,7 @@ export function buildAppointmentLetterHTML(member = {}, orgSettings = {}, letter
             <div style="font-size: 0.85rem; font-weight: 800; color: #FF9933; letter-spacing: 0.5px; margin-bottom: 2px;">
               🇮🇳 राष्ट्रीय राजनीतिक दल &bull; NATIONAL POLITICAL PARTY
             </div>
-            <h1 style="margin: 0; font-size: 1.45rem; font-weight: 900; color: #0F2B5C; text-transform: uppercase; letter-spacing: 0.6px; line-height: 1.15;">
+            <h1 style="margin: 0; font-size: 1.45rem; font-weight: 900; color: ${headerColor}; text-transform: uppercase; letter-spacing: 0.6px; line-height: 1.15;">
               ${org.orgName}
             </h1>
             <div style="font-size: 0.78rem; color: #475569; font-weight: 600; margin-top: 4px;">

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standalone Digital ID Card Studio & Canvas Editor | SVPP</title>
+  
+  <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/id-card-layouts.css" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body style="background: #0f172a; color: #f8fafc; margin: 0; padding: 0; font-family: 'Outfit', sans-serif;">
+
+  <!-- Header Navigation -->
+  <header style="background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="admin-dashboard.html" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 700;">&larr; Admin Dashboard</a>
+      <span style="color: #475569;">|</span>
+      <h1 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #ffffff;">🆔 Digital ID Card Canvas Studio</h1>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <select id="selectPhpTemplate" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;">
+        <option value="">-- Load Saved Template (MySQL) --</option>
+      </select>
+      <button id="btnSavePhpTemplate" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+        💾 Save to Database
+      </button>
+    </div>
+  </header>
+
+  <main style="display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 60px);">
+    
+    <!-- Left Inspector Sidebar -->
+    <aside style="background: #1e293b; border-right: 1px solid #334155; padding: 18px; overflow-y: auto;">
+      <h3 style="margin-top: 0; font-size: 0.95rem; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 8px;">🎨 Studio Toolbar & Layers</h3>
+
+      <!-- Side Selection -->
+      <div style="display: flex; background: #0f172a; padding: 3px; border-radius: 8px; margin-bottom: 16px;">
+        <button id="btnIdCardSideFront" class="active" style="flex: 1; background: #2563eb; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Front Side</button>
+        <button id="btnIdCardSideBack" style="flex: 1; background: transparent; color: #94a3b8; border: none; padding: 6px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">Back Side</button>
+      </div>
+
+      <!-- Controls -->
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.8rem;">
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px;">Alignment Guides:</label>
+          <button id="btnIdCardToggleGrid" style="width: 100%; background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer;">
+            📐 Toggle Snap Grid Guides
+          </button>
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px;">Canvas Zoom Level:</label>
+          <div style="display: flex; align-items: center; gap: 8px; background: #0f172a; padding: 6px; border-radius: 6px;">
+            <button id="btnIdCardZoomOut" style="background: #334155; color: white; border: none; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer;">-</button>
+            <span id="idCardZoomLabel" style="flex: 1; text-align: center; color: #38bdf8; font-family: monospace;">100%</span>
+            <button id="btnIdCardZoomIn" style="background: #334155; color: white; border: none; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer;">+</button>
+            <button id="btnIdCardZoomReset" style="background: #334155; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Fit</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px;">
+          <h4 style="margin: 0 0 6px 0; font-size: 0.82rem; color: #38bdf8;">💡 Pro Design Tips:</h4>
+          <ul style="margin: 0; padding-left: 16px; color: #cbd5e1; font-size: 0.75rem; line-height: 1.4;">
+            <li>Click any element on canvas to inspect position.</li>
+            <li>Use <b>Keyboard Arrow Keys</b> for pixel-precise nudging.</li>
+            <li>Save custom layouts directly to MySQL database!</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Canvas Area -->
+    <section style="display: flex; align-items: center; justify-content: center; background: #020617; position: relative; overflow: auto; padding: 40px;">
+      
+      <div id="idCardCanvasWrapper" style="position: relative; width: 240px; height: 370px; background: #ffffff; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); overflow: hidden;">
+        
+        <!-- Background Card Theme Overlay -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 80px; background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%); clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);"></div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; display: flex; z-index: 10;">
+          <div style="flex:1; background:#FF9933;"></div>
+          <div style="flex:1; background:#ffffff;"></div>
+          <div style="flex:1; background:#138808;"></div>
+        </div>
+
+        <!-- Interactive Elements Stage -->
+        <div id="idCardCanvasContainer" style="position: absolute; inset: 0;"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <script type="module" src="js/editors/id-card-editor.js"></script>
+</body>
+</html>

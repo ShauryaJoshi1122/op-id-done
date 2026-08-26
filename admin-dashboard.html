@@ -234,6 +234,63 @@
       </section>
 
       <!-- ======================================== -->
+      <!-- STANDALONE STUDIO EDITORS HUB -->
+      <!-- ======================================== -->
+      <section style="background: #ffffff; border-radius: 12px; border: 1.5px solid #cbd5e1; padding: 20px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div>
+            <h2 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: #0F2B5C;">🎨 Modular Document Editors Suite</h2>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #64748b;">Dedicated full-screen editor files for canvas design, letterhead generation, certificate issuance & security press badges.</p>
+          </div>
+          <span style="background: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 12px;">4 Standalone Editors</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px;">
+          
+          <!-- Editor 1 -->
+          <a href="id-card-editor.html" target="_blank" style="text-decoration: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#2563eb'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='none'">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.5rem;">🆔</span>
+              <strong style="color: #0F2B5C; font-size: 0.95rem;">Digital ID Card Editor</strong>
+            </div>
+            <p style="margin: 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">Snap grid guides, drag-and-drop elements, font selector & double-sided canvas.</p>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #2563eb; margin-top: 4px;">Open ID Card Studio &rarr;</span>
+          </a>
+
+          <!-- Editor 2 -->
+          <a href="appointment-letter-editor.html" target="_blank" style="text-decoration: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#166534'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='none'">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.5rem;">📄</span>
+              <strong style="color: #0F2B5C; font-size: 0.95rem;">Appointment Letter Editor</strong>
+            </div>
+            <p style="margin: 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">Letterhead theme builder, signature seal, dynamic variables & PDF download.</p>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #166534; margin-top: 4px;">Open Letterhead Studio &rarr;</span>
+          </a>
+
+          <!-- Editor 3 -->
+          <a href="certificate-editor.html" target="_blank" style="text-decoration: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#b45309'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='none'">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.5rem;">🏆</span>
+              <strong style="color: #0F2B5C; font-size: 0.95rem;">Award Certificate Editor</strong>
+            </div>
+            <p style="margin: 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">Gold foil double borders, appreciation citation builder & landscape export.</p>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #b45309; margin-top: 4px;">Open Certificate Studio &rarr;</span>
+          </a>
+
+          <!-- Editor 4 -->
+          <a href="press-badge-editor.html" target="_blank" style="text-decoration: none; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#dc2626'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='none'">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.5rem;">🎟️</span>
+              <strong style="color: #0F2B5C; font-size: 0.95rem;">Press & Rally Badge Editor</strong>
+            </div>
+            <p style="margin: 0; font-size: 0.8rem; color: #64748b; line-height: 1.4;">Security clearance ribbon, VIP zone access, photo mask & lanyard badge format.</p>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #dc2626; margin-top: 4px;">Open Press Badge Studio &rarr;</span>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ======================================== -->
       <!-- APPLICANT SCREENING (MEMBER APPROVALS) -->
       <!-- ======================================== -->
       <section id="memberApprovals">
@@ -895,6 +952,10 @@
 
                   <!-- View Mode & Zoom Toolbar -->
                   <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" id="btnToggleSnapGrid" style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer;" title="Toggle center and margin guide lines">
+                      📐 Grid Guides
+                    </button>
+
                     <div style="display: flex; align-items: center; background: #1e293b; padding: 2px 4px; border-radius: 6px; border: 1px solid #334155;">
                       <button type="button" id="btnCanvasViewRealistic" class="canvas-render-mode-btn active" style="background: #2563eb; color: white; border: none; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">✨ Realistic Live</button>
                       <button type="button" id="btnCanvasViewTags" class="canvas-render-mode-btn" style="background: transparent; color: #94a3b8; border: none; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; cursor: pointer;">🏷️ Tag Labels</button>
@@ -982,6 +1043,40 @@
                       <input type="color" id="inspectorColor" style="width: 32px; height: 30px; padding: 0; border: none; cursor: pointer; border-radius: 4px;" />
                       <input type="text" id="inspectorColorHex" style="flex: 1; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.75rem;" />
                     </div>
+                  </div>
+
+                  <div id="inspectorFontFamilyGroup">
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Font Family:</label>
+                    <select id="inspectorFontFamily" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <option value="'Outfit', sans-serif">Outfit (Default)</option>
+                      <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+                      <option value="'Inter', sans-serif">Inter</option>
+                      <option value="'Playfair Display', serif">Playfair Display (Serif)</option>
+                      <option value="'Courier Prime', monospace">Courier (Monospace)</option>
+                      <option value="'Caveat', cursive">Caveat (Script)</option>
+                    </select>
+                  </div>
+
+                  <div id="inspectorTextTransformGroup">
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Text Transform:</label>
+                    <select id="inspectorTextTransform" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <option value="none">Normal Case</option>
+                      <option value="uppercase">UPPERCASE</option>
+                      <option value="capitalize">Capitalize Words</option>
+                      <option value="lowercase">lowercase</option>
+                    </select>
+                  </div>
+
+                  <div id="inspectorBadgePillGroup">
+                    <label style="display: block; color: #475569; font-weight: 600; margin-bottom: 2px;">Badge Pill Style:</label>
+                    <select id="inspectorBadgePill" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                      <option value="none">None (Transparent)</option>
+                      <option value="dark-pill">Dark Pill (#0f172a)</option>
+                      <option value="saffron-pill">Saffron Pill (#FF9933)</option>
+                      <option value="navy-pill">Navy Blue Pill (#0F2B5C)</option>
+                      <option value="gold-pill">Gold Pill (#fbbf24)</option>
+                      <option value="white-pill">White Glass Pill</option>
+                    </select>
                   </div>
                 </div>
 

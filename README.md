@@ -1,8 +1,46 @@
-# Thamarai Charitable Trust Foundation
+# Sardar Vallabhbhai Patel Party & Thamarai Foundation Platform
 
-Created by Shaurya R Joshi
+Created for Shaurya R Joshi & National Secretariat
 
 ---
+
+## 🌐 1-Click cPanel Web Hosting Deployment (Apache + PHP + MySQL)
+
+This platform is **100% cPanel Ready**. You can host it on any standard cPanel web hosting server (Namecheap, Hostinger, GoDaddy, Bluehost, A2 Hosting, etc.) without modifying any code.
+
+### ⚡ Quick 4-Step cPanel Upload Instructions:
+1. **Upload Files**: Upload the project `.zip` to `public_html` in cPanel File Manager and extract.
+2. **Create MySQL Database**: Create a database & user in cPanel **MySQL Databases**.
+3. **1-Click Web Installer**: Open `http://yourdomain.com/install.php` in your browser and click **Execute 1-Click Database Setup** to automatically import all 13 tables & seed data.
+4. **Set Credentials**: Copy `php/config.local.example.php` to `php/config.local.php` and set your cPanel MySQL username, password, and database name.
+
+👉 **Full Step-by-Step Guide**: Read `CPANEL_DEPLOYMENT_GUIDE.md` for complete screenshots and instructions.
+
+---
+
+## 🎨 Modular Standalone Studio Editors
+
+The platform includes 4 dedicated web design studios for generating high-resolution documents and PDFs:
+- 🆔 **Digital ID Card Studio**: `id-card-editor.html`
+- 📄 **Appointment Letterhead Customizer**: `appointment-letter-editor.html`
+- 🏆 **Award Certificate Studio**: `certificate-editor.html`
+- 🎟️ **Press & Rally Badge Studio**: `press-badge-editor.html`
+
+---
+
+## 🔑 Default Login Credentials
+
+### Secretariat Admin Portal
+- **URL**: `/admin-login.html`
+- **Email**: `admin@svpp.org`
+- **Password**: `admin123`
+
+### Party Member Portal
+- **URL**: `/member-login.html`
+- **Member ID**: `SVPP-2026-0001` or `SVPP-2026-0002`
+
+---
+
 
 ## 🚀 How to Deploy on Vercel (Step-by-Step Guide)
 

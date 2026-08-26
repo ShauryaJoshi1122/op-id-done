@@ -1128,14 +1128,20 @@ const inspectorWidth = document.getElementById("inspectorWidth");
 const inspectorHeight = document.getElementById("inspectorHeight");
 const inspectorBorderRadius = document.getElementById("inspectorBorderRadius");
 const inspectorQuickSizePresets = document.getElementById("inspectorQuickSizePresets");
+const inspectorFontFamily = document.getElementById("inspectorFontFamily");
+const inspectorTextTransform = document.getElementById("inspectorTextTransform");
+const inspectorBadgePill = document.getElementById("inspectorBadgePill");
+const btnToggleSnapGrid = document.getElementById("btnToggleSnapGrid");
 const selectedCoordinatesHint = document.getElementById("selectedCoordinatesHint");
 const cardOrientationSelector = document.getElementById("cardOrientationSelector");
 
-// Canvas Zoom Controls
+// Canvas Zoom & Grid Controls
 const btnZoomIn = document.getElementById("btnZoomIn");
 const btnZoomOut = document.getElementById("btnZoomOut");
 const btnZoomReset = document.getElementById("btnZoomReset");
 const canvasZoomLabel = document.getElementById("canvasZoomLabel");
+
+let showSnapGrid = false;
 
 // Live Preview Controls
 const studioPreviewMemberSelect = document.getElementById("studioPreviewMemberSelect");
@@ -1216,6 +1222,15 @@ if (btnZoomOut) {
 }
 if (btnZoomReset) {
     btnZoomReset.addEventListener("click", () => setCanvasZoom(1.0));
+}
+
+if (btnToggleSnapGrid) {
+    btnToggleSnapGrid.addEventListener("click", () => {
+        showSnapGrid = !showSnapGrid;
+        btnToggleSnapGrid.style.background = showSnapGrid ? "#2563eb" : "#1e293b";
+        btnToggleSnapGrid.style.color = showSnapGrid ? "#ffffff" : "#38bdf8";
+        renderInteractiveCanvas();
+    });
 }
 
 function setStudioOrientationUI(orientation = "vertical") {
@@ -1522,18 +1537,56 @@ function renderInteractiveCanvas() {
             textValue = `${scDef.icon || "🏷️"} ${el.label || el.tag}`;
         }
 
+        const ff = el.fontFamily || "'Outfit', sans-serif";
+        const tt = el.textTransform || "none";
+        const pill = el.badgePill || "none";
+
+        let pillBgStyle = "";
+        let pillColorStyle = el.color || "#0f172a";
+        let pillPadding = studioCanvasRenderMode === "realistic" ? "1px 3px" : "3px 6px";
+        let pillRadius = "4px";
+
+        if (pill === "dark-pill") {
+            pillBgStyle = "#0f172a";
+            pillColorStyle = "#ffffff";
+            pillPadding = "3px 8px";
+            pillRadius = "12px";
+        } else if (pill === "saffron-pill") {
+            pillBgStyle = "#FF9933";
+            pillColorStyle = "#ffffff";
+            pillPadding = "3px 8px";
+            pillRadius = "12px";
+        } else if (pill === "navy-pill") {
+            pillBgStyle = "#0F2B5C";
+            pillColorStyle = "#ffffff";
+            pillPadding = "3px 8px";
+            pillRadius = "12px";
+        } else if (pill === "gold-pill") {
+            pillBgStyle = "#fbbf24";
+            pillColorStyle = "#78350f";
+            pillPadding = "3px 8px";
+            pillRadius = "12px";
+        } else if (pill === "white-pill") {
+            pillBgStyle = "rgba(255,255,255,0.92)";
+            pillColorStyle = "#0f172a";
+            pillPadding = "3px 8px";
+            pillRadius = "12px";
+        }
+
         const styleStr = `
             position: absolute;
             left: ${el.x}%;
             top: ${el.y}%;
             font-size: ${el.fontSize || 12}px;
             font-weight: ${el.fontWeight || '600'};
-            color: ${el.color || '#0f172a'};
+            font-family: ${ff};
+            text-transform: ${tt};
+            color: ${pillColorStyle};
             cursor: move;
-            padding: ${studioCanvasRenderMode === 'realistic' ? '1px 3px' : '3px 6px'};
+            padding: ${pillPadding};
             border: ${isSelected ? '2px solid #38bdf8' : (studioCanvasRenderMode === 'realistic' ? '1px dashed rgba(56,189,248,0.4)' : '1px dashed rgba(37,99,235,0.5)')};
-            background: ${isSelected ? 'rgba(56,189,248,0.35)' : (studioCanvasRenderMode === 'realistic' ? 'transparent' : 'rgba(255,255,255,0.9)')};
-            border-radius: 4px;
+            background: ${isSelected ? 'rgba(56,189,248,0.35)' : (pillBgStyle || (studioCanvasRenderMode === 'realistic' ? 'transparent' : 'rgba(255,255,255,0.9)'))};
+            border-radius: ${pillRadius};
             box-shadow: ${isSelected ? '0 0 12px rgba(56,189,248,0.9)' : 'none'};
             white-space: nowrap;
             z-index: ${isSelected ? 20 : 3};
@@ -1544,6 +1597,26 @@ function renderInteractiveCanvas() {
 
         return `<div class="draggable-canvas-item" data-id="${el.id}" style="${styleStr}">${textValue}${resizeHandleHTML}</div>`;
     }).join("");
+
+    if (showSnapGrid) {
+        const gridOverlay = document.createElement("div");
+        gridOverlay.style.cssText = "position: absolute; inset: 0; pointer-events: none; z-index: 100;";
+        gridOverlay.innerHTML = `
+            <!-- Vertical Center Guide Line -->
+            <div style="position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; border-left: 1px dashed rgba(56, 189, 248, 0.7); transform: translateX(-50%);"></div>
+            <!-- Horizontal Center Guide Line -->
+            <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; border-top: 1px dashed rgba(56, 189, 248, 0.7); transform: translateY(-50%);"></div>
+            <!-- Left Margin Line (10%) -->
+            <div style="position: absolute; top: 0; bottom: 0; left: 10%; width: 1px; border-left: 1px dotted rgba(239, 68, 68, 0.5);"></div>
+            <!-- Right Margin Line (90%) -->
+            <div style="position: absolute; top: 0; bottom: 0; left: 90%; width: 1px; border-left: 1px dotted rgba(239, 68, 68, 0.5);"></div>
+            <!-- Top Margin Line (10%) -->
+            <div style="position: absolute; left: 0; right: 0; top: 10%; height: 1px; border-top: 1px dotted rgba(239, 68, 68, 0.5);"></div>
+            <!-- Bottom Margin Line (90%) -->
+            <div style="position: absolute; left: 0; right: 0; top: 90%; height: 1px; border-top: 1px dotted rgba(239, 68, 68, 0.5);"></div>
+        `;
+        interactiveCardCanvas.appendChild(gridOverlay);
+    }
 
     if (!bgUrl) {
         const emptyMsg = document.createElement("div");
@@ -1703,15 +1776,24 @@ function updateInspector() {
     const colorGroup = document.getElementById("inspectorColorGroup");
     const fontGroup = document.getElementById("inspectorFontSizeGroup");
     const weightGroup = document.getElementById("inspectorFontWeightGroup");
+    const ffGroup = document.getElementById("inspectorFontFamilyGroup");
+    const ttGroup = document.getElementById("inspectorTextTransformGroup");
+    const pillGroup = document.getElementById("inspectorBadgePillGroup");
 
     if (colorGroup) colorGroup.style.display = isMedia ? "none" : "block";
     if (fontGroup) fontGroup.style.display = isMedia ? "none" : "block";
     if (weightGroup) weightGroup.style.display = isMedia ? "none" : "block";
+    if (ffGroup) ffGroup.style.display = isMedia ? "none" : "block";
+    if (ttGroup) ttGroup.style.display = isMedia ? "none" : "block";
+    if (pillGroup) pillGroup.style.display = isMedia ? "none" : "block";
 
     if (inspectorFontSize) inspectorFontSize.value = selected.fontSize || 12;
     if (inspectorFontWeight) inspectorFontWeight.value = selected.fontWeight || "600";
     if (inspectorColor) inspectorColor.value = selected.color || "#0f172a";
     if (inspectorColorHex) inspectorColorHex.value = selected.color || "#0f172a";
+    if (inspectorFontFamily) inspectorFontFamily.value = selected.fontFamily || "'Outfit', sans-serif";
+    if (inspectorTextTransform) inspectorTextTransform.value = selected.textTransform || "none";
+    if (inspectorBadgePill) inspectorBadgePill.value = selected.badgePill || "none";
 
     // Media Size Controls Configuration
     if (isMedia) {
@@ -1948,6 +2030,42 @@ if (inspectorColorHex) {
                 renderInteractiveCanvas();
                 updateStudioLivePreview();
             }
+        }
+    });
+}
+
+if (inspectorFontFamily) {
+    inspectorFontFamily.addEventListener("change", (e) => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.fontFamily = e.target.value;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorTextTransform) {
+    inspectorTextTransform.addEventListener("change", (e) => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.textTransform = e.target.value;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
+        }
+    });
+}
+
+if (inspectorBadgePill) {
+    inspectorBadgePill.addEventListener("change", (e) => {
+        const elements = studioState.activeCanvasSide === "back" ? studioState.backElements : studioState.frontElements;
+        const selected = elements.find((el) => el.id === studioState.selectedElementId);
+        if (selected) {
+            selected.badgePill = e.target.value;
+            renderInteractiveCanvas();
+            updateStudioLivePreview();
         }
     });
 }

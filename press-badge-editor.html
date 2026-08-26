@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VVIP Rally Pass & Press Badge Studio | SVPP</title>
+  
+  <link rel="icon" type="image/jpg" href="images/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body style="background: #0f172a; color: #f8fafc; margin: 0; padding: 0; font-family: 'Outfit', sans-serif;">
+
+  <header style="background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="admin-dashboard.html" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 700;">&larr; Admin Dashboard</a>
+      <span style="color: #475569;">|</span>
+      <h1 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #ffffff;">🎟️ VVIP Rally Pass & Press Badge Studio</h1>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <select id="selectBadgePhpTemplate" style="background: #0f172a; color: #38bdf8; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem;">
+        <option value="">-- Load Saved Badge Template (MySQL) --</option>
+      </select>
+      <button id="btnSaveBadgeTemplate" style="background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+        💾 Save Template
+      </button>
+      <button id="btnDownloadBadgePdf" style="background: #dc2626; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+        📄 Download Badge PDF
+      </button>
+    </div>
+  </header>
+
+  <main style="display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 60px);">
+    <aside style="background: #1e293b; border-right: 1px solid #334155; padding: 20px; overflow-y: auto;">
+      <h3 style="margin-top: 0; font-size: 0.95rem; color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 8px;">🎫 Pass Customization</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.8rem;">
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Pass Holder Name:</label>
+          <input type="text" id="inputPassHolder" value="Priya Verma" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Clearance Level:</label>
+          <select id="selectClearance" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px;">
+            <option value="VIP PRESS MEDIA">VIP PRESS MEDIA</option>
+            <option value="VVIP STAGE ACCESS">VVIP STAGE ACCESS</option>
+            <option value="EXECUTIVE DELEGATE">EXECUTIVE DELEGATE</option>
+            <option value="VOLUNTEER CREW">VOLUNTEER CREW</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Event Title:</label>
+          <input type="text" id="inputEventTitle" value="MEGA LUCKNOW RALLY 2026" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Zone Permission:</label>
+          <input type="text" id="inputZoneAccess" value="ZONE-A (STAGE & BEHIND STAGE)" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Pass ID:</label>
+            <input type="text" id="inputPassId" value="VIP-2026-8809" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px; box-sizing: border-box;" />
+          </div>
+          <div>
+            <label style="display: block; color: #94a3b8; margin-bottom: 4px; font-weight: 600;">Ribbon Badge Color:</label>
+            <select id="selectRibbonColor" style="width: 100%; background: #0f172a; color: white; border: 1px solid #334155; padding: 8px; border-radius: 6px;">
+              <option value="#dc2626">Security Red</option>
+              <option value="#2563eb">Navy Blue</option>
+              <option value="#166534">Patriot Green</option>
+              <option value="#d97706">Saffron Gold</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; color: #94a3b8; margin-bottom: 4px;">Canvas Zoom:</label>
+          <div style="display: flex; align-items: center; gap: 8px; background: #0f172a; padding: 6px; border-radius: 6px;">
+            <button id="btnBadgeZoomOut" style="background: #334155; color: white; border: none; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer;">-</button>
+            <span id="badgeZoomLabel" style="flex: 1; text-align: center; color: #38bdf8; font-family: monospace;">100%</span>
+            <button id="btnBadgeZoomIn" style="background: #334155; color: white; border: none; width: 28px; height: 28px; border-radius: 4px; font-weight: bold; cursor: pointer;">+</button>
+            <button id="btnBadgeZoomReset" style="background: #334155; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Fit</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <section style="background: #020617; padding: 40px; overflow: auto; display: flex; justify-content: center;">
+      <div id="badgeCanvasPreview" style="transform-origin: top center;"></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/editors/press-badge-editor.js"></script>
+</body>
+</html>

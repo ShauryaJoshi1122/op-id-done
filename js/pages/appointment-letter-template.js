@@ -29,13 +29,35 @@ const refNumberInput = document.getElementById("refNumberInput");
 const appointmentDateInput = document.getElementById("appointmentDateInput");
 const validUptoInput = document.getElementById("validUptoInput");
 const btnSetOneYear = document.getElementById("btnSetOneYear");
+const letterHeaderColorInput = document.getElementById("letterHeaderColorInput");
+const watermarkToggleInput = document.getElementById("watermarkToggleInput");
 const letterBodyTextarea = document.getElementById("letterBodyTextarea");
 const btnResetLetterBody = document.getElementById("btnResetLetterBody");
 const letterShortcodeBadges = document.getElementById("letterShortcodeBadges");
 const btnDownloadLetterPng = document.getElementById("btnDownloadLetterPng");
+const btnDownloadLetterPdf = document.getElementById("btnDownloadLetterPdf");
 const btnPrintLetter = document.getElementById("btnPrintLetter");
 const btnCopyLetterText = document.getElementById("btnCopyLetterText");
 const appointmentLetterCanvasWrapper = document.getElementById("appointmentLetterCanvasWrapper");
+
+// Zoom controls
+const btnLetterZoomIn = document.getElementById("btnLetterZoomIn");
+const btnLetterZoomOut = document.getElementById("btnLetterZoomOut");
+const btnLetterZoomReset = document.getElementById("btnLetterZoomReset");
+const letterZoomLabel = document.getElementById("letterZoomLabel");
+
+let letterCanvasZoom = 1.0;
+
+function setLetterZoom(newZoom) {
+    letterCanvasZoom = Math.min(1.5, Math.max(0.5, parseFloat(newZoom.toFixed(2))));
+    if (appointmentLetterCanvasWrapper) {
+        appointmentLetterCanvasWrapper.style.transform = `scale(${letterCanvasZoom})`;
+        appointmentLetterCanvasWrapper.style.transformOrigin = "top center";
+    }
+    if (letterZoomLabel) {
+        letterZoomLabel.textContent = `${Math.round(letterCanvasZoom * 100)}%`;
+    }
+}
 
 /**
  * Initialize Appointment Letter Studio
@@ -228,11 +250,17 @@ function setupEventListeners() {
     }
 
     // Inputs change
-    [designationInput, refNumberInput, appointmentDateInput, validUptoInput, letterBodyTextarea].forEach((input) => {
+    [designationInput, refNumberInput, appointmentDateInput, validUptoInput, letterHeaderColorInput, watermarkToggleInput, letterBodyTextarea].forEach((input) => {
         if (input) {
             input.addEventListener("input", renderLiveLetter);
+            input.addEventListener("change", renderLiveLetter);
         }
     });
+
+    // Zoom buttons
+    if (btnLetterZoomIn) btnLetterZoomIn.addEventListener("click", () => setLetterZoom(letterCanvasZoom + 0.15));
+    if (btnLetterZoomOut) btnLetterZoomOut.addEventListener("click", () => setLetterZoom(letterCanvasZoom - 0.15));
+    if (btnLetterZoomReset) btnLetterZoomReset.addEventListener("click", () => setLetterZoom(1.0));
 
     // Quick +1 Year button
     if (btnSetOneYear) {
@@ -262,6 +290,11 @@ function setupEventListeners() {
     // Download PNG
     if (btnDownloadLetterPng) {
         btnDownloadLetterPng.addEventListener("click", downloadLetterPNG);
+    }
+
+    // Download PDF
+    if (btnDownloadLetterPdf) {
+        btnDownloadLetterPdf.addEventListener("click", downloadLetterPDF);
     }
 
     // Print
@@ -297,6 +330,8 @@ function renderLiveLetter() {
         refNumber: refNumberInput?.value || "SVPP/HQ/2026/089",
         appointmentDate: appointmentDateInput?.value ? new Date(appointmentDateInput.value) : new Date(),
         validUpto: validUptoInput?.value || "14/08/2027",
+        headerColor: letterHeaderColorInput?.value || "#0F2B5C",
+        watermark: watermarkToggleInput?.value || "subtle",
         letterBody: letterBodyTextarea?.value || DEFAULT_LETTER_TEMPLATE
     };
 
@@ -314,6 +349,56 @@ function renderLiveLetter() {
 
     const html = buildAppointmentLetterHTML(targetMember, orgSettings, letterParams, assetSettings);
     appointmentLetterCanvasWrapper.innerHTML = html;
+}
+
+/**
+ * Download High-Res PDF of Appointment Letter via html2canvas & jsPDF
+ */
+async function downloadLetterPDF() {
+    const letterElement = document.querySelector(".appointment-letter-sheet");
+    if (!letterElement) {
+        showToast("Cannot find letter canvas to download", "error");
+        return;
+    }
+
+    try {
+        showToast("Generating high-resolution appointment letter PDF...", "info");
+        btnDownloadLetterPdf.disabled = true;
+        btnDownloadLetterPdf.innerHTML = `<span>⏳</span> Generating PDF...`;
+
+        const canvas = await window.html2canvas(letterElement, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: "#ffffff",
+            logging: false
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.95);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: "p",
+            unit: "mm",
+            format: "a4"
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+        pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+
+        const targetName = (selectedMember?.fullName || "Member").replace(/[^a-zA-Z0-9]/g, "_");
+        const refId = (refNumberInput?.value || "SVPP").replace(/[^a-zA-Z0-9]/g, "_");
+
+        pdf.save(`SVPP_Appointment_Letter_${targetName}_${refId}.pdf`);
+        showToast("Appointment Letter PDF generated successfully!", "success");
+    } catch (err) {
+        console.error("PDF download error:", err);
+        showToast("Failed to generate PDF. Try the Print or PNG option.", "error");
+    } finally {
+        btnDownloadLetterPdf.disabled = false;
+        btnDownloadLetterPdf.innerHTML = `<span>📄</span> Download High-DPI PDF`;
+    }
 }
 
 /**
