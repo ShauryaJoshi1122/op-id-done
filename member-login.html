@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Member Portal & Card Download</title>
+    <title>Member Portal & Card Download | Sardar Vallabhbhai Patel Party</title>
     <meta
       name="description"
       content="Official Member Portal and Digital ID Card access for registered members."
@@ -14,47 +14,160 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsive.css" />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+      body {
+        background-color: #f8fafc;
+        font-family: 'Inter', sans-serif;
+      }
+      .top-tricolor {
+        display: flex;
+        height: 5px;
+        width: 100%;
+      }
+      .top-tricolor .saffron { flex: 1; background: #FF9933; }
+      .top-tricolor .white { flex: 1; background: #ffffff; }
+      .top-tricolor .green { flex: 1; background: #138808; }
+
       .page-hero-unified {
-        background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+        background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 50%, #2563eb 100%);
         color: #ffffff;
-        padding: 50px 24px;
+        padding: 48px 24px;
         text-align: center;
+        position: relative;
       }
       .page-hero-unified h1 {
+        font-family: 'Outfit', sans-serif;
         color: #ffffff;
-        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        font-size: clamp(1.8rem, 4vw, 2.3rem);
         margin-bottom: 10px;
         font-weight: 800;
+        letter-spacing: -0.5px;
       }
       .page-hero-unified p {
-        color: rgba(255, 255, 255, 0.9);
-        max-width: 600px;
+        color: #e2e8f0;
+        max-width: 620px;
         margin: 0 auto;
-        font-size: 1.05rem;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .login-container {
+        max-width: 480px;
+        margin: 0 auto;
+        background: #ffffff;
+        padding: 36px 32px;
+        border-radius: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+      }
+      .member-icon-badge {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        background: #eff6ff;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        border: 2px solid #bfdbfe;
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.12);
+      }
+      .login-title-h2 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.45rem;
+        color: #0F2B5C;
+        margin: 0 0 6px;
+        font-weight: 800;
+        text-align: center;
+      }
+      .member-form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .member-form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #0F2B5C;
+      }
+      .member-form-group input {
+        width: 100%;
+        padding: 13px 16px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+      }
+      .member-form-group input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+      .member-form-hint {
+        display: block;
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 5px;
+      }
+      .member-submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 14px rgba(15, 43, 92, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .member-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(15, 43, 92, 0.35);
       }
     </style>
   </head>
 
   <body>
+    <!-- Top Tricolor Ribbon -->
+    <div class="top-tricolor">
+      <div class="saffron"></div>
+      <div class="white"></div>
+      <div class="green"></div>
+    </div>
+
     <!-- ======================================== -->
     <!-- HEADER -->
     <!-- ======================================== -->
     <header class="main-header">
       <div class="logo-area">
         <a href="index.html" class="logo-branding" style="text-decoration: none;">
-          <div style="width: 44px; height: 44px; background: #2563eb; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden;">
-            <img src="images/logo.jpg" alt="Thamarai Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
+          <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #0F2B5C 0%, #2563eb 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; box-shadow:0 4px 10px rgba(15,43,92,0.15);">
+            <img src="images/logo.jpg" alt="Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
           </div>
           <div>
-            <h2 style="font-size: 1.15rem; margin: 0; color: #0f172a;">Member Portal</h2>
-            <span style="font-size: 0.8rem; color: #64748b;">Digital ID Card Access</span>
+            <h2 style="font-family:'Outfit', sans-serif; font-size: 1.15rem; margin: 0; color: #0F2B5C; font-weight:800;">Sardar Vallabhbhai Patel Party</h2>
+            <span style="font-size: 0.78rem; color: #64748b; font-weight:600;">Official Member Portal</span>
           </div>
         </a>
 
         <div class="header-actions">
           <div id="logoutNavLi" style="display: none">
-            <a href="#" id="logoutBtn" class="logout-btn" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">Logout</a>
+            <a href="#" id="logoutBtn" class="logout-btn" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size:0.85rem;">Logout</a>
           </div>
           <button class="menu-toggle-btn" aria-label="Toggle Menu">
             <span class="bar"></span>
@@ -95,9 +208,9 @@
     <!-- ======================================== -->
     <section class="page-hero-unified">
       <div class="container">
-        <h1>Official Member Login & Download Portal</h1>
+        <h1>Official Member Login & ID Portal</h1>
         <p>
-          Enter your registered <strong>Member ID</strong> and <strong>Date of Birth (DoB)</strong> to view and download your official Digital ID Card and Appointment Letter.
+          Enter your registered <strong>Member ID</strong> and <strong>Date of Birth (DoB)</strong> to authenticate and instantly download your Digital ID Card and Appointment Letter.
         </p>
       </div>
     </section>
@@ -106,13 +219,13 @@
     <!-- LOGIN FORM -->
     <!-- ======================================== -->
     <section class="login-section" style="padding: 40px 20px;">
-      <div class="login-container" style="max-width: 460px; margin: 0 auto; background: white; padding: 32px 26px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <div style="width: 56px; height: 56px; margin: 0 auto 12px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 2px solid #bfdbfe;">
+      <div class="login-container">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div class="member-icon-badge">
             🪪
           </div>
-          <h2 style="font-size: 1.35rem; color: #0F2B5C; margin: 0 0 6px; font-weight: 800;">Member Credential Verification</h2>
-          <p class="login-subtitle" style="text-align: center; color: #64748b; font-size: 0.88rem; margin: 0; line-height: 1.4;">
+          <h2 class="login-title-h2">Member Credential Verification</h2>
+          <p style="text-align: center; color: #64748b; font-size: 0.88rem; margin: 0; line-height: 1.4;">
             Authenticate using your official party Member ID and registered Date of Birth.
           </p>
         </div>
@@ -120,75 +233,74 @@
         <div
           id="loginInfo"
           class="info-message"
-          style="display: none; background-color: #eff6ff; color: #1e40af; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-weight: 600; border: 1px solid #bfdbfe; font-size: 0.88rem;"
+          style="display: none; background-color: #eff6ff; color: #1e40af; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; text-align: center; font-weight: 600; border: 1px solid #bfdbfe; font-size: 0.88rem;"
         ></div>
 
         <div
           id="loginError"
           class="error-message"
-          style="display: none; background-color: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; border: 1px solid #fecaca; font-size: 0.88rem;"
+          style="display: none; background-color: #fef2f2; color: #991b1b; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; text-align: center; border: 1px solid #fecaca; font-size: 0.88rem; font-weight: 600;"
         ></div>
 
-        <form id="memberDirectLoginForm" style="text-align: left;">
+        <form id="memberDirectLoginForm">
           <!-- 1. Member ID Input -->
-          <div style="margin-bottom: 16px;">
-            <label for="memberEmailOrIdInput" style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: #0F2B5C;">
+          <div class="member-form-group">
+            <label for="memberEmailOrIdInput">
               🪪 Member ID / Registration No. <span style="color: #dc2626;">*</span>
             </label>
             <input
               type="text"
               id="memberEmailOrIdInput"
-              placeholder="e.g. SVPP-2026-9041 or your registered email"
+              placeholder="e.g. SVPP-2026-9041 or registered email"
               required
-              style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box; font-family: inherit;"
             />
-            <span style="display: block; font-size: 0.75rem; color: #64748b; margin-top: 4px;">Enter your assigned Member ID (e.g. SVPP-2026-XXXX) or registered email.</span>
+            <span class="member-form-hint">Enter your assigned Member ID (e.g. SVPP-2026-XXXX), registered email, or mobile number.</span>
           </div>
 
           <!-- 2. Date of Birth Input -->
-          <div style="margin-bottom: 22px;">
-            <label for="memberDobInput" style="display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.88rem; color: #0F2B5C;">
+          <div class="member-form-group">
+            <label for="memberDobInput">
               📅 Date of Birth (DoB) <span style="color: #dc2626;">*</span>
             </label>
             <input
               type="date"
               id="memberDobInput"
               required
-              style="width: 100%; padding: 12px 14px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; box-sizing: border-box; font-family: inherit; background: #ffffff;"
             />
-            <span style="display: block; font-size: 0.75rem; color: #64748b; margin-top: 4px;">Select your Date of Birth as submitted during membership registration.</span>
+            <span class="member-form-hint">Select your Date of Birth as submitted during membership registration.</span>
           </div>
 
           <button
             type="submit"
             id="memberDirectSubmitBtn"
-            style="width: 100%; padding: 14px; background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%); color: #ffffff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(15,43,92,0.25);"
+            class="member-submit-btn"
           >
-            🔐 Log In & Access Documents &rarr;
+            <span>🔐 Log In & Access Documents</span>
+            <span>&rarr;</span>
           </button>
         </form>
 
         <!-- Member Hub / Quick Download Options (Shown when authenticated) -->
-        <div id="authenticatedMemberHub" style="display: none; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-          <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px; padding: 14px; margin-bottom: 16px; text-align: center;">
-            <div style="font-size: 1.1rem; font-weight: 800; color: #166534;" id="authMemberName">Welcome Member</div>
-            <div style="font-size: 0.82rem; color: #15803d; font-weight: 700; margin-top: 2px;" id="authMemberId">ID: Verified</div>
+        <div id="authenticatedMemberHub" style="display: none; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+          <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 14px; padding: 16px; margin-bottom: 16px; text-align: center;">
+            <div style="font-family:'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #166534;" id="authMemberName">Welcome Member</div>
+            <div style="font-size: 0.84rem; color: #15803d; font-weight: 600; margin-top: 4px;" id="authMemberId">ID: Verified</div>
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <a id="btnAuthGoIdCard" href="id-card-template.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 12px 18px; background: #0F2B5C; color: white; border-radius: 8px; font-weight: 700; font-size: 0.92rem;">
+            <a id="btnAuthGoIdCard" href="id-card-template.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 13px 18px; background: #0F2B5C; color: white; border-radius: 10px; font-weight: 700; font-size: 0.92rem; box-shadow: 0 4px 10px rgba(15,43,92,0.2);">
               <span>🪪</span> <span>Download Digital ID Card</span>
             </a>
-            <a id="btnAuthGoLetter" href="appointment-letter-template.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 12px 18px; background: #138808; color: white; border-radius: 8px; font-weight: 700; font-size: 0.92rem;">
+            <a id="btnAuthGoLetter" href="appointment-letter-template.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; padding: 13px 18px; background: #138808; color: white; border-radius: 10px; font-weight: 700; font-size: 0.92rem; box-shadow: 0 4px 10px rgba(19,136,8,0.2);">
               <span>🎖️</span> <span>Download Appointment Letter</span>
             </a>
           </div>
         </div>
 
-        <div style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <div style="margin-top: 24px; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 20px;">
           <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 10px;">Not registered as a member yet?</p>
-          <a href="join-contact.html" style="display: inline-block; text-decoration: none; padding: 10px 18px; background: #FF9933; color: white; border-radius: 8px; font-weight: 700; font-size: 0.88rem;">
-            ✍️ Apply for SVPP Membership
+          <a href="join-contact.html" style="display: inline-flex; align-items:center; gap:6px; text-decoration: none; padding: 10px 18px; background: #FF9933; color: white; border-radius: 10px; font-weight: 700; font-size: 0.88rem; box-shadow:0 4px 12px rgba(255,153,51,0.25);">
+            <span>✍️</span> <span>Apply for SVPP Membership</span>
           </a>
         </div>
       </div>
@@ -202,10 +314,11 @@
       class="login-status-section"
       style="display: none; max-width: 500px; margin: 30px auto; padding: 20px;"
     >
-      <div class="status-box" style="background: white; padding: 30px; border-radius: 14px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-        <h2 style="color: #0f172a; margin-bottom: 10px; font-size: 1.3rem;">Membership Record Not Found</h2>
-        <p style="color: #64748b; margin-bottom: 20px; line-height: 1.5;">No approved member registration was found for this Google account. Please submit an application.</p>
-        <a href="join-contact.html" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+      <div class="status-box" style="background: white; padding: 32px; border-radius: 20px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">🔍</div>
+        <h2 style="color: #0F2B5C; margin-bottom: 10px; font-size: 1.35rem; font-family:'Outfit', sans-serif; font-weight:800;">Membership Record Not Found</h2>
+        <p style="color: #64748b; margin-bottom: 20px; line-height: 1.5; font-size:0.92rem;">No approved member registration was found for this credential. Please submit a new membership application or check your details.</p>
+        <a href="join-contact.html" style="display: inline-block; background: #0F2B5C; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700;">
           Register as a Member
         </a>
       </div>
@@ -219,12 +332,12 @@
       class="login-status-section"
       style="display: none; max-width: 500px; margin: 30px auto; padding: 20px;"
     >
-      <div class="pending-box" style="background: #fffbeb; padding: 30px; border-radius: 14px; text-align: center; border: 1px solid #fde68a;">
-        <h2 style="color: #b45309; margin-bottom: 10px; font-size: 1.3rem;">⏳ Application Under Review</h2>
-        <p style="color: #92400e; margin-bottom: 15px; line-height: 1.5;">Your membership application is currently undergoing administrator screening. Once approved, your Digital ID Card will be immediately accessible here.</p>
-        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #fef3c7; text-align: left;">
-          <p style="margin: 5px 0; color: #2563eb; font-weight: 600;">✓ Google Account Verified</p>
-          <p style="margin: 5px 0; color: #d97706; font-weight: 600;">⏳ Admin Document Screening in Progress</p>
+      <div class="pending-box" style="background: #fffbeb; padding: 32px; border-radius: 20px; text-align: center; border: 1px solid #fde68a;">
+        <h2 style="color: #b45309; margin-bottom: 10px; font-size: 1.35rem; font-family:'Outfit', sans-serif; font-weight:800;">⏳ Application Under Review</h2>
+        <p style="color: #92400e; margin-bottom: 16px; line-height: 1.5; font-size:0.92rem;">Your membership application is currently undergoing administrator verification. Once approved, your Digital ID Card will be immediately accessible here.</p>
+        <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid #fef3c7; text-align: left;">
+          <p style="margin: 6px 0; color: #15803d; font-weight: 600; font-size:0.88rem;">✓ Application Submitted & Logged</p>
+          <p style="margin: 6px 0; color: #d97706; font-weight: 600; font-size:0.88rem;">⏳ Administrator Document Screening in Progress</p>
         </div>
       </div>
     </section>
@@ -237,10 +350,10 @@
       class="login-status-section"
       style="display: none; max-width: 500px; margin: 30px auto; padding: 20px;"
     >
-      <div class="rejected-box" style="background: #fef2f2; padding: 30px; border-radius: 14px; text-align: center; border: 1px solid #fecaca;">
-        <h2 style="color: #b91c1c; margin-bottom: 10px; font-size: 1.3rem;">Application Status: Rejected</h2>
-        <p style="color: #7f1d1d; margin-bottom: 15px; line-height: 1.5;">Your application could not be approved due to incomplete details or invalid document proof.</p>
-        <a href="join-contact.html" style="display: inline-block; background: #dc2626; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+      <div class="rejected-box" style="background: #fef2f2; padding: 32px; border-radius: 20px; text-align: center; border: 1px solid #fecaca;">
+        <h2 style="color: #b91c1c; margin-bottom: 10px; font-size: 1.35rem; font-family:'Outfit', sans-serif; font-weight:800;">Application Status: Rejected</h2>
+        <p style="color: #7f1d1d; margin-bottom: 16px; line-height: 1.5; font-size:0.92rem;">Your application could not be approved due to incomplete details or invalid document verification.</p>
+        <a href="join-contact.html" style="display: inline-block; background: #dc2626; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.9rem;">
           Submit New Application
         </a>
       </div>
@@ -299,7 +412,7 @@
 
       <!-- BOTTOM COPYRIGHT BAR -->
       <div class="footer-copyright-bar">
-        <p id="footerCopyrightText">© 2021 All rights reserved by Fragron Infotech</p>
+        <p id="footerCopyrightText">© 2026 Sardar Vallabhbhai Patel Party. All rights reserved.</p>
       </div>
     </footer>
 

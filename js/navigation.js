@@ -1,6 +1,6 @@
 import { initFooterOnPage } from "./utils/footer-renderer.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+function setupNavigation() {
   initFooterOnPage();
 
   const menuToggleBtn = document.querySelector(".menu-toggle-btn");
@@ -85,4 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupNavigation);
+} else {
+  setupNavigation();
+}
+

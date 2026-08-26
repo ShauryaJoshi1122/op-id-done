@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Admin Portal Login</title>
+    <title>Admin Portal Login | Sardar Vallabhbhai Patel Party</title>
     <meta
       name="description"
       content="Secure Admin Portal for Member Management and ID Card Verification."
@@ -17,20 +17,35 @@
     <link rel="stylesheet" href="css/admin.css" />
     <link rel="stylesheet" href="css/responsive.css" />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
       body {
         background-color: #f8fafc;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        font-family: 'Inter', sans-serif;
       }
+      .top-tricolor {
+        display: flex;
+        height: 5px;
+        width: 100%;
+      }
+      .top-tricolor .saffron { flex: 1; background: #FF9933; }
+      .top-tricolor .white { flex: 1; background: #ffffff; }
+      .top-tricolor .green { flex: 1; background: #138808; }
+
       .admin-card-container {
-        max-width: 440px;
-        margin: 40px auto;
+        max-width: 460px;
+        margin: 32px auto;
         background: #ffffff;
-        border-radius: 20px;
-        padding: 36px 28px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+        border-radius: 24px;
+        padding: 36px 32px;
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
         border: 1px solid #e2e8f0;
       }
       .brand-badge-center {
@@ -38,136 +53,213 @@
         justify-content: center;
         margin-bottom: 20px;
       }
-      .passcode-divider {
+      .brand-icon-box {
+        width: 68px;
+        height: 68px;
+        background: linear-gradient(135deg, #0F2B5C 0%, #2563eb 100%);
+        border-radius: 18px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: 0 10px 25px rgba(15, 43, 92, 0.2);
+        overflow: hidden;
+        border: 2px solid #ffffff;
+      }
+      .brand-icon-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .admin-title {
         text-align: center;
-        margin: 24px 0 20px;
-        color: #94a3b8;
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0F2B5C;
+        margin: 0 0 6px;
+        letter-spacing: -0.3px;
       }
-      .passcode-divider::before,
-      .passcode-divider::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid #e2e8f0;
-      }
-      .passcode-divider:not(:empty)::before {
-        margin-right: .75em;
-      }
-      .passcode-divider:not(:empty)::after {
-        margin-left: .75em;
+      .admin-subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 0.88rem;
+        margin: 0 0 24px;
+        line-height: 1.4;
       }
       .credentials-box {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        border-radius: 12px;
-        padding: 14px 18px;
-        margin-bottom: 22px;
-        font-size: 0.88rem;
-        color: #1e40af;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-bottom: 24px;
+        font-size: 0.86rem;
+        color: #166534;
       }
-      .credentials-box strong {
-        color: #1e3a8a;
+      .cred-pills-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
       }
-      .credentials-box code {
-        background: #dbeafe;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: monospace;
-        font-weight: bold;
-        color: #1d4ed8;
+      .cred-quick-btn {
+        background: #ffffff;
+        border: 1px solid #86efac;
+        color: #15803d;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .cred-quick-btn:hover {
+        background: #dcfce7;
+        transform: translateY(-1px);
       }
       .admin-input-group {
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         text-align: left;
       }
       .admin-input-group label {
         display: block;
         margin-bottom: 6px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        color: #334155;
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #0F2B5C;
+      }
+      .input-wrapper-rel {
+        position: relative;
       }
       .admin-input-group input {
         width: 100%;
-        padding: 12px 14px;
-        border: 1px solid #cbd5e1;
-        border-radius: 10px;
-        font-size: 1rem;
+        padding: 13px 16px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-family: inherit;
         box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+      }
+      .admin-input-group input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+      .toggle-pwd-btn {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 4px;
       }
       .admin-submit-btn {
         width: 100%;
         padding: 14px;
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        background: linear-gradient(135deg, #0F2B5C 0%, #1d4ed8 100%);
         color: #ffffff;
         border: none;
         border-radius: 12px;
-        font-size: 1.05rem;
+        font-size: 1rem;
         font-weight: 700;
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 4px 14px rgba(15, 43, 92, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
       .admin-submit-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        box-shadow: 0 8px 22px rgba(15, 43, 92, 0.35);
       }
     </style>
   </head>
 
   <body>
+    <!-- Top Tricolor Ribbon -->
+    <div class="top-tricolor">
+      <div class="saffron"></div>
+      <div class="white"></div>
+      <div class="green"></div>
+    </div>
+
     <!-- Top Bar -->
-    <header class="app-header" style="background:#fff; padding: 12px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+    <header class="app-header" style="background:#fff; padding: 14px 28px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
       <a href="index.html" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
-        <div style="width:40px; height:40px; background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; overflow:hidden;">
-          <img src="images/logo.jpg" alt="Thamarai Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
+        <div style="width:40px; height:40px; background:linear-gradient(135deg, #0F2B5C 0%, #2563eb 100%); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; overflow:hidden;">
+          <img src="images/logo.jpg" alt="SVPP Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
         </div>
-        <span style="font-size:1.2rem; font-weight:700; color:#0f172a;">Admin Control Panel</span>
+        <span style="font-family:'Outfit', sans-serif; font-size:1.15rem; font-weight:800; color:#0F2B5C;">Admin Control Panel</span>
       </a>
-      <a href="index.html" style="text-decoration:none; color:#2563eb; font-weight:600; font-size:0.9rem;">&larr; Back to Home</a>
+      <a href="index.html" style="text-decoration:none; color:#2563eb; font-weight:700; font-size:0.88rem; display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; background:#eff6ff;">
+        &larr; Back to Portal
+      </a>
     </header>
 
-    <main style="flex:1; padding: 20px;">
+    <main style="flex:1; padding: 20px; display:flex; align-items:center; justify-content:center;">
       <div class="admin-card-container">
         <div class="brand-badge-center">
-          <div style="width:64px; height:64px; background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius:16px; display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 8px 20px rgba(37,99,235,0.25); overflow:hidden;">
-            <img src="images/logo.jpg" alt="Thamarai Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
+          <div class="brand-icon-box">
+            <img src="images/logo.jpg" alt="Logo" referrerPolicy="no-referrer" />
           </div>
         </div>
 
-        <h1 style="text-align: center; font-size: 1.5rem; color: #0f172a; margin: 0 0 6px;">
+        <h1 class="admin-title">
           Administrator Login
         </h1>
-        <p style="text-align: center; color: #64748b; font-size: 0.92rem; margin: 0 0 20px;">
-          Control panel for ID card approvals, member management, and portal configuration
+        <p class="admin-subtitle">
+          Secure authorized access for member approvals, ID card issuance, and portal governance.
         </p>
 
-        <div class="credentials-box" style="background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; border-radius:12px; padding:12px 16px; margin-bottom:20px; font-size:0.88rem;">
-          <div style="font-weight:700; margin-bottom:4px; color:#14532d;">🔑 Direct Admin Credentials:</div>
-          <div>• Passcode: <code style="background:#dcfce7; padding:2px 6px; border-radius:4px; font-weight:bold; color:#15803d;">superadmin123</code> or <code style="background:#dcfce7; padding:2px 6px; border-radius:4px; font-weight:bold; color:#15803d;">admin123</code></div>
+        <div class="credentials-box">
+          <div style="font-weight:800; margin-bottom:4px; color:#14532d; display:flex; align-items:center; gap:6px;">
+            <span>🔑</span> <span>Quick Access Passcodes:</span>
+          </div>
+          <div>Click below to automatically fill the demo administrator password:</div>
+          <div class="cred-pills-row">
+            <button type="button" class="cred-quick-btn" onclick="document.getElementById('adminPasscodeInput').value='superadmin123';">
+              ⚡ Superadmin: superadmin123
+            </button>
+            <button type="button" class="cred-quick-btn" onclick="document.getElementById('adminPasscodeInput').value='admin123';">
+              🛡️ Admin: admin123
+            </button>
+          </div>
         </div>
 
-        <div id="loginInfo" class="info-message" style="display: none; background: #eff6ff; color: #1e40af; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;"></div>
-        <div id="loginError" class="error-message" style="display: none; background: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;"></div>
-        <div id="loginLoading" style="display: none; text-align: center; padding: 10px; color: #2563eb; font-weight: 600;">Authenticating...</div>
+        <div id="loginInfo" class="info-message" style="display: none; background: #eff6ff; color: #1e40af; padding: 12px; border-radius: 10px; margin-bottom: 16px; text-align: center; font-size: 0.88rem; font-weight:600; border:1px solid #bfdbfe;"></div>
+        <div id="loginError" class="error-message" style="display: none; background: #fef2f2; color: #991b1b; padding: 12px; border-radius: 10px; margin-bottom: 16px; text-align: center; font-size: 0.88rem; font-weight:600; border:1px solid #fecaca;"></div>
+        <div id="loginLoading" style="display: none; text-align: center; padding: 10px; color: #2563eb; font-weight: 700; font-size:0.9rem;">
+          ⏳ Authenticating administrator credentials...
+        </div>
 
         <!-- FORM: Direct Passcode Login -->
         <form id="adminPasscodeForm">
           <div class="admin-input-group">
-            <label for="adminEmailInput">Admin Email</label>
+            <label for="adminEmailInput">Administrator Email</label>
             <input type="email" id="adminEmailInput" value="admin@portal.com" placeholder="admin@domain.com" required />
           </div>
 
           <div class="admin-input-group">
-            <label for="adminPasscodeInput">Admin Password / PIN</label>
-            <input type="password" id="adminPasscodeInput" placeholder="Enter Admin Password" required />
+            <label for="adminPasscodeInput">Administrator Passcode / PIN</label>
+            <div class="input-wrapper-rel">
+              <input type="password" id="adminPasscodeInput" placeholder="Enter superadmin123 or admin123" required />
+              <button type="button" class="toggle-pwd-btn" id="toggleAdminPwd" title="Toggle password visibility">👁️</button>
+            </div>
           </div>
 
           <button type="submit" id="adminPasscodeBtn" class="admin-submit-btn">
-            Sign In to Dashboard &rarr;
+            <span>Sign In to Dashboard</span>
+            <span>&rarr;</span>
           </button>
         </form>
       </div>
@@ -226,10 +318,22 @@
 
       <!-- BOTTOM COPYRIGHT BAR -->
       <div class="footer-copyright-bar">
-        <p id="footerCopyrightText">© 2021 All rights reserved by Fragron Infotech</p>
+        <p id="footerCopyrightText">© 2026 Sardar Vallabhbhai Patel Party. All rights reserved.</p>
       </div>
     </footer>
 
+    <script>
+      // Toggle password visibility
+      const toggleAdminPwd = document.getElementById('toggleAdminPwd');
+      const adminPasscodeInput = document.getElementById('adminPasscodeInput');
+      if (toggleAdminPwd && adminPasscodeInput) {
+        toggleAdminPwd.addEventListener('click', () => {
+          const type = adminPasscodeInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          adminPasscodeInput.setAttribute('type', type);
+          toggleAdminPwd.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+      }
+    </script>
     <script type="module" src="js/navigation.js"></script>
     <script type="module" src="js/pages/admin-login.js"></script>
   </body>

@@ -173,7 +173,14 @@ function setupCardDownloadFlow() {
 }
 
 // Initialize on page load
-document.addEventListener("DOMContentLoaded", () => {
+function init() {
     loadDynamicPortalSettings();
     setupCardDownloadFlow();
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+} else {
+    init();
+}
+

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Member Registration & ID Card Application</title>
+    <title>Member Registration & ID Card Application | Sardar Vallabhbhai Patel Party</title>
     <meta
       name="description"
       content="Official membership registration and ID card application form."
@@ -14,68 +14,188 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsive.css" />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-      .tricolor-ribbon {
+      body {
+        background-color: #f8fafc;
+        font-family: 'Inter', sans-serif;
+      }
+      .top-tricolor {
         display: flex;
-        height: 6px;
+        height: 5px;
         width: 100%;
       }
-      .tricolor-ribbon .saffron { flex: 1; background: #FF9933; }
-      .tricolor-ribbon .white { flex: 1; background: #FFFFFF; }
-      .tricolor-ribbon .green { flex: 1; background: #138808; }
+      .top-tricolor .saffron { flex: 1; background: #FF9933; }
+      .top-tricolor .white { flex: 1; background: #ffffff; }
+      .top-tricolor .green { flex: 1; background: #138808; }
 
       .page-hero-unified {
-        background: linear-gradient(135deg, #0F2B5C 0%, #1e3a8a 50%, #166534 100%);
+        background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 50%, #138808 100%);
         color: #ffffff;
         padding: 50px 24px;
         text-align: center;
+        position: relative;
       }
       .page-hero-unified h1 {
+        font-family: 'Outfit', sans-serif;
         color: #ffffff;
         font-size: clamp(1.8rem, 4vw, 2.4rem);
         margin-bottom: 8px;
         font-weight: 900;
-        text-transform: uppercase;
+        letter-spacing: -0.5px;
       }
       .page-hero-unified .hero-slogan {
-        font-family: 'Caveat', cursive, sans-serif;
-        font-size: 1.45rem;
+        font-size: 1.15rem;
         color: #FF9933;
         font-weight: 700;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
       }
       .page-hero-unified p {
-        color: rgba(255, 255, 255, 0.9);
-        max-width: 700px;
+        color: #e2e8f0;
+        max-width: 680px;
         margin: 0 auto;
         font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .form-section-container {
+        max-width: 820px;
+        margin: -30px auto 40px;
+        position: relative;
+        z-index: 10;
+        padding: 0 16px;
+      }
+      .registration-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 36px 32px;
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e2e8f0;
+      }
+      .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      @media (max-width: 640px) {
+        .form-grid-2 {
+          grid-template-columns: 1fr;
+        }
+        .registration-card {
+          padding: 24px 18px;
+        }
+      }
+      .form-group {
+        margin-bottom: 18px;
+        text-align: left;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #0F2B5C;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="email"],
+      .form-group input[type="tel"],
+      .form-group input[type="date"],
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+        background: #ffffff;
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+      .file-upload-box {
+        border: 2px dashed #cbd5e1;
+        border-radius: 14px;
+        padding: 16px;
+        background: #f8fafc;
+        text-align: center;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .file-upload-box:hover {
+        border-color: #2563eb;
+        background: #f0f7ff;
+      }
+      .file-upload-box input[type="file"] {
+        width: 100%;
+        font-size: 0.88rem;
+        color: #475569;
+      }
+      .notice-box-modern {
+        border-radius: 14px;
+        padding: 16px;
+        margin: 20px 0;
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+      .submit-form-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #0F2B5C 0%, #1e40af 100%);
+        color: #ffffff;
+        padding: 15px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.05rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 14px rgba(15, 43, 92, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .submit-form-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .submit-form-btn:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(15, 43, 92, 0.35);
       }
     </style>
   </head>
 
   <body>
     <!-- Top Tricolor Ribbon -->
-    <div class="tricolor-ribbon">
+    <div class="top-tricolor">
       <div class="saffron"></div>
       <div class="white"></div>
       <div class="green"></div>
     </div>
+
     <!-- ======================================== -->
     <!-- HEADER -->
     <!-- ======================================== -->
     <header class="main-header">
       <div class="logo-area">
         <a href="index.html" class="logo-branding" style="text-decoration: none;">
-          <div style="width: 44px; height: 44px; background: #2563eb; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
+          <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #0F2B5C 0%, #2563eb 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; box-shadow: 0 4px 10px rgba(15,43,92,0.15);">
+            <img src="images/logo.jpg" alt="Logo" style="width:100%; height:100%; object-fit:cover;" referrerPolicy="no-referrer" />
           </div>
           <div>
-            <h2 id="headerOrgTitle" style="font-size: 1.15rem; margin: 0; color: #0f172a;">Member Registration</h2>
-            <span style="font-size: 0.8rem; color: #64748b;">Official Member & ID Portal</span>
+            <h2 id="headerOrgTitle" style="font-family:'Outfit', sans-serif; font-size: 1.15rem; margin: 0; color: #0F2B5C; font-weight:800;">Sardar Vallabhbhai Patel Party</h2>
+            <span style="font-size: 0.78rem; color: #64748b; font-weight:600;">Official Member Registration</span>
           </div>
         </a>
 
@@ -130,158 +250,173 @@
     <!-- ======================================== -->
     <!-- MEMBERSHIP FORM -->
     <!-- ======================================== -->
-    <section id="membership">
-      <div class="section-title">
-        <span>Registration</span>
-        <h2>New Member Application Form</h2>
+    <div class="form-section-container">
+      <div class="registration-card">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <span style="display:inline-block; padding: 4px 12px; background: #eff6ff; color: #2563eb; font-weight: 700; font-size: 0.8rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Official Application</span>
+          <h2 style="font-family:'Outfit', sans-serif; font-size: 1.6rem; color: #0F2B5C; margin: 0; font-weight: 800;">New Member Registration Form</h2>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 6px 0 0;">Fill in the mandatory fields marked with an asterisk (*) to apply.</p>
+        </div>
+
+        <form id="membershipForm">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="fullName" placeholder="Enter your full legal name" required />
+            </div>
+
+            <div class="form-group">
+              <label>Father's / Guardian's Name *</label>
+              <input type="text" name="fatherName" placeholder="Enter father or guardian's name" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Mobile Number *</label>
+              <input type="tel" name="mobile" placeholder="10-digit mobile number" required />
+            </div>
+
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" name="email" id="memberEmailInput" placeholder="name@example.com" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Full Residential Address *</label>
+            <textarea name="address" rows="2" placeholder="Door No, Street, City/Town, District, Pincode" required></textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Date of Birth *</label>
+              <input type="date" name="dob" required />
+              <small style="color: #64748b; font-size: 0.76rem; display: block; margin-top: 4px;">
+                (Applicants must be at least 18 years of age)
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label>Occupation *</label>
+              <input type="text" name="occupation" placeholder="e.g. Professional, Business, Student, Volunteer" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Gender *</label>
+              <select name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Blood Group *</label>
+              <select name="bloodGroup" required>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>AB+</option>
+                <option>AB-</option>
+                <option>O+</option>
+                <option>O-</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Upload Member Photo *</label>
+              <div class="file-upload-box">
+                <input
+                  type="file"
+                  name="photo"
+                  id="photoInput"
+                  accept="image/*"
+                  required
+                />
+                <small style="color: #64748b; font-size: 0.76rem; display: block; margin-top: 6px; line-height: 1.4;">
+                  📸 JPG, PNG, WEBP (Max 5 MB) &bull; Front portrait
+                </small>
+                <small id="photoError" style="color: #dc2626; font-size: 0.8rem; display: none; margin-top: 4px;"></small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Government ID Proof (Any One) *</label>
+              <div class="file-upload-box">
+                <input
+                  type="file"
+                  name="governmentProof"
+                  id="govProofInput"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  required
+                />
+                <small style="color: #64748b; font-size: 0.76rem; display: block; margin-top: 6px; line-height: 1.4;">
+                  📋 Aadhaar, Voter ID, License, Passport (Max 10 MB)
+                </small>
+                <small id="govProofError" style="color: #dc2626; font-size: 0.8rem; display: none; margin-top: 4px;"></small>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="background:#f8fafc; padding:14px; border-radius:12px; border:1px solid #e2e8f0; margin-top:8px;">
+            <label style="margin-bottom:8px;">Membership Category *</label>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+              <label style="font-weight:600; font-size:0.9rem; color:#334155; display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="radio" name="membertype" value="member" required checked /> Regular Member
+              </label>
+              <label style="font-weight:600; font-size:0.9rem; color:#334155; display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="radio" name="membertype" value="active-member" required /> Active Volunteer Member
+              </label>
+            </div>
+          </div>
+
+          <div class="notice-box-modern" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af;">
+            <strong>🔒 Privacy & Verification Workflow:</strong><br />
+            Government documents uploaded are strictly reviewed by authorized administrators for verification. Once approved, your double-sided Digital ID Card and official Appointment Letter are immediately generated.
+          </div>
+
+          <button type="submit" id="membershipSubmitBtn" disabled class="submit-form-btn">
+            <span>Submit Membership Application</span>
+            <span>&rarr;</span>
+          </button>
+        </form>
       </div>
-
-      <form id="membershipForm">
-        <div class="form-group">
-          <label>Full Name *</label>
-          <input type="text" name="fullName" placeholder="Enter your full legal name" required />
-        </div>
-
-        <div class="form-group">
-          <label>Father's / Guardian's Name *</label>
-          <input type="text" name="fatherName" placeholder="Enter father or guardian's name" required />
-        </div>
-
-        <div class="form-group">
-          <label>Mobile Number *</label>
-          <input type="tel" name="mobile" placeholder="10-digit mobile number" required />
-        </div>
-
-        <div class="form-group">
-          <label>Email Address *</label>
-          <input type="email" name="email" id="memberEmailInput" placeholder="name@example.com" required />
-        </div>
-
-        <div class="form-group">
-          <label>Full Residential Address *</label>
-          <textarea name="address" placeholder="Door No, Street, City/Town, District, Pincode" required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Date of Birth *</label>
-          <input type="date" name="dob" required />
-          <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 4px;">
-            (Applicants must be at least 18 years of age)
-          </small>
-        </div>
-
-        <div class="form-group">
-          <label>Occupation *</label>
-          <input type="text" name="occupation" placeholder="e.g. Professional, Business, Student, Volunteer" required />
-        </div>
-
-        <div class="form-group">
-          <label>Gender *</label>
-          <select name="gender" required>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Blood Group *</label>
-          <select name="bloodGroup" required>
-            <option>A+</option>
-            <option>A-</option>
-            <option>B+</option>
-            <option>B-</option>
-            <option>AB+</option>
-            <option>AB-</option>
-            <option>O+</option>
-            <option>O-</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Upload Member Photo *</label>
-          <input
-            type="file"
-            name="photo"
-            id="photoInput"
-            accept="image/*"
-            required
-          />
-          <small style="color: #64748b; font-size: 0.82rem; display: block; margin-top: 6px; line-height: 1.6;">
-            📸 <strong>Accepted Formats:</strong> JPG, PNG, WEBP (Max 5 MB)<br />
-            📐 <strong>Requirement:</strong> Clear passport-style front-facing portrait
-          </small>
-          <small id="photoError" style="color: #dc2626; font-size: 0.82rem; display: none; margin-top: 4px;"></small>
-        </div>
-
-        <div class="form-group">
-          <label>Government ID Proof (Any One) *</label>
-          <input
-            type="file"
-            name="governmentProof"
-            id="govProofInput"
-            accept=".pdf,.jpg,.jpeg,.png"
-            required
-          />
-          <small style="color: #64748b; font-size: 0.82rem; display: block; margin-top: 6px; line-height: 1.6;">
-            📋 <strong>Accepted IDs:</strong> Aadhaar Card, Voter ID, Driving License, Passport<br />
-            📄 <strong>Accepted Formats:</strong> JPG, PNG, PDF (Max 10 MB)
-          </small>
-          <small id="govProofError" style="color: #dc2626; font-size: 0.82rem; display: none; margin-top: 4px;"></small>
-        </div>
-
-        <div class="notice-box" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; border-radius: 8px; padding: 14px; margin: 18px 0; font-size: 0.9rem;">
-          <strong>🔒 Privacy & Data Protection:</strong>
-          Government ID documents uploaded for verification are reviewed exclusively by authorized administrators and handled with high security.
-        </div>
-
-        <div class="form-group">
-          <label>Membership Category *</label>
-          <div>
-            <label><input type="radio" name="membertype" value="member" required checked /> Regular Member</label>
-          </div>
-          <div style="margin-top: 6px;">
-            <label><input type="radio" name="membertype" value="active-member" required /> Active Volunteer Member</label>
-          </div>
-        </div>
-
-        <div class="notice-box" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #334155; border-radius: 8px; padding: 14px; margin: 18px 0; font-size: 0.9rem;">
-          <strong>Application Workflow:</strong>
-          <br /><br />
-          ✓ Step 1: Google Email Verification<br />
-          ✓ Step 2: Administrator Document Screening & Approval<br />
-          ✓ Step 3: Unique Member ID Allocation & Digital ID Card Generation
-        </div>
-
-        <button type="submit" id="membershipSubmitBtn" disabled style="width: 100%; background: #2563eb; color: white; padding: 14px; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">
-          Submit Application
-        </button>
-      </form>
-    </section>
+    </div>
 
     <!-- ======================================== -->
     <!-- MEMBER BENEFITS -->
     <!-- ======================================== -->
-    <section style="background: #f8fafc; padding: 60px 20px;">
-      <div class="section-title">
-        <span>Privileges</span>
-        <h2>Benefits for Registered Members</h2>
-      </div>
-
-      <div class="benefits-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto;">
-        <div class="benefit-card" style="background: white; padding: 24px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-          <h3 style="margin-top: 0; color: #2563eb; font-size: 1.15rem;">🪪 Verified Digital ID Card</h3>
-          <p style="color: #64748b; margin-bottom: 0; font-size: 0.92rem;">Official photo ID card with unique membership number and QR verification.</p>
+    <section style="background: #f8fafc; padding: 50px 20px; border-top: 1px solid #e2e8f0;">
+      <div class="container" style="max-width: 1000px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <span style="font-size:0.82rem; font-weight:700; color:#2563eb; text-transform:uppercase; letter-spacing:0.5px;">Privileges & Rights</span>
+          <h2 style="font-family:'Outfit', sans-serif; font-size: 1.6rem; color: #0F2B5C; margin: 4px 0; font-weight: 800;">Benefits for Registered SVPP Members</h2>
         </div>
 
-        <div class="benefit-card" style="background: white; padding: 24px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-          <h3 style="margin-top: 0; color: #2563eb; font-size: 1.15rem;">🤝 Community Participation</h3>
-          <p style="color: #64748b; margin-bottom: 0; font-size: 0.92rem;">Direct engagement in community initiatives, projects, and special programs.</p>
-        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+          <div style="background: white; padding: 24px; border-radius: 18px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="font-size: 2rem; margin-bottom: 12px;">🪪</div>
+            <h3 style="margin-top: 0; color: #0F2B5C; font-size: 1.15rem; font-family:'Outfit', sans-serif; font-weight:700;">Verified Digital ID Card</h3>
+            <p style="color: #64748b; margin-bottom: 0; font-size: 0.9rem; line-height:1.5;">Official double-sided photo ID card with unique membership number, barcode, and QR verification.</p>
+          </div>
 
-        <div class="benefit-card" style="background: white; padding: 24px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-          <h3 style="margin-top: 0; color: #2563eb; font-size: 1.15rem;">🛡️ Support Network</h3>
-          <p style="color: #64748b; margin-bottom: 0; font-size: 0.92rem;">A collaborative peer network providing civic guidance and mutual assistance.</p>
+          <div style="background: white; padding: 24px; border-radius: 18px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="font-size: 2rem; margin-bottom: 12px;">🤝</div>
+            <h3 style="margin-top: 0; color: #0F2B5C; font-size: 1.15rem; font-family:'Outfit', sans-serif; font-weight:700;">Community Leadership</h3>
+            <p style="color: #64748b; margin-bottom: 0; font-size: 0.9rem; line-height:1.5;">Direct engagement in district meetings, welfare initiatives, public programs, and social impact projects.</p>
+          </div>
+
+          <div style="background: white; padding: 24px; border-radius: 18px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="font-size: 2rem; margin-bottom: 12px;">🛡️</div>
+            <h3 style="margin-top: 0; color: #0F2B5C; font-size: 1.15rem; font-family:'Outfit', sans-serif; font-weight:700;">Support Network</h3>
+            <p style="color: #64748b; margin-bottom: 0; font-size: 0.9rem; line-height:1.5;">A collaborative peer network providing civic assistance, legal guidance, and mutual member support.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -339,7 +474,7 @@
 
       <!-- BOTTOM COPYRIGHT BAR -->
       <div class="footer-copyright-bar">
-        <p id="footerCopyrightText">© 2021 All rights reserved by Fragron Infotech</p>
+        <p id="footerCopyrightText">© 2026 Sardar Vallabhbhai Patel Party. All rights reserved.</p>
       </div>
     </footer>
 

@@ -29,27 +29,18 @@ import {
 // FIREBASE CONFIG
 // ========================================
 
-let firebaseConfig = {
+const firebaseConfig = {
+    projectId: "upheld-renderer-96pck",
+    appId: "1:258816415496:web:6409828c4a7c7364defebd",
     apiKey: "AIzaSyAMbphDWdviu-i9Aszy8mQnLyDFkma1IFw",
     authDomain: "upheld-renderer-96pck.firebaseapp.com",
-    projectId: "upheld-renderer-96pck",
+    firestoreDatabaseId: "ai-studio-id-045c9baa-59ce-48c1-a3c5-2462853abdf1",
     storageBucket: "upheld-renderer-96pck.firebasestorage.app",
     messagingSenderId: "258816415496",
-    appId: "1:258816415496:web:6409828c4a7c7364defebd",
-    firestoreDatabaseId: "ai-studio-id-045c9baa-59ce-48c1-a3c5-2462853abdf1"
+    measurementId: "",
+    oAuthClientId: "258816415496-keq1al4a29d92enbeqnj7dilu0q5cjmd.apps.googleusercontent.com",
+    recaptchaSiteKey: ""
 };
-
-try {
-    const res = await fetch("/firebase-applet-config.json");
-    if (res.ok) {
-        const json = await res.json();
-        if (json.apiKey) {
-            firebaseConfig = { ...firebaseConfig, ...json };
-        }
-    }
-} catch (e) {
-    console.warn("Could not load dynamic firebase-applet-config.json:", e);
-}
 
 // ========================================
 // INITIALIZE FIREBASE

@@ -8,7 +8,7 @@ export const DEFAULT_FOOTER_SETTINGS = {
   email: "khabarkitahtak@gmail.com",
   phone: "94517 33981",
   address: "Head Office - Office No. 1743, First Floor Lekhraj Dollar, Near Ghazipur Police Station Faizabad Road, Indira Nagar Lucknow – 226016 Uttar Pradesh, India",
-  copyright: "© 2021 All rights reserved by Fragron Infotech",
+  copyright: "© 2026 Sardar Vallabhbhai Patel Party. All rights reserved.",
   fbUrl: "#",
   twitterUrl: "#",
   instaUrl: "#",
