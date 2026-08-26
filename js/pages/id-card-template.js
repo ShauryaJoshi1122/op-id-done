@@ -69,7 +69,7 @@ const DEFAULT_SAMPLE_MEMBER = {
 };
 
 // Initialize
-document.addEventListener("DOMContentLoaded", async () => {
+async function initIdCardStudio() {
     // Setup Side Toggle Handlers
     sideToggleButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -230,6 +230,12 @@ async function checkMemberSession() {
     // Unauthenticated visitor -> Show sample and modal
     currentMember = DEFAULT_SAMPLE_MEMBER;
     renderCard();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initIdCardStudio);
+} else {
+    initIdCardStudio();
 }
 
 /**

@@ -77,9 +77,15 @@ try {
 
 const auth = getAuth(app);
 
-const db = (firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== "(default)")
-    ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
-    : getFirestore(app);
+let db;
+try {
+    db = (firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== "(default)")
+        ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
+        : getFirestore(app);
+} catch (err) {
+    console.warn("Custom database initialization failed, falling back to default:", err);
+    db = getFirestore(app);
+}
 
 const storage = getStorage(app);
 

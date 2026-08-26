@@ -42,7 +42,7 @@ watchAuth(async (user) => {
         }
 
         const admin = await isAdmin(user?.uid, user);
-        if (admin && !window.location.pathname.includes("admin-dashboard.html")) {
+        if (admin && !window.location.pathname.includes("admin-dashboard")) {
             location.href = "admin-dashboard.html";
         }
     } catch (error) {

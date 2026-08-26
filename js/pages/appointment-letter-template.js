@@ -40,7 +40,7 @@ const appointmentLetterCanvasWrapper = document.getElementById("appointmentLette
 /**
  * Initialize Appointment Letter Studio
  */
-document.addEventListener("DOMContentLoaded", async () => {
+async function initAppointmentStudio() {
     try {
         // Set today's date in appointment date input
         const today = new Date();
@@ -97,7 +97,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Initialization error:", err);
         showToast("Error initializing appointment studio", "error");
     }
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAppointmentStudio);
+} else {
+    initAppointmentStudio();
+}
 
 /**
  * Load Org Settings & Asset Settings

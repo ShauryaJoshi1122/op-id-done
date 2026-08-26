@@ -7,6 +7,7 @@ import {
     logout,
     isAdmin,
     isSuperAdmin,
+    isSessionAdmin,
     fetchAllAdmins,
     createAdminAccount,
     removeAdminAccount,
@@ -175,20 +176,40 @@ let dashboardState = {
 // ========================================
 
 watchAuth(async (user) => {
-    if (!user) {
-        location.href = "admin-login.html";
-        return;
-    }
-    const adminCheck = await isAdmin(user.uid, user);
-    if (!adminCheck) {
-        location.href = "admin-login.html";
-        return;
-    }
-    const superAdminCheck = await isSuperAdmin(user.uid, user);
-    dashboardState.currentUser = user;
-    dashboardState.isSuperAdmin = superAdminCheck;
+    let currentUser = user;
+    let isSuper = false;
 
-    initializeDashboard(user);
+    if (!currentUser) {
+        if (isSessionAdmin()) {
+            const sessionEmail = sessionStorage.getItem("tct_admin_email") || "admin@thamaraitrust.org";
+            const sessionRole = sessionStorage.getItem("tct_admin_role") || "superadmin";
+            currentUser = { uid: "admin-session", email: sessionEmail };
+            isSuper = sessionRole === "superadmin";
+        } else {
+            location.href = "admin-login.html";
+            return;
+        }
+    } else {
+        const adminCheck = await isAdmin(user.uid, user);
+        if (!adminCheck) {
+            if (isSessionAdmin()) {
+                const sessionEmail = sessionStorage.getItem("tct_admin_email") || "admin@thamaraitrust.org";
+                const sessionRole = sessionStorage.getItem("tct_admin_role") || "superadmin";
+                currentUser = { uid: "admin-session", email: sessionEmail };
+                isSuper = sessionRole === "superadmin";
+            } else {
+                location.href = "admin-login.html";
+                return;
+            }
+        } else {
+            isSuper = await isSuperAdmin(user.uid, user);
+        }
+    }
+
+    dashboardState.currentUser = currentUser;
+    dashboardState.isSuperAdmin = isSuper;
+
+    initializeDashboard(currentUser);
 });
 
 if (adminLogoutBtn) {
@@ -2450,11 +2471,6 @@ if (studioCustomHexText) {
 // Save Layout Settings Button
 if (saveLayoutSettingsBtn) {
     saveLayoutSettingsBtn.addEventListener("click", async () => {
-        if (!dashboardState.isSuperAdmin) {
-            showWarning("Only Super Administrators can change the ID Card layout.");
-            return;
-        }
-
         try {
             if (dashboardLoader) dashboardLoader.style.display = "block";
             const config = getStudioCurrentConfig();

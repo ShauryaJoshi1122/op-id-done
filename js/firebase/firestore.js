@@ -86,6 +86,25 @@ async function syncDeleteToSupabase(collectionName, id) {
     }
 }
 
+// Helper: Timeout wrapper for Firestore async requests
+function withTimeout(promise, ms = 3000) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            reject(new Error(`Firestore query timed out after ${ms}ms`));
+        }, ms);
+        promise.then(
+            (res) => {
+                clearTimeout(timer);
+                resolve(res);
+            },
+            (err) => {
+                clearTimeout(timer);
+                reject(err);
+            }
+        );
+    });
+}
+
 // ========================================
 // REAL-TIME LISTENERS
 // ========================================
@@ -200,7 +219,7 @@ export async function getDocument(
 ) {
     try {
         const documentRef = doc(db, collectionName, documentId);
-        const snapshot = await getDoc(documentRef);
+        const snapshot = await withTimeout(getDoc(documentRef), 3000);
         if (snapshot.exists()) {
             return {
                 id: snapshot.id,
@@ -223,9 +242,9 @@ export async function getCollection(
     collectionName
 ) {
     try {
-        const snapshot = await getDocs(
+        const snapshot = await withTimeout(getDocs(
             collection(db, collectionName)
-        );
+        ), 3000);
         if (!snapshot.empty) {
             return snapshot.docs.map(doc => ({
                 id: doc.id,
