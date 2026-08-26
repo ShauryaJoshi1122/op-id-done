@@ -1,0 +1,13 @@
+      - name: 📂 Sync files to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21 # Try changing to 22 if your host strictly requires SFTP
+          security: loose # Forces the action to proceed if FTPS explicitly fails over to FTP
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
