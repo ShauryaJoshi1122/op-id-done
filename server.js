@@ -9,13 +9,12 @@ const app = express();
 const PORT = 3000;
 const HOST = '0.0.0.0';
 
-// Global CORS and iframe embedding middleware
+// Global CORS and static headers
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+  res.setHeader('Access-Control-Allow-Headers', '*');
   res.setHeader('Content-Security-Policy', "frame-ancestors *;");
-  // Allow rendering in iframes for dev preview
   res.removeHeader('X-Frame-Options');
   next();
 });
@@ -30,6 +29,8 @@ app.use(express.static(__dirname, {
   extensions: ['html', 'htm'],
   setHeaders: (res, filePath) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Security-Policy', "frame-ancestors *;");
+    res.removeHeader('X-Frame-Options');
     if (filePath.endsWith('.js')) {
       res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
     } else if (filePath.endsWith('.css')) {
