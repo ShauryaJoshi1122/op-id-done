@@ -1,13 +1,22 @@
-      - name: 📂 Sync files to cPanel
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+name: Deploy via FTP Sync
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: FTP Deploy
+        uses: IshanFx/ftp-deploy-action@v2 # An alternative lightweight engine
         with:
-          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21 # Try changing to 22 if your host strictly requires SFTP
-          security: loose # Forces the action to proceed if FTPS explicitly fails over to FTP
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            .env
+          server: ${{ secrets.FTP_SERVER }}
+          local_dir: ./
+          # Use your hosting account's primary IP address as the FTP_SERVER secret
